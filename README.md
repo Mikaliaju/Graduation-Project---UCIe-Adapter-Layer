@@ -3,7 +3,7 @@
 This Repo is a UCIe 3.0 D2D adapter layer impelementation.
 This sepcific Implementation splits the design into 4 main blocks: Mainband, Sideband, ALSM, and Register File.
 
-![UCIe Main Blocks](./rtl/UCIe_Blocks.jpeg)
+![UCIe Main Blocks](UCIe_Blocks.jpeg)
 
 ## Mainband (Ali Nour and Fatma Fawzy)
 
