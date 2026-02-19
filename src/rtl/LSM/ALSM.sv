@@ -5,9 +5,9 @@ module ALSM (
     // RDI inputs
     input logic i_rdi_pl_inband_pres,
     input logic i_rdi_pl_phyinrecenter,
-    input logic i_rdi_pl_speedmode,
-    input logic i_rdi_pl_lnk_cfg,
-    input logic i_rdi_pl_state_sts,
+    input logic [2:0] i_rdi_pl_speedmode,
+    input logic [2:0] i_rdi_pl_lnk_cfg,
+    input logic [3:0] i_rdi_pl_state_sts,
     input logic i_rdi_pl_clk_req,
     input logic i_rdi_pl_wake_ack,
 
@@ -15,25 +15,25 @@ module ALSM (
     output logic o_rdi_lp_clk_ack,
     output logic o_rdi_lp_wake_req,
     output logic o_rdi_lp_linkerror,
-    output logic o_rdi_lp_state_req,
+    output logic [3:0] o_rdi_lp_state_req,
 
     // FDI inputs
-    input i_fdi_lp_state_req,
-    input i_fdi_lp_linkerror,
-    input i_fdi_lp_rx_active_sts,
-    input i_fdi_lp_stall_ack,
+    input logic [3:0] i_fdi_lp_state_req,
+    input logic i_fdi_lp_linkerror,
+    input logic i_fdi_lp_rx_active_sts,
+    input logic i_fdi_lp_stall_ack,
 
     // FDI outputs
-    input o_fdi_pl_stallreq,
-    input o_fdi_pl_phyinrecenter,
-    input o_fdi_pl_phyinl1,
-    input o_fdi_pl_phyinl2,
-    input o_fdi_pl_speedmode,
-    input o_fdi_pl_max_speedmode,
-    input o_fdi_pl_lnk_cfg,
-    input o_fdi_pl_state_sts,
-    input o_fdi_pl_inband_pres,
-    input o_fdi_pl_rx_active_req,
+    input logic o_fdi_pl_stallreq,
+    input logic o_fdi_pl_phyinrecenter,
+    input logic o_fdi_pl_phyinl1,
+    input logic o_fdi_pl_phyinl2,
+    input logic [2:0] o_fdi_pl_speedmode,
+    input logic o_fdi_pl_max_speedmode,
+    input logic [2:0] o_fdi_pl_lnk_cfg,
+    input logic [3:0] o_fdi_pl_state_sts,
+    input logic o_fdi_pl_inband_pres,
+    input logic o_fdi_pl_rx_active_req,
 
     // SB inputs
     input logic i_sb_state_rx,
@@ -42,7 +42,7 @@ module ALSM (
     // SB outputs
     output logic o_sb_start_param_exch,
     output logic o_sb_msg_request,
-    output logic o_sb_state_tx,
+    output logic [3:0] o_sb_state_tx,
 
     // MB inputs
     input logic i_MB_retry_clean_boundary_done,
@@ -60,7 +60,7 @@ module ALSM (
     input logic i_Regfile_LinkError,
 
     // RegFile outputs
-    output logic o_Adpater_LSM_response_type,
+    output logic [2:0] o_Adpater_LSM_response_type,
     output logic o_uce_Adapter_timeout_non_active,
     output logic o_uce_Adapter_timeout_active,
     output logic o_Error_Valid,
