@@ -1,0 +1,64 @@
+m255
+K4
+z2
+!s11f vlog 2021.1 2021.01, Jan 19 2021
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dD:/Senior Year/VHDL/Project
+vALSM
+Z0 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+DXx4 work 12 ALSM_sv_unit 0 22 TbL3d?nUU]XdTe@2]k7Vf0
+Z1 !s110 1771531464
+VDg1SIo80bB@j0V0VzS_@n1
+r1
+!s85 0
+!i10b 1
+!s100 T17PTPOl?CSZPmWNPCA7_0
+IUT3ecMJh;Snb71:`8J=VI3
+!s105 ALSM_sv_unit
+S1
+Z2 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM
+Z3 w1771531448
+Z4 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
+Z5 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
+!i122 3
+L0 46 136
+Z6 OL;L;2021.1;73
+31
+Z7 !s108 1771531464.000000
+!s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+Z8 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+!i113 0
+Z9 o-work work -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+Z10 tCvgOpt 0
+n@a@l@s@m
+XALSM_sv_unit
+R0
+R1
+VTbL3d?nUU]XdTe@2]k7Vf0
+r1
+!s85 0
+!i10b 1
+!s100 c=hPZJJAU9=_Jf6X8<]GB0
+ITbL3d?nUU]XdTe@2]k7Vf0
+!i103 1
+S1
+R2
+R3
+R4
+R5
+!i122 3
+L0 1 0
+R6
+31
+R7
+Z11 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+R8
+!i113 0
+R9
+R10
+n@a@l@s@m_sv_unit
