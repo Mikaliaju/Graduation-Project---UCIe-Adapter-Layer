@@ -1,6 +1,9 @@
 m255
 K4
 z2
+Z0 !s99 nomlopt
+R0
+R0
 !s11f vlog 2021.1 2021.01, Jan 19 2021
 13
 !s112 1.1
@@ -9,56 +12,66 @@ z2
 !i10f 100
 cModel Technology
 dD:/Senior Year/VHDL/Project
+T_opt
+!s110 1771628442
+VKmOH@Tf8S5iZehGf36IDh0
+04 4 4 work ALSM fast 0
+=1-28d043fe16f2-6998e79a-17a-7f0
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work +acc
+Z1 tCvgOpt 0
+n@_opt
+OL;O;2021.1;73
 vALSM
-Z0 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-DXx4 work 12 ALSM_sv_unit 0 22 TbL3d?nUU]XdTe@2]k7Vf0
-Z1 !s110 1771531464
+Z2 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+DXx4 work 12 ALSM_sv_unit 0 22 5hRXU@UlC?8TFL5``0TSJ1
+Z3 !s110 1771628439
 VDg1SIo80bB@j0V0VzS_@n1
 r1
 !s85 0
 !i10b 1
-!s100 T17PTPOl?CSZPmWNPCA7_0
-IUT3ecMJh;Snb71:`8J=VI3
+!s100 BR]f@1929T[U1cQA8icLb1
+IV>W91;8IRZBL72jOE<7ES1
 !s105 ALSM_sv_unit
 S1
-Z2 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM
-Z3 w1771531448
-Z4 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
-Z5 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
-!i122 3
-L0 46 136
-Z6 OL;L;2021.1;73
+Z4 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM
+Z5 w1771628422
+Z6 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
+Z7 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv
+!i122 15
+L0 74 350
+Z8 OL;L;2021.1;73
 31
-Z7 !s108 1771531464.000000
-!s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
-Z8 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+Z9 !s108 1771628439.000000
+Z10 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+Z11 !s90 -reportprogress|300|-work|work|-sv|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
 !i113 0
-Z9 o-work work -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
-Z10 tCvgOpt 0
+Z12 o-work work -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R1
 n@a@l@s@m
 XALSM_sv_unit
-R0
-R1
-VTbL3d?nUU]XdTe@2]k7Vf0
+R2
+R3
+V5hRXU@UlC?8TFL5``0TSJ1
 r1
 !s85 0
 !i10b 1
-!s100 c=hPZJJAU9=_Jf6X8<]GB0
-ITbL3d?nUU]XdTe@2]k7Vf0
+!s100 PRA:YFhdRINjGK<gVY_e@0
+I5hRXU@UlC?8TFL5``0TSJ1
 !i103 1
 S1
-R2
-R3
 R4
 R5
-!i122 3
-L0 1 0
 R6
-31
 R7
-Z11 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/ALSM.sv|
+!i122 15
+L0 1 0
 R8
-!i113 0
+31
 R9
 R10
+R11
+!i113 0
+R12
+R1
 n@a@l@s@m_sv_unit
