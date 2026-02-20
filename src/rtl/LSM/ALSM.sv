@@ -1,9 +1,9 @@
 typedef enum logic [2:0] { 
-    Active_LSM_response_type = 'b001,
-    L1_LSM_response_type = 'b010,
-    L2_LSM_response_type = 'b011,
+    Active_LSM_response_type    = 'b001,
+    L1_LSM_response_type        = 'b010,
+    L2_LSM_response_type        = 'b011,
     LinkReset_LSM_response_type = 'b100,
-    Disable_LSM_response_type = 'b101
+    Disable_LSM_response_type   = 'b101
 } Adapter_Response;
 
 // all lp_state_req encodings
