@@ -1,3 +1,11 @@
+typedef enum logic [2:0] { 
+    Active_LSM_response_type = 'b001,
+    L1_LSM_response_type = 'b010,
+    L2_LSM_response_type = 'b011,
+    LinkReset_LSM_response_type = 'b100,
+    Disable_LSM_response_type = 'b101
+} Adapter_Response;
+
 // all lp_state_req encodings
 typedef enum logic [3:0] { 
     Req_NOP       = 'b0000,
@@ -129,12 +137,12 @@ module ALSM (
     input logic        i_Regfile_LinkError,
 
     // RegFile outputs
-    output logic [2:0] o_Adpater_LSM_response_type,
-    output logic       o_uce_Adapter_timeout_non_active,
-    output logic       o_uce_Adapter_timeout_active,
-    output logic       o_Error_Valid,
-    output logic       o_Link_Status,
-    output logic       o_ce_Adapter_Transition_Retrain
+    output Adapter_Response o_Adpater_LSM_response_type,
+    output logic            o_uce_Adapter_timeout_non_active,
+    output logic            o_uce_Adapter_timeout_active,
+    output logic            o_Error_Valid,
+    output logic            o_Link_Status,
+    output logic            o_ce_Adapter_Transition_Retrain
 );
 
     // current main state, next sub state
@@ -151,10 +159,62 @@ module ALSM (
     assign o_rdi_lp_wake_req = 'b1;
     assign fdi_pl_clk_req = 'b1;
 
+    // RDI outputs
+    logic o_rdi_lp_linkerror_comb; 
+    state_req o_rdi_lp_state_req_comb;
+
+    // FDI outputs
+    logic o_fdi_pl_stallreq_comb, o_fdi_pl_inband_pres_comb, o_fdi_pl_rx_active_req_comb;
+    ll_state o_fdi_pl_state_sts_comb;
+    // SB outputs
+    logic o_sb_start_param_exch_comb, o_sb_msg_request_comb;
+    SB_state o_sb_state_tx_comb;
+
+    // MB outputs
+    logic o_MB_flush_comb, o_MB_retry_clean_boundary_comb, o_MB_tx_enable_comb, o_MB_rx_enable_comb;
+
+    // Regfile outputs
+    logic o_uce_Adapter_timeout_non_active_comb,
+          o_uce_Adapter_timeout_active_comb,
+          o_Error_Valid_comb,
+          o_Link_Status_comb,
+          o_ce_Adapter_Transition_Retrain_comb;
+
+    Adapter_Response  o_Adpater_LSM_response_type_comb;
+
     // next state
     always_comb begin
         nms = cms;
         nss = css;
+
+        // RDI outputs
+        o_rdi_lp_linkerror_comb = o_rdi_lp_linkerror;
+        o_rdi_lp_state_req_comb = o_rdi_lp_state_req;
+
+        // FDI outputs
+        o_fdi_pl_stallreq_comb      = o_fdi_pl_stallreq;
+        o_fdi_pl_state_sts_comb     = o_fdi_pl_state_sts;
+        o_fdi_pl_inband_pres_comb   = o_fdi_pl_inband_pres;
+        o_fdi_pl_rx_active_req_comb = o_fdi_pl_rx_active_req;
+
+        // SB outputs
+        o_sb_start_param_exch_comb = o_sb_start_param_exch;
+        o_sb_msg_request_comb      = o_sb_msg_request;
+        o_sb_state_tx_comb         = o_sb_state_tx;
+
+        // MB outputs
+        o_MB_flush_comb                = o_MB_flush;
+        o_MB_retry_clean_boundary_comb = o_MB_retry_clean_boundary;
+        o_MB_tx_enable_comb            = o_MB_tx_enable;
+        o_MB_rx_enable_comb            = o_MB_rx_enable;
+
+        // Regfile outputs
+        o_Adpater_LSM_response_type_comb      = o_Adpater_LSM_response_type;
+        o_uce_Adapter_timeout_non_active_comb = o_uce_Adapter_timeout_non_active;
+        o_uce_Adapter_timeout_active_comb     = o_uce_Adapter_timeout_active;
+        o_Error_Valid_comb                    = o_Error_Valid;
+        o_Link_Status_comb                    = o_Link_Status;
+        o_ce_Adapter_Transition_Retrain_comb  = o_ce_Adapter_Transition_Retrain;
 
         case (cms)
             Reset: 
@@ -237,6 +297,9 @@ module ALSM (
                     nss = 'b0; nms = Reset;
                 end
             endcase
+            default: begin
+                nss = 'b0; nms = Reset;
+            end
         endcase
     end
 
@@ -244,17 +307,17 @@ module ALSM (
     // Reset, otherwise they are zero
     always_ff @(negedge rst_n, posedge clk) begin
         if (~rst_n) begin
-            Protocol_Active <= 'b0;
+            Protocol_Active        <= 'b0;
             sb_active_req_received <= 'b0;
             sb_active_rsp_received <= 'b0;
         end
         else if (cms == Reset) begin
-            Protocol_Active <= Protocol_Active | (i_fdi_lp_state_req == Req_Active);
+            Protocol_Active        <= Protocol_Active | (i_fdi_lp_state_req == Req_Active);
             sb_active_req_received <= sb_active_req_received | (i_sb_state_rx == SB_Req_Active);
             sb_active_rsp_received <= sb_active_rsp_received | (i_sb_state_rx == SB_Rsp_Active);
         end
         else begin
-            Protocol_Active <= 'b0;
+            Protocol_Active        <= 'b0;
             sb_active_req_received <= 'b0;
             sb_active_rsp_received <= 'b0;
         end
@@ -271,25 +334,90 @@ module ALSM (
         end
     end
 
+    // ALSM outputs
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (~rst_n) begin
+            // RDI outputs
+            o_rdi_lp_linkerror <= 'b0;
+            o_rdi_lp_state_req <= Req_NOP;
+
+            // FDI outputs
+            o_fdi_pl_stallreq      <= 'b0;
+            o_fdi_pl_state_sts     <= LL_Reset;
+            o_fdi_pl_inband_pres   <= 'b0;
+            o_fdi_pl_rx_active_req <= 'b0;
+
+            // SB outputs
+            o_sb_start_param_exch <= 'b0;
+            o_sb_msg_request      <= 'b0;
+            o_sb_state_tx         <= SB_Req_Active;
+
+            // MB outputs
+            o_MB_flush                <= 'b0;
+            o_MB_retry_clean_boundary <= 'b0;
+            o_MB_tx_enable            <= 'b0;
+            o_MB_rx_enable            <= 'b0;
+
+            // Regfile outputs
+            o_Adpater_LSM_response_type      <= Active_LSM_response_type;
+            o_uce_Adapter_timeout_non_active <= 'b0;
+            o_uce_Adapter_timeout_active     <= 'b0;
+            o_Error_Valid                    <= 'b0;
+            o_Link_Status                    <= 'b0;
+            o_ce_Adapter_Transition_Retrain  <= 'b0;
+        end
+        else begin
+            // RDI outputs
+            o_rdi_lp_linkerror <= o_rdi_lp_linkerror_comb;
+            o_rdi_lp_state_req <= o_rdi_lp_state_req_comb;
+
+            // FDI outputs
+            o_fdi_pl_stallreq      <= o_fdi_pl_stallreq_comb;
+            o_fdi_pl_state_sts     <= o_fdi_pl_state_sts_comb;
+            o_fdi_pl_inband_pres   <= o_fdi_pl_inband_pres_comb;
+            o_fdi_pl_rx_active_req <= o_fdi_pl_rx_active_req_comb;
+
+            // SB outputs
+            o_sb_start_param_exch <= o_sb_start_param_exch_comb;
+            o_sb_msg_request      <= o_sb_msg_request_comb;
+            o_sb_state_tx         <= o_sb_state_tx_comb;
+
+            // MB outputs
+            o_MB_flush                <= o_MB_flush_comb;
+            o_MB_retry_clean_boundary <= o_MB_retry_clean_boundary_comb;
+            o_MB_tx_enable            <= o_MB_tx_enable_comb;
+            o_MB_rx_enable            <= o_MB_rx_enable_comb;
+
+            // Regfile outputs
+            o_Adpater_LSM_response_type      <= o_Adpater_LSM_response_type_comb;
+            o_uce_Adapter_timeout_non_active <= o_uce_Adapter_timeout_non_active_comb;
+            o_uce_Adapter_timeout_active     <= o_uce_Adapter_timeout_active_comb;
+            o_Error_Valid                    <= o_Error_Valid_comb;
+            o_Link_Status                    <= o_Link_Status_comb;
+            o_ce_Adapter_Transition_Retrain  <= o_ce_Adapter_Transition_Retrain_comb;
+        end
+    end
     // Registered signals
     always_ff @(negedge rst_n, posedge clk) begin
         if (~rst_n) begin
             o_fdi_pl_phyinrecenter <= 'b0; 
-            o_fdi_pl_speedmode <= 'b0;
-            o_fdi_pl_lnk_cfg <= 'b0;
-            o_fdi_pl_phyinl1 <= 'b0;
-            o_fdi_pl_phyinl2 <= 'b0;
-            o_fdi_pl_wake_ack <= 'b0;
-            o_rdi_lp_clk_ack <= 'b0;
+            o_fdi_pl_speedmode     <= 'b0;
+            o_fdi_pl_max_speedmode <= 'b0;
+            o_fdi_pl_lnk_cfg       <= 'b0;
+            o_fdi_pl_phyinl1       <= 'b0;
+            o_fdi_pl_phyinl2       <= 'b0;
+            o_fdi_pl_wake_ack      <= 'b0;
+            o_rdi_lp_clk_ack       <= 'b0;
         end
         else begin
-           o_fdi_pl_phyinrecenter <= i_rdi_pl_phyinrecenter; 
-           o_fdi_pl_speedmode <= i_rdi_pl_speedmode;
-           o_fdi_pl_lnk_cfg <= i_rdi_pl_lnk_cfg;
-           o_fdi_pl_phyinl1 <= (i_rdi_pl_state_sts == LL_L1);
-           o_fdi_pl_phyinl2 <= (i_rdi_pl_state_sts == LL_L2);
-           o_fdi_pl_wake_ack <= i_fdi_lp_wake_req;
-           o_rdi_lp_clk_ack <= i_rdi_pl_clk_req;
+            o_fdi_pl_phyinrecenter <= i_rdi_pl_phyinrecenter; 
+            o_fdi_pl_speedmode     <= i_rdi_pl_speedmode;
+            o_fdi_pl_max_speedmode <= (i_rdi_pl_speedmode > 'b101);
+            o_fdi_pl_lnk_cfg       <= i_rdi_pl_lnk_cfg;
+            o_fdi_pl_phyinl1       <= (i_rdi_pl_state_sts == LL_L1);
+            o_fdi_pl_phyinl2       <= (i_rdi_pl_state_sts == LL_L2);
+            o_fdi_pl_wake_ack      <= i_fdi_lp_wake_req;
+            o_rdi_lp_clk_ack       <= i_rdi_pl_clk_req;
         end
     end
 endmodule
