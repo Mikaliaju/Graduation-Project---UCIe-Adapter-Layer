@@ -1,0 +1,3 @@
+../rtl/common/ALSM_package.sv
+../rtl/ALSM/ALSM.sv
+ALSM_tb.sv

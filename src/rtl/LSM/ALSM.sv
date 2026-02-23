@@ -9,68 +9,69 @@
 //! Register File. FDI and RDI signals are used to control/communicate the state of the adapter
 //! with the upper and lower layers.
 
-typedef enum logic [2:0] {
-	Active_LSM_response_type    = 'b001,
-	L1_LSM_response_type        = 'b010,
-	L2_LSM_response_type        = 'b011,
-	LinkReset_LSM_response_type = 'b100,
-	Disable_LSM_response_type   = 'b101
-} Adapter_Response;
+import ALSM_package::*;
 
-// all lp_state_req encodings
-typedef enum logic [3:0] { 
-	Req_NOP       = 'b0000,
-	Req_Active    = 'b0001,
-	Req_L1        = 'b0100,
-	Req_L2        = 'b1000,
-	Req_LinkReset = 'b1001,
-	Req_Retrain   = 'b1011,
-	Req_Disable   = 'b1100
-} state_req;
+// typedef enum logic [2:0] {
+// 	Active_LSM_response_type    = 'b001,
+// 	L1_LSM_response_type        = 'b010,
+// 	L2_LSM_response_type        = 'b011,
+// 	LinkReset_LSM_response_type = 'b100,
+// 	Disable_LSM_response_type   = 'b101
+// } Adapter_Response;
 
-// all pl_sts encodings
-typedef enum logic [3:0] { 
-	LL_Reset        = 'b0000,
-	LL_Active       = 'b0001,
-	LL_Active_PMNAK = 'b0011,
-	LL_L1           = 'b0100,
-	LL_L2           = 'b1000,
-	LL_LinkReset    = 'b1001,
-	LL_LinkError    = 'b1010,
-	LL_Retrain      = 'b1011,
-	LL_Disable      = 'b1100
-} ll_state;
+// // all lp_state_req encodings
+// typedef enum logic [3:0] { 
+// 	Req_NOP       = 'b0000,
+// 	Req_Active    = 'b0001,
+// 	Req_L1        = 'b0100,
+// 	Req_L2        = 'b1000,
+// 	Req_LinkReset = 'b1001,
+// 	Req_Retrain   = 'b1011,
+// 	Req_Disable   = 'b1100
+// } state_req;
 
-// all valid sb message encodings
-typedef enum { 
-	SB_None,
-	SB_Req_Active,
-	SB_Req_L1,
-	SB_Req_L2,
-	SB_Req_LinkReset,
-	SB_Req_Disable,
-	SB_Rsp_Active,
-	SB_Rsp_L1,
-	SB_Rsp_L2,
-	SB_Rsp_LinkReset,
-	SB_Rsp_Disable,
-	SB_Rsp_PMNAK
-} sb_state_msg_encoding;
+// // all pl_sts encodings
+// typedef enum logic [3:0] { 
+// 	LL_Reset        = 'b0000,
+// 	LL_Active       = 'b0001,
+// 	LL_Active_PMNAK = 'b0011,
+// 	LL_L1           = 'b0100,
+// 	LL_L2           = 'b1000,
+// 	LL_LinkReset    = 'b1001,
+// 	LL_LinkError    = 'b1010,
+// 	LL_Retrain      = 'b1011,
+// 	LL_Disable      = 'b1100
+// } ll_state;
 
-// Reset sub state encodings
-typedef enum {
-	ALSM_Reset,
-	ALSM_Param_exch,
-	ALSM_Active_Entry,
-	ALSM_SB_Active_Req,
-	ALSM_Active_Req_Await,
-	ALSM_rx_active_1,
-	ALSM_SB_rsp_recieved,
-	ALSM_rx_active_2,
-	ALSM_Await_FDI_Active,
-	ALSM_Active
-} ALSM_State;
+// // all valid sb message encodings
+// typedef enum { 
+// 	SB_None,
+// 	SB_Req_Active,
+// 	SB_Req_L1,
+// 	SB_Req_L2,
+// 	SB_Req_LinkReset,
+// 	SB_Req_Disable,
+// 	SB_Rsp_Active,
+// 	SB_Rsp_L1,
+// 	SB_Rsp_L2,
+// 	SB_Rsp_LinkReset,
+// 	SB_Rsp_Disable,
+// 	SB_Rsp_PMNAK
+// } sb_state_msg_encoding;
 
+// // Reset sub state encodings
+// typedef enum {
+// 	ALSM_Reset,
+// 	ALSM_Param_exch,
+// 	ALSM_Active_Entry,
+// 	ALSM_SB_Active_Req,
+// 	ALSM_Active_Req_Await,
+// 	ALSM_rx_active_1,
+// 	ALSM_SB_rsp_received,
+// 	ALSM_rx_active_2,
+// 	ALSM_Await_FDI_Active,
+// 	ALSM_Active
+// } ALSM_State;
 
 module ALSM (
 	input logic       i_clk,   								//! input clock
@@ -138,12 +139,12 @@ module ALSM (
 	input logic        i_Regfile_LinkError, 		  //! Uncorrectable error signal from regfile
 
 	// RegFile outputs
-	output Adapter_Response o_Adpater_LSM_response_type, //! state at which timeout happened
+	output Adapter_Response o_Adpater_LSM_response_type,      //! state at which timeout happened
 	output logic            o_uce_Adapter_timeout_non_active, //! indication if timout happened in active
-	output logic            o_uce_Adapter_timeout_active, //! indication if timout happened not in active
-	output logic            o_Error_Valid, //! error valid signal to Regfile
-	output logic            o_Link_Status, //! Link Status indication
-	output logic            o_ce_Adapter_Transition_Retrain //! ALSM in retrain indication
+	output logic            o_uce_Adapter_timeout_active,     //! indication if timout happened not in active
+	output logic            o_Error_Valid, 										//! error valid signal to Regfile
+	output logic            o_Link_Status, 										//! Link Status indication
+	output logic            o_ce_Adapter_Transition_Retrain   //! ALSM in retrain indication
 );
 
  //! if speed_mode > MINIMUM_MAX_SPEED_VALUE, then max_speed_mode is high
@@ -444,7 +445,7 @@ module ALSM (
 					w_sb_state_tx_comb = SB_Req_Active;
 					s_ns = ALSM_SB_Active_Req;
 				end
-				else if (r_sb_active_req_received && o_rdi_lp_clk_ack) begin
+				else if (r_sb_active_req_received) begin
 					w_fdi_pl_rx_active_req_comb = 'b1;
 					s_ns = ALSM_rx_active_2;
 				end
@@ -455,7 +456,7 @@ module ALSM (
 				w_sb_state_tx_comb = SB_None;
 				if (r_sb_active_rsp_received) begin
 					w_MB_tx_enable_comb = 'b1;
-					s_ns = ALSM_Active_Req_Await;
+					s_ns 								= ALSM_Active_Req_Await;
 				end 
 				else if (r_sb_active_req_received) begin
 					w_fdi_pl_rx_active_req_comb = 'b1;
@@ -475,22 +476,24 @@ module ALSM (
 				end
 			ALSM_rx_active_1:
 				if (i_fdi_lp_rx_active_sts && r_sb_active_rsp_received) begin
-					w_MB_rx_enable_comb = 'b1;
-					w_MB_tx_enable_comb = 'b1;
+					w_sb_state_tx_comb      = SB_Rsp_Active;
+					w_MB_rx_enable_comb 		= 'b1;
+					w_MB_tx_enable_comb 		= 'b1;
 					w_fdi_pl_state_sts_comb = LL_Active;
-					w_Link_Status_comb = 'b1;
-					s_ns = ALSM_Active;
+					w_Link_Status_comb 			= 'b1;
+					s_ns 										= ALSM_Active;
 				end
 				else if (i_fdi_lp_rx_active_sts && ~r_sb_active_rsp_received) begin
+					w_sb_state_tx_comb      = SB_Rsp_Active;
 					w_MB_rx_enable_comb = 'b1;
-					s_ns = ALSM_SB_rsp_recieved;
+					s_ns 								= ALSM_SB_rsp_received;
 				end
 				else begin
 					s_ns = ALSM_rx_active_1;
 				end
 			ALSM_rx_active_2:
 				if (i_fdi_lp_rx_active_sts) begin
-					w_sb_state_tx_comb = SB_Rsp_Active;
+					w_sb_state_tx_comb 	= SB_Rsp_Active;
 					w_MB_rx_enable_comb = 'b1;
 					s_ns = ALSM_Await_FDI_Active;
 				end
@@ -501,26 +504,27 @@ module ALSM (
 				w_sb_state_tx_comb = SB_None;
 				if (i_fdi_lp_state_req == Req_Active) begin
 					w_sb_state_tx_comb = SB_Req_Active;
-					s_ns = ALSM_SB_rsp_recieved;
+					s_ns = ALSM_SB_rsp_received;
 				end
 				else begin
 					s_ns = ALSM_Await_FDI_Active;
 				end
 			end
-			ALSM_SB_rsp_recieved: begin
+			ALSM_SB_rsp_received: begin
 				w_sb_state_tx_comb = SB_None;
 				if (r_sb_active_rsp_received) begin
-					w_MB_rx_enable_comb = 'b1;
-					w_MB_tx_enable_comb = 'b1;
+					w_MB_rx_enable_comb 		= 'b1;
+					w_MB_tx_enable_comb 		= 'b1;
 					w_fdi_pl_state_sts_comb = LL_Active;
-					w_Link_Status_comb = 'b1;
-					s_ns = ALSM_Active;
+					w_Link_Status_comb 			= 'b1;
+					s_ns 										= ALSM_Active;
 				end
 				else begin
-					s_ns = ALSM_SB_rsp_recieved;
+					s_ns = ALSM_SB_rsp_received;
 				end
 			end
 			ALSM_Active:begin
+				w_sb_state_tx_comb = SB_None;
 				s_ns = ALSM_Active;
 			end
 		endcase
@@ -537,7 +541,7 @@ module ALSM (
 			ALSM_rx_active_1,
 			ALSM_rx_active_2,
 			ALSM_Await_FDI_Active,
-			ALSM_SB_rsp_recieved: 
+			ALSM_SB_rsp_received: 
 				s_in_ALSM_reset = 'b1;
 			default: s_in_ALSM_reset = 'b0;
 		endcase
