@@ -198,8 +198,8 @@ initial begin
   reset_values();
   rdi_active();
   parameter_exchange();
-  // local_die_start_scenario();
-  remote_die_start_scenario();
+  local_die_start_scenario();
+  // remote_die_start_scenario();
   $stop();
   $finish();
 end
@@ -249,9 +249,9 @@ endtask
 task local_die_start_scenario();
   i_fdi_lp_state_req = Req_Active;
   @(negedge i_clk);
-  @(negedge i_clk);
   sb_active_req: assert (o_sb_state_tx == SB_Req_Active)
     else $error("Assertion sb_active_req failed!");
+  @(negedge i_clk);
   @(negedge i_clk);
   i_sb_state_rx = SB_Rsp_Active;
   // i_sb_state_rx = SB_Req_Active;

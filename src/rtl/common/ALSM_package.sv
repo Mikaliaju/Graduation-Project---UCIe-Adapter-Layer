@@ -58,7 +58,7 @@ package ALSM_package;
   } sb_state_msg_encoding;
 
   // ------------------------------------------------------------
-  // Active Link State Machine sub-state encodings
+  // Adapter Link State Machine state encodings
   // ------------------------------------------------------------
   typedef enum {
     ALSM_Reset,
@@ -70,7 +70,9 @@ package ALSM_package;
     ALSM_SB_rsp_received,
     ALSM_rx_active_2,
     ALSM_Await_FDI_Active,
-    ALSM_Active
+    ALSM_Active,
+    ALSM_Stall,
+    ALSM_Retrain
   } ALSM_State;
 
 endpackage : ALSM_package
