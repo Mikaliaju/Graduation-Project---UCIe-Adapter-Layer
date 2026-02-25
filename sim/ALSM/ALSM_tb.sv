@@ -7,7 +7,6 @@ import ALSM_package::*;
 // 	LinkReset_LSM_response_type = 'b100,
 // 	Disable_LSM_response_type   = 'b101
 // } Adapter_Response;
-
 // // all lp_state_req encodings
 // typedef enum logic [3:0] { 
 // 	Req_NOP       = 'b0000,
@@ -18,7 +17,6 @@ import ALSM_package::*;
 // 	Req_Retrain   = 'b1011,
 // 	Req_Disable   = 'b1100
 // } state_req;
-
 // // all pl_sts encodings
 // typedef enum logic [3:0] { 
 // 	LL_Reset        = 'b0000,
@@ -31,7 +29,6 @@ import ALSM_package::*;
 // 	LL_Retrain      = 'b1011,
 // 	LL_Disable      = 'b1100
 // } ll_state;
-
 // // all valid sb message encodings
 // typedef enum { 
 // 	SB_None,
@@ -47,7 +44,6 @@ import ALSM_package::*;
 // 	SB_Rsp_Disable,
 // 	SB_Rsp_PMNAK
 // } sb_state_msg_encoding;
-
 // // Reset sub state encodings
 // typedef enum {
 // 	ALSM_Reset,
@@ -91,6 +87,9 @@ module ALSM_tb;
   logic i_MB_flush_done;
   logic i_MB_Retrain_Trigger;
   logic i_MB_rx_path_empty;
+  logic i_rdi_pl_error;
+  logic i_rdi_pl_stall_req;
+  logic i_Regfile_Start_Retrain;
   logic [2:0] o_fdi_pl_lnk_cfg;
   ll_state o_fdi_pl_state_sts;
   sb_state_msg_encoding o_sb_state_tx;
@@ -118,9 +117,10 @@ module ALSM_tb;
   logic o_fdi_pl_phyinl2;
   logic [2:0] o_fdi_pl_speedmode;
   logic o_fdi_pl_max_speedmode;
+  logic o_rdi_lp_stall_ack;
   state_req o_rdi_lp_state_req;
 
-  ALSM  ALSM_inst (
+ALSM  ALSM_inst (
     .i_clk(i_clk),
     .i_rst_n(i_rst_n),
     .i_init(i_init),
@@ -131,10 +131,13 @@ module ALSM_tb;
     .i_rdi_pl_state_sts(i_rdi_pl_state_sts),
     .i_rdi_pl_clk_req(i_rdi_pl_clk_req),
     .i_rdi_pl_wake_ack(i_rdi_pl_wake_ack),
+    .i_rdi_pl_stall_req(i_rdi_pl_stall_req),
+    .i_rdi_pl_error(i_rdi_pl_error),
     .o_rdi_lp_clk_ack(o_rdi_lp_clk_ack),
     .o_rdi_lp_wake_req(o_rdi_lp_wake_req),
     .o_rdi_lp_linkerror(o_rdi_lp_linkerror),
     .o_rdi_lp_state_req(o_rdi_lp_state_req),
+    .o_rdi_lp_stall_ack(o_rdi_lp_stall_ack),
     .i_fdi_lp_state_req(i_fdi_lp_state_req),
     .i_fdi_lp_linkerror(i_fdi_lp_linkerror),
     .i_fdi_lp_rx_active_sts(i_fdi_lp_rx_active_sts),
@@ -166,6 +169,7 @@ module ALSM_tb;
     .o_MB_tx_enable(o_MB_tx_enable),
     .o_MB_rx_enable(o_MB_rx_enable),
     .i_Regfile_LinkError(i_Regfile_LinkError),
+    .i_Regfile_Start_Retrain(i_Regfile_Start_Retrain),
     .o_Adpater_LSM_response_type(o_Adpater_LSM_response_type),
     .o_uce_Adapter_timeout_non_active(o_uce_Adapter_timeout_non_active),
     .o_uce_Adapter_timeout_active(o_uce_Adapter_timeout_active),
@@ -173,7 +177,6 @@ module ALSM_tb;
     .o_Link_Status(o_Link_Status),
     .o_ce_Adapter_Transition_Retrain(o_ce_Adapter_Transition_Retrain)
   );
-
 initial begin
   i_clk = 'b0;
   forever begin
@@ -183,12 +186,16 @@ initial begin
 end
 
 always_ff @(posedge i_clk or negedge i_rst_n) begin
-  if (~i_rst_n && ~i_init) begin
+  if (~i_rst_n || ~i_init) begin
     i_rdi_pl_wake_ack <= 'b0;
     i_fdi_lp_clk_ack <= 'b0;
+    i_MB_retry_clean_boundary_done <= 'b0;
   end
+  else begin
     i_rdi_pl_wake_ack <= o_rdi_lp_wake_req;
     i_fdi_lp_clk_ack <= o_fdi_pl_clk_req;
+    i_MB_retry_clean_boundary_done <= o_MB_retry_clean_boundary;
+  end
 end
 
 assign i_fdi_lp_wake_req = 'b1;
@@ -200,29 +207,61 @@ initial begin
   parameter_exchange();
   local_die_start_scenario();
   // remote_die_start_scenario();
+  
+  i_MB_Retrain_Trigger = 'b1;
+  @(negedge i_clk);
+  assert (o_rdi_lp_state_req == Req_Retrain)
+    else $error("Assertion failed!");
+  i_MB_Retrain_Trigger = 'b0;
+  @(negedge i_clk);
+  i_rdi_pl_stall_req = 'b1;
+  @(negedge i_clk);
+  assert (o_MB_retry_clean_boundary)
+    else $error("Assertion failed");
+  @(negedge i_clk);
+  @(negedge i_clk);
+  assert (o_rdi_lp_stall_ack)
+    else $error("Assertion failed");
+  i_rdi_pl_state_sts = LL_Retrain;
+  @(negedge i_clk);
+  assert (o_fdi_pl_state_sts == LL_Retrain)
+    else $error("Assertion failed");
+  i_rdi_pl_state_sts = LL_Active;
+  @(negedge i_clk);
+  @(negedge i_clk);
+  $display("state is %s", ALSM_inst.s_cs.name());
+  @(negedge i_clk);
+  @(negedge i_clk);
+  i_sb_state_rx = SB_Rsp_Active;
+  @(negedge i_clk);
+  i_sb_state_rx = SB_Req_Active;
+  @(negedge i_clk);
+  @(negedge i_clk);
   $stop();
   $finish();
 end
 
 task reset_values();
-  i_rst_n = 'b0;
-  i_init = 'b0;
-  i_rdi_pl_inband_pres = 'b0;
-  i_rdi_pl_phyinrecenter = 'b0;
-  i_rdi_pl_speedmode = 'b0;
-  i_rdi_pl_lnk_cfg = 'b0;
-  i_rdi_pl_state_sts = LL_Reset;
-  i_Regfile_LinkError = 'b0;
-  i_fdi_lp_state_req = Req_NOP;
-  i_fdi_lp_linkerror = 'b0;
-  i_fdi_lp_rx_active_sts = 'b0;
-  i_fdi_lp_stall_ack = 'b0;
-  i_sb_state_rx = SB_None;
-  i_sb_param_exch_done = 'b0;
-  i_MB_retry_clean_boundary_done = 'b0;
-  i_MB_flush_done = 'b0;
-  i_MB_Retrain_Trigger = 'b0;
-  i_MB_rx_path_empty = 'b0;
+  i_rst_n                        = 'b0;
+  i_init                         = 'b0;
+  i_rdi_pl_inband_pres           = 'b0;
+  i_rdi_pl_phyinrecenter         = 'b0;
+  i_rdi_pl_speedmode             = 'b0;
+  i_rdi_pl_lnk_cfg               = 'b0;
+  i_rdi_pl_state_sts             = LL_Reset;
+  i_Regfile_LinkError            = 'b0;
+  i_fdi_lp_state_req             = Req_NOP;
+  i_fdi_lp_linkerror             = 'b0;
+  i_fdi_lp_rx_active_sts         = 'b0;
+  i_fdi_lp_stall_ack             = 'b0;
+  i_sb_state_rx                  = SB_None;
+  i_sb_param_exch_done           = 'b0;
+  i_MB_flush_done                = 'b0;
+  i_MB_Retrain_Trigger           = 'b0;
+  i_MB_rx_path_empty             = 'b0;
+  i_rdi_pl_stall_req             = 'b0;
+  i_rdi_pl_error                 = 'b0;
+  i_Regfile_Start_Retrain        = 'b0;
   @(negedge i_clk);
   @(negedge i_clk);
   i_rst_n = 'b1;

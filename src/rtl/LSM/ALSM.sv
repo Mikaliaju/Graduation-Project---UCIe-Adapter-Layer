@@ -18,7 +18,6 @@ typedef enum logic [2:0] {
 	LinkReset_LSM_response_type = 'b100,
 	Disable_LSM_response_type   = 'b101
 } Adapter_Response;
-
 // all lp_state_req encodings
 typedef enum logic [3:0] { 
 	Req_NOP       = 'b0000,
@@ -29,7 +28,6 @@ typedef enum logic [3:0] {
 	Req_Retrain   = 'b1011,
 	Req_Disable   = 'b1100
 } state_req;
-
 // all pl_sts encodings
 typedef enum logic [3:0] { 
 	LL_Reset        = 'b0000,
@@ -42,7 +40,6 @@ typedef enum logic [3:0] {
 	LL_Retrain      = 'b1011,
 	LL_Disable      = 'b1100
 } ll_state;
-
 // all valid sb message encodings
 typedef enum { 
 	SB_None,
@@ -58,7 +55,6 @@ typedef enum {
 	SB_Rsp_Disable,
 	SB_Rsp_PMNAK
 } sb_state_msg_encoding;
-
 // ------------------------------------------------------------
 // Adapter Link State Machine state encodings
 // ------------------------------------------------------------
@@ -91,6 +87,7 @@ module ALSM (
 	input logic       i_rdi_pl_clk_req,       //! phy request to ungate adapter
 	input logic       i_rdi_pl_wake_ack,      //! phy response to ungating request signal from adapter
 	input logic				i_rdi_pl_stall_req,			//! phy requests the adapter to stall transmission
+	input logic				i_rdi_pl_error,					//! phy indication of error
 
 	// RDI outputs
 	output logic       o_rdi_lp_clk_ack,      //! adpater response to ungating signal from phy
@@ -143,6 +140,7 @@ module ALSM (
 
 	// RegFile Inputs
 	input logic        i_Regfile_LinkError, 		  //! Uncorrectable error signal from regfile
+	input logic 			 i_Regfile_Start_Retrain,    //! SW retrain through Register File
 
 	// RegFile outputs
 	output Adapter_Response o_Adpater_LSM_response_type,      //! state at which timeout happened
@@ -173,7 +171,7 @@ module ALSM (
 	logic w_sb_active_req_received_comb, w_sb_active_rsp_received_comb;
 
 	//! RDI output (combinational)
-	logic w_rdi_lp_linkerror_comb, w_rdi_lp_stall_ack; 
+	logic w_rdi_lp_linkerror_comb, w_rdi_lp_stall_ack_comb; 
 	//! RDI output (combinational)
 	state_req w_rdi_lp_state_req_comb;
 
@@ -200,13 +198,19 @@ module ALSM (
 	//! Regfile output (combinational)
 	Adapter_Response  w_Adpater_LSM_response_type_comb;
 
+	//! all retrain triggers
+	logic w_retrain_triggers;
+
+
 	// always request the FDI and RDI to be ungated
 	assign o_rdi_lp_wake_req = 'b1;
 	assign o_fdi_pl_clk_req = 'b1;
 
-	assign w_Protocol_Active_comb = r_Protocol_Active | (i_fdi_lp_state_req == Req_Active);
-	assign w_sb_active_req_received_comb = r_sb_active_req_received | (i_sb_state_rx == SB_Req_Active);
-	assign w_sb_active_rsp_received_comb = r_sb_active_rsp_received | (i_sb_state_rx == SB_Rsp_Active);
+	assign w_Protocol_Active_comb 			 = r_Protocol_Active 			  | (i_fdi_lp_state_req == Req_Active);
+	assign w_sb_active_req_received_comb = r_sb_active_req_received | (i_sb_state_rx      == SB_Req_Active);
+	assign w_sb_active_rsp_received_comb = r_sb_active_rsp_received | (i_sb_state_rx      == SB_Rsp_Active);
+
+	assign w_retrain_triggers = i_MB_Retrain_Trigger | i_Regfile_Start_Retrain | i_rdi_pl_error;
 
 	//! current state logic
 	always_ff @(negedge i_rst_n, posedge i_clk) begin : current_state_block
@@ -287,7 +291,7 @@ module ALSM (
 			// RDI outputs
 			o_rdi_lp_linkerror <= w_rdi_lp_linkerror_comb;
 			o_rdi_lp_state_req <= w_rdi_lp_state_req_comb;
-			o_rdi_lp_stall_ack <= w_rdi_lp_stall_ack;
+			o_rdi_lp_stall_ack <= w_rdi_lp_stall_ack_comb;
 
 			// FDI outputs
 			o_fdi_pl_stallreq      <= w_fdi_pl_stallreq_comb;
@@ -357,7 +361,7 @@ module ALSM (
 			r_sb_active_req_received <= 'b0;
 			r_sb_active_rsp_received <= 'b0;
 		end
-		else if (~i_init && ~s_in_ALSM_reset) begin
+		else if (~i_init || ~s_in_ALSM_reset) begin
 			r_Protocol_Active        <= 'b0;
 			r_sb_active_req_received <= 'b0;
 			r_sb_active_rsp_received <= 'b0;
@@ -376,7 +380,7 @@ module ALSM (
 		// RDI outputs default combinational value
 		w_rdi_lp_linkerror_comb = o_rdi_lp_linkerror;
 		w_rdi_lp_state_req_comb = o_rdi_lp_state_req;
-		w_rdi_lp_stall_ack		  = o_rdi_lp_stall_ack;
+		w_rdi_lp_stall_ack_comb = o_rdi_lp_stall_ack;
 
 		// FDI outputs default combinational value
 		w_fdi_pl_stallreq_comb      = o_fdi_pl_stallreq;
@@ -498,7 +502,7 @@ module ALSM (
 					s_ns 										= ALSM_Active;
 				end
 				else if (i_fdi_lp_rx_active_sts && ~r_sb_active_rsp_received) begin
-					w_sb_state_tx_comb      = SB_Rsp_Active;
+					w_sb_state_tx_comb  = SB_Rsp_Active;
 					w_MB_rx_enable_comb = 'b1;
 					s_ns 								= ALSM_SB_rsp_received;
 				end
@@ -538,12 +542,47 @@ module ALSM (
 				end
 			end
 			ALSM_Active: begin
-				w_sb_state_tx_comb = SB_None;
-				if () begin
-					pass
+				if (i_rdi_pl_stall_req) begin
+					w_sb_state_tx_comb = SB_None;
+					w_MB_retry_clean_boundary_comb = 'b1;
+					s_ns = ALSM_Stall;
 				end
-				else (w_retrain_triggers) begin
-					pass
+				else if (w_retrain_triggers) begin
+					w_sb_state_tx_comb = SB_None;
+					w_rdi_lp_state_req_comb = Req_Retrain;
+					s_ns = ALSM_Stall;
+				end
+				else begin
+					w_sb_state_tx_comb = SB_None;
+					s_ns = ALSM_Active;
+				end
+			end
+			ALSM_Stall: begin
+				w_MB_retry_clean_boundary_comb =   i_rdi_pl_stall_req;
+				w_rdi_lp_stall_ack_comb        =   i_MB_retry_clean_boundary_done;
+				w_MB_tx_enable_comb            =   i_MB_retry_clean_boundary_done;
+				w_fdi_pl_rx_active_req_comb    = ~(i_rdi_pl_state_sts == LL_Retrain);
+				if (~i_fdi_lp_rx_active_sts && ~i_rdi_pl_stall_req) begin
+					w_fdi_pl_state_sts_comb 						 = LL_Retrain;
+					w_MB_rx_enable_comb 								 = 'b0;
+					w_MB_tx_enable_comb 								 = 'b0;
+					w_MB_retry_clean_boundary_comb			 = 'b0;
+					w_ce_Adapter_Transition_Retrain_comb = 'b1;
+					s_ns 																 = ALSM_Retrain;
+				end
+				else begin
+					s_ns = ALSM_Stall;
+				end
+			end
+			ALSM_Retrain: begin
+				if (i_fdi_lp_state_req == Req_Active && i_rdi_pl_state_sts == LL_Active) begin
+					w_rdi_lp_state_req_comb = Req_Active;
+					w_ce_Adapter_Transition_Retrain_comb = 'b0;
+					s_ns = ALSM_Active_Entry;
+				end
+				else if (i_fdi_lp_state_req == Req_NOP || i_fdi_lp_state_req == Req_Active) begin
+					w_rdi_lp_state_req_comb = i_fdi_lp_state_req;
+					s_ns = ALSM_Retrain;
 				end
 			end
 		endcase
