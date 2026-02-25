@@ -190,11 +190,13 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     i_rdi_pl_wake_ack <= 'b0;
     i_fdi_lp_clk_ack <= 'b0;
     i_MB_retry_clean_boundary_done <= 'b0;
+    i_fdi_lp_rx_active_sts         <= 'b0;
   end
   else begin
     i_rdi_pl_wake_ack <= o_rdi_lp_wake_req;
     i_fdi_lp_clk_ack <= o_fdi_pl_clk_req;
     i_MB_retry_clean_boundary_done <= o_MB_retry_clean_boundary;
+    i_fdi_lp_rx_active_sts         <= o_fdi_pl_rx_active_req;
   end
 end
 
@@ -207,36 +209,8 @@ initial begin
   parameter_exchange();
   local_die_start_scenario();
   // remote_die_start_scenario();
+  retratin_to_active();
   
-  i_MB_Retrain_Trigger = 'b1;
-  @(negedge i_clk);
-  assert (o_rdi_lp_state_req == Req_Retrain)
-    else $error("Assertion failed!");
-  i_MB_Retrain_Trigger = 'b0;
-  @(negedge i_clk);
-  i_rdi_pl_stall_req = 'b1;
-  @(negedge i_clk);
-  assert (o_MB_retry_clean_boundary)
-    else $error("Assertion failed");
-  @(negedge i_clk);
-  @(negedge i_clk);
-  assert (o_rdi_lp_stall_ack)
-    else $error("Assertion failed");
-  i_rdi_pl_state_sts = LL_Retrain;
-  @(negedge i_clk);
-  assert (o_fdi_pl_state_sts == LL_Retrain)
-    else $error("Assertion failed");
-  i_rdi_pl_state_sts = LL_Active;
-  @(negedge i_clk);
-  @(negedge i_clk);
-  $display("state is %s", ALSM_inst.s_cs.name());
-  @(negedge i_clk);
-  @(negedge i_clk);
-  i_sb_state_rx = SB_Rsp_Active;
-  @(negedge i_clk);
-  i_sb_state_rx = SB_Req_Active;
-  @(negedge i_clk);
-  @(negedge i_clk);
   $stop();
   $finish();
 end
@@ -325,5 +299,43 @@ task remote_die_start_scenario();
   @(negedge i_clk);
   @(negedge i_clk);
   assert (o_fdi_pl_state_sts == LL_Active && o_MB_tx_enable && o_MB_rx_enable && o_Link_Status);
+endtask
+
+task retratin_to_active();
+  i_MB_Retrain_Trigger = 'b1;
+  @(negedge i_clk);
+  assert (o_rdi_lp_state_req == Req_Retrain)
+    else $error("Assertion failed!");
+  i_MB_Retrain_Trigger = 'b0;
+  @(negedge i_clk);
+  i_rdi_pl_stall_req = 'b1;
+  @(negedge i_clk);
+  assert (o_MB_retry_clean_boundary)
+    else $error("Assertion failed");
+  @(negedge i_clk);
+  @(negedge i_clk);
+  assert (o_rdi_lp_stall_ack)
+    else $error("Assertion failed");
+  i_rdi_pl_state_sts = LL_Retrain;
+  i_rdi_pl_stall_req = 'b0;
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  assert (o_fdi_pl_state_sts == LL_Retrain)
+    else $error("Assertion failed");
+  $display("state is %s", ALSM_inst.s_cs.name());
+  i_rdi_pl_state_sts = LL_Active;
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  i_sb_state_rx = SB_Rsp_Active;
+  @(negedge i_clk);
+  i_sb_state_rx = SB_Req_Active;
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
 endtask
 endmodule
