@@ -75,7 +75,8 @@ package ALSM_package;
     ALSM_Retrain,
     ALSM_Error_Entry,
     ALSM_LinkError,
-    ALSM_Protocol_Exit
+    ALSM_Protocol_Exit,
+    ALSM_Detected_Nop
   } ALSM_State;
 
 endpackage : ALSM_package

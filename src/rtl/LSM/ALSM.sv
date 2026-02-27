@@ -73,7 +73,8 @@ import ALSM_package::*;
 // 	ALSM_Retrain,
 // 	ALSM_Error_Entry,
 // 	ALSM_LinkError,
-// 	ALSM_Protocol_Exit
+// 	ALSM_Protocol_Exit,
+//  ALSM_Detected_Nop
 // } ALSM_State;
 
 module ALSM (
@@ -426,13 +427,15 @@ module ALSM (
 			w_fdi_pl_state_sts_comb     = LL_LinkError;
 			w_MB_tx_enable_comb         = 'b0;
 			w_fdi_pl_rx_active_req_comb = 'b0;
+			w_Link_Status_comb 					= 'b0;
+			w_fdi_pl_inband_pres_comb   = 'b0;
 			s_ns = ALSM_LinkError;
 		end
 		else if (s_Error_Entry_State_Condition) begin
 			w_MB_flush_comb = 'b1;
 			s_ns = ALSM_Error_Entry;
 		end
-		else if (i_fdi_lp_linkerror || i_Regfile_LinkError) begin
+		else if ((s_cs != ALSM_Error_Entry) && (s_cs != ALSM_LinkError) && (i_fdi_lp_linkerror || i_Regfile_LinkError)) begin
 			w_rdi_lp_linkerror_comb <= 'b1;
 			s_ns = ALSM_Error_Entry;
 		end
@@ -622,6 +625,8 @@ module ALSM (
 						w_MB_tx_enable_comb         = 'b0;
 						w_fdi_pl_state_sts_comb     =  LL_LinkError;
 						w_fdi_pl_rx_active_req_comb = 'b0;
+						w_Link_Status_comb					= 'b0;
+						w_fdi_pl_inband_pres_comb   = 'b0;
 						s_ns = ALSM_LinkError;
 					end
 					else if (i_rdi_pl_state_sts == LL_LinkError && i_rdi_pl_trdy && o_MB_tx_enable) begin
@@ -634,7 +639,6 @@ module ALSM (
 				end
 				ALSM_LinkError: begin
 					w_rdi_lp_stall_ack_comb = i_rdi_pl_stall_req;
-
 					// when fdi rx path is closed, close the mb rx path, otherwise keep it as is
 					w_MB_rx_enable_comb = (i_fdi_lp_rx_active_sts == 'b0) ? 'b0 : o_MB_rx_enable;
 
@@ -658,16 +662,25 @@ module ALSM (
 					end
 				end
 				ALSM_Protocol_Exit: begin
-					// if rdi is reset, then announce reset on fdi_pl_state_sts
-					w_fdi_pl_state_sts_comb = (i_rdi_pl_state_sts == LL_Reset) ? LL_Reset : o_fdi_pl_state_sts;
-
 					if (i_fdi_lp_state_req == Req_NOP) begin
 						w_rdi_lp_state_req_comb = Req_NOP;
+						s_ns = ALSM_Detected_Nop;
+					end
+					else if (i_rdi_pl_state_sts == LL_Reset) begin
+						w_fdi_pl_state_sts_comb = LL_Reset;
 						s_ns = ALSM_Protocol_Exit;
 					end
-					else if (i_fdi_lp_state_req == Req_Active) begin
+					else begin
+						s_ns = ALSM_Protocol_Exit;
+					end
+				end
+				ALSM_Detected_Nop: begin
+					if (i_fdi_lp_state_req == Req_Active) begin
 						w_rdi_lp_state_req_comb = Req_Active;
 						s_ns = ALSM_Reset;
+					end
+					else begin
+						s_ns = ALSM_Detected_Nop;
 					end
 				end
 			endcase

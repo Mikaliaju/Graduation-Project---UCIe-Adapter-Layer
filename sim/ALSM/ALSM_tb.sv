@@ -62,7 +62,8 @@ import ALSM_package::*;
 //   ALSM_Retrain,
 //   ALSM_Error_Entry,
 //   ALSM_LinkError,
-//   ALSM_Protocol_Exit
+//   ALSM_Protocol_Exit,
+//   ALSM_Detected_Nop
 // } ALSM_State;
 
 
@@ -97,6 +98,7 @@ module ALSM_tb;
   logic i_MB_rx_path_empty;
   logic i_rdi_pl_error;
   logic i_rdi_pl_stall_req;
+  logic i_rdi_pl_trdy;
   logic i_Regfile_Start_Retrain;
   logic [2:0] o_fdi_pl_lnk_cfg;
   ll_state o_fdi_pl_state_sts;
@@ -141,6 +143,7 @@ ALSM  ALSM_inst (
     .i_rdi_pl_wake_ack(i_rdi_pl_wake_ack),
     .i_rdi_pl_stall_req(i_rdi_pl_stall_req),
     .i_rdi_pl_error(i_rdi_pl_error),
+    .i_rdi_pl_trdy(i_rdi_pl_trdy),
     .o_rdi_lp_clk_ack(o_rdi_lp_clk_ack),
     .o_rdi_lp_wake_req(o_rdi_lp_wake_req),
     .o_rdi_lp_linkerror(o_rdi_lp_linkerror),
@@ -218,7 +221,7 @@ initial begin
   local_die_start_scenario();
   // remote_die_start_scenario();
   retratin_to_active();
-  
+  protocol_exit_linkerror();
   $stop();
   $finish();
 end
@@ -242,6 +245,7 @@ task reset_values();
   i_MB_Retrain_Trigger           = 'b0;
   i_MB_rx_path_empty             = 'b0;
   i_rdi_pl_stall_req             = 'b0;
+  i_rdi_pl_trdy                  = 'b0;
   i_rdi_pl_error                 = 'b0;
   i_Regfile_Start_Retrain        = 'b0;
   @(negedge i_clk);
@@ -254,6 +258,7 @@ task rdi_active();
   @(negedge i_clk);
   i_rdi_pl_inband_pres = 'b1;
   i_rdi_pl_state_sts = LL_Active;
+  i_rdi_pl_trdy = 'b1;
 endtask
 
 task parameter_exchange();
@@ -343,6 +348,46 @@ task retratin_to_active();
   @(negedge i_clk);
   @(negedge i_clk);
   @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+endtask
+task protocol_exit_linkerror();
+  i_fdi_lp_linkerror = 'b1;
+  @(negedge i_clk);
+  i_rdi_pl_trdy      = 'b1;
+  i_rdi_pl_state_sts = LL_LinkError;
+  i_rdi_pl_stall_req = 'b1; 
+  @(negedge i_clk);
+  assert(o_MB_flush);
+  @(negedge i_clk);
+  i_MB_flush_done = 'b1;
+  @(negedge i_clk);
+  assert(o_fdi_pl_state_sts == LL_LinkError);
+  assert(o_rdi_lp_stall_ack);
+  assert(~o_Link_Status);
+  assert(~o_MB_tx_enable);
+  assert(~o_fdi_pl_inband_pres);
+  assert(~o_fdi_pl_rx_active_req);
+  i_rdi_pl_stall_req = 'b0;
+  @(negedge i_clk);
+  @(negedge i_clk);
+  assert(~o_MB_rx_enable);
+  i_fdi_lp_linkerror = 'b0;
+  i_fdi_lp_state_req =  Req_Active;
+  @(negedge i_clk);
+  assert(o_rdi_lp_state_req == Req_Active);
+  i_rdi_pl_state_sts = LL_Reset;
+  i_Regfile_LinkError     = 'b0;
+  @(negedge i_clk);
+  assert(o_fdi_pl_state_sts == LL_Reset);
+  i_fdi_lp_state_req =  Req_NOP;
+  @(negedge i_clk);
+  assert(o_rdi_lp_state_req == Req_NOP);
+  @(negedge i_clk);
+  assert(o_rdi_lp_state_req == Req_NOP);
+  i_fdi_lp_state_req =  Req_Active;
+  @(negedge i_clk);
+  assert(o_rdi_lp_state_req == Req_Active);
   @(negedge i_clk);
   @(negedge i_clk);
 endtask
