@@ -44,19 +44,27 @@ import ALSM_package::*;
 // 	SB_Rsp_Disable,
 // 	SB_Rsp_PMNAK
 // } sb_state_msg_encoding;
-// // Reset sub state encodings
+// // ------------------------------------------------------------
+// // Adapter Link State Machine state encodings
+// // ------------------------------------------------------------
 // typedef enum {
-// 	ALSM_Reset,
-// 	ALSM_Param_exch,
-// 	ALSM_Active_Entry,
-// 	ALSM_SB_Active_Req,
-// 	ALSM_Active_Req_Await,
-// 	ALSM_rx_active_1,
-// 	ALSM_SB_rsp_recieved,
-// 	ALSM_rx_active_2,
-// 	ALSM_Await_FDI_Active,
-// 	ALSM_Active
+//   ALSM_Reset,
+//   ALSM_Param_exch,
+//   ALSM_Active_Entry,
+//   ALSM_SB_Active_Req,
+//   ALSM_Active_Req_Await,
+//   ALSM_rx_active_1,
+//   ALSM_SB_rsp_received,
+//   ALSM_rx_active_2,
+//   ALSM_Await_FDI_Active,
+//   ALSM_Active,
+//   ALSM_Stall,
+//   ALSM_Retrain,
+//   ALSM_Error_Entry,
+//   ALSM_LinkError,
+//   ALSM_Protocol_Exit
 // } ALSM_State;
+
 
 module ALSM_tb;
 

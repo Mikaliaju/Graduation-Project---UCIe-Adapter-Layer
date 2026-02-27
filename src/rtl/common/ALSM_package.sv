@@ -72,7 +72,10 @@ package ALSM_package;
     ALSM_Await_FDI_Active,
     ALSM_Active,
     ALSM_Stall,
-    ALSM_Retrain
+    ALSM_Retrain,
+    ALSM_Error_Entry,
+    ALSM_LinkError,
+    ALSM_Protocol_Exit
   } ALSM_State;
 
 endpackage : ALSM_package

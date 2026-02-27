@@ -70,7 +70,10 @@ import ALSM_package::*;
 // 	ALSM_Await_FDI_Active,
 // 	ALSM_Active,
 // 	ALSM_Stall,
-// 	ALSM_Retrain
+// 	ALSM_Retrain,
+// 	ALSM_Error_Entry,
+// 	ALSM_LinkError,
+// 	ALSM_Protocol_Exit
 // } ALSM_State;
 
 module ALSM (
@@ -88,6 +91,7 @@ module ALSM (
 	input logic       i_rdi_pl_wake_ack,      //! phy response to ungating request signal from adapter
 	input logic				i_rdi_pl_stall_req,			//! phy requests the adapter to stall transmission
 	input logic				i_rdi_pl_error,					//! phy indication of error
+	input logic				i_rdi_pl_trdy,					//! phy data path backpressure on adatpter transmitter
 
 	// RDI outputs
 	output logic       o_rdi_lp_clk_ack,      //! adpater response to ungating signal from phy
@@ -200,6 +204,12 @@ module ALSM (
 	//! all retrain triggers
 	logic w_retrain_triggers;
 
+	//! Global condition signal at which must immediatly enter ALSM_LinkError
+	logic s_Link_Error_State_Condition;
+
+	//! Global condition signal at which must immediatly enter ALSM_Error_Entry
+	logic s_Error_Entry_State_Condition;
+
 
 	// always request the FDI and RDI to be ungated
 	assign o_rdi_lp_wake_req = 'b1;
@@ -211,6 +221,14 @@ module ALSM (
 
 	assign w_retrain_triggers = i_MB_Retrain_Trigger | i_Regfile_Start_Retrain | i_rdi_pl_error;
 
+	assign s_Link_Error_State_Condition = (i_rdi_pl_state_sts == LL_LinkError) && // if RDI is in LinkError
+																				(~o_MB_rx_enable || ~i_rdi_pl_trdy)  && // the MB is disabled or rdi_pl_trdy is off (must not drain)
+																				(s_cs != ALSM_LinkError);								// Not already in ALSM_LinkError
+
+	assign s_Error_Entry_State_Condition = (i_rdi_pl_state_sts == LL_LinkError)   && // if RDI is in LinkError
+																			   (w_MB_tx_enable_comb && i_rdi_pl_trdy) && // the MB is enabled and rdi_pl_trdy is on (can drain)
+																			   (s_cs != ALSM_Error_Entry)							&& // Not already in ALSM_Error_Entry
+																			   (s_cs != ALSM_LinkError);								 // Not already in ALSM_LinkError
 	//! current state logic
 	always_ff @(negedge i_rst_n, posedge i_clk) begin : current_state_block
 		if (~i_rst_n) begin
@@ -404,183 +422,256 @@ module ALSM (
 		w_Error_Valid_comb                    = o_Error_Valid;
 		w_Link_Status_comb                    = o_Link_Status;
 
-		case (s_cs)
-			ALSM_Reset: begin
-				// RDI outputs zero combinational value
-				w_rdi_lp_linkerror_comb = 'b0;
+		if (s_Link_Error_State_Condition) begin
+			w_fdi_pl_state_sts_comb     = LL_LinkError;
+			w_MB_tx_enable_comb         = 'b0;
+			w_fdi_pl_rx_active_req_comb = 'b0;
+			s_ns = ALSM_LinkError;
+		end
+		else if (s_Error_Entry_State_Condition) begin
+			w_MB_flush_comb = 'b1;
+			s_ns = ALSM_Error_Entry;
+		end
+		else if (i_fdi_lp_linkerror || i_Regfile_LinkError) begin
+			w_rdi_lp_linkerror_comb <= 'b1;
+			s_ns = ALSM_Error_Entry;
+		end
+		else begin
+			case (s_cs)
+				ALSM_Reset: begin
+					// RDI outputs zero combinational value
+					w_rdi_lp_linkerror_comb = 'b0;
 
-				// FDI outputs zero combinational value
-				w_fdi_pl_stallreq_comb      = 'b0;
-				w_fdi_pl_state_sts_comb     = LL_Reset;
-				w_fdi_pl_inband_pres_comb   = 'b0;
-				w_fdi_pl_rx_active_req_comb = 'b0;
+					// FDI outputs zero combinational value
+					w_fdi_pl_stallreq_comb      = 'b0;
+					w_fdi_pl_state_sts_comb     = LL_Reset;
+					w_fdi_pl_inband_pres_comb   = 'b0;
+					w_fdi_pl_rx_active_req_comb = 'b0;
 
-				// SB outputs zero combinational value
-				w_sb_start_param_exch_comb = 'b0;
-				w_sb_state_tx_comb         = SB_None;
+					// SB outputs zero combinational value
+					w_sb_start_param_exch_comb = 'b0;
+					w_sb_state_tx_comb         = SB_None;
 
-				// MB outputs zero combinational value
-				w_MB_flush_comb                = 'b0;
-				w_MB_retry_clean_boundary_comb = 'b0;
-				w_MB_tx_enable_comb            = 'b0;
-				w_MB_rx_enable_comb            = 'b0;
+					// MB outputs zero combinational value
+					w_MB_flush_comb                = 'b0;
+					w_MB_retry_clean_boundary_comb = 'b0;
+					w_MB_tx_enable_comb            = 'b0;
+					w_MB_rx_enable_comb            = 'b0;
 
-				// Regfile outputs zero combinational value
-				w_Adpater_LSM_response_type_comb      = Active_LSM_response_type;
-				w_uce_Adapter_timeout_non_active_comb = 'b0;
-				w_uce_Adapter_timeout_active_comb     = 'b0;
-				w_Error_Valid_comb                    = 'b0;
-				w_Link_Status_comb                    = 'b0;
+					// Regfile outputs zero combinational value
+					w_Adpater_LSM_response_type_comb      = Active_LSM_response_type;
+					w_uce_Adapter_timeout_non_active_comb = 'b0;
+					w_uce_Adapter_timeout_active_comb     = 'b0;
+					w_Error_Valid_comb                    = 'b0;
+					w_Link_Status_comb                    = 'b0;
 
-				if (i_rdi_pl_state_sts == LL_Active) begin
-					w_sb_start_param_exch_comb = 'b1;
-					s_ns = ALSM_Param_exch;
-				end
-				else begin
-					if (i_rdi_pl_inband_pres && i_rdi_pl_wake_ack && i_fdi_lp_clk_ack) begin
-						w_rdi_lp_state_req_comb = Req_Active;
+					if (i_rdi_pl_state_sts == LL_Active) begin
+						w_sb_start_param_exch_comb = 'b1;
+						s_ns = ALSM_Param_exch;
 					end
 					else begin
-						w_rdi_lp_state_req_comb = Req_NOP;
+						if (i_rdi_pl_inband_pres && i_rdi_pl_wake_ack && i_fdi_lp_clk_ack) begin
+							w_rdi_lp_state_req_comb = Req_Active;
+						end
+						else begin
+							w_rdi_lp_state_req_comb = Req_NOP;
+						end
+						s_ns = ALSM_Reset;
 					end
-					s_ns = ALSM_Reset;
 				end
-			end
-			ALSM_Param_exch: 
-				if (i_sb_param_exch_done) begin
-					w_fdi_pl_inband_pres_comb = 'b1;
-					s_ns = ALSM_Active_Entry;
-				end
-				else begin
-					w_sb_start_param_exch_comb = 'b0;
-					s_ns = ALSM_Param_exch;
-				end
-			ALSM_Active_Entry:
-				if (w_Protocol_Active_comb) begin
-					w_sb_state_tx_comb = SB_Req_Active;
-					s_ns = ALSM_SB_Active_Req;
-				end
-				else if (w_sb_active_req_received_comb) begin
-					w_fdi_pl_rx_active_req_comb = 'b1;
-					s_ns = ALSM_rx_active_2;
-				end
-				else begin
-					s_ns = ALSM_Active_Entry;
-				end
-			ALSM_SB_Active_Req: begin
-				w_sb_state_tx_comb = SB_None;
-				if (r_sb_active_rsp_received) begin
-					w_MB_tx_enable_comb = 'b1;
-					s_ns 								= ALSM_Active_Req_Await;
-				end 
-				else if (w_sb_active_req_received_comb) begin
-					w_fdi_pl_rx_active_req_comb = 'b1;
-					s_ns = ALSM_rx_active_1;
-				end
-				else begin
-					s_ns = ALSM_SB_Active_Req;
-				end
-			end
-			ALSM_Active_Req_Await:
-				if (w_sb_active_req_received_comb) begin
-					w_fdi_pl_rx_active_req_comb = 'b1;
-					s_ns = ALSM_rx_active_1;
-				end
-				else begin
-					s_ns = ALSM_Active_Req_Await;
-				end
-			ALSM_rx_active_1:
-				if (i_fdi_lp_rx_active_sts && r_sb_active_rsp_received) begin
-					w_sb_state_tx_comb      = SB_Rsp_Active;
-					w_MB_rx_enable_comb 		= 'b1;
-					w_MB_tx_enable_comb 		= 'b1;
-					w_fdi_pl_state_sts_comb = LL_Active;
-					w_Link_Status_comb 			= 'b1;
-					s_ns 										= ALSM_Active;
-				end
-				else if (i_fdi_lp_rx_active_sts && ~r_sb_active_rsp_received) begin
-					w_sb_state_tx_comb  = SB_Rsp_Active;
-					w_MB_rx_enable_comb = 'b1;
-					s_ns 								= ALSM_SB_rsp_received;
-				end
-				else begin
-					s_ns = ALSM_rx_active_1;
-				end
-			ALSM_rx_active_2:
-				if (i_fdi_lp_rx_active_sts) begin
-					w_sb_state_tx_comb 	= SB_Rsp_Active;
-					w_MB_rx_enable_comb = 'b1;
-					s_ns = ALSM_Await_FDI_Active;
-				end
-				else begin
-					s_ns = ALSM_rx_active_2;
-				end
-			ALSM_Await_FDI_Active: begin
-				w_sb_state_tx_comb = SB_None;
-				if (i_fdi_lp_state_req == Req_Active) begin
-					w_sb_state_tx_comb = SB_Req_Active;
-					s_ns = ALSM_SB_rsp_received;
-				end
-				else begin
-					s_ns = ALSM_Await_FDI_Active;
-				end
-			end
-			ALSM_SB_rsp_received: begin
-				w_sb_state_tx_comb = SB_None;
-				if (w_sb_active_rsp_received_comb) begin
-					w_MB_rx_enable_comb 		= 'b1;
-					w_MB_tx_enable_comb 		= 'b1;
-					w_fdi_pl_state_sts_comb = LL_Active;
-					w_Link_Status_comb 			= 'b1;
-					s_ns 										= ALSM_Active;
-				end
-				else begin
-					s_ns = ALSM_SB_rsp_received;
-				end
-			end
-			ALSM_Active: begin
-				if (i_rdi_pl_stall_req) begin
+				ALSM_Param_exch: 
+					if (i_sb_param_exch_done) begin
+						w_fdi_pl_inband_pres_comb = 'b1;
+						s_ns = ALSM_Active_Entry;
+					end
+					else begin
+						w_sb_start_param_exch_comb = 'b0;
+						s_ns = ALSM_Param_exch;
+					end
+				ALSM_Active_Entry:
+					if (w_Protocol_Active_comb) begin
+						w_sb_state_tx_comb = SB_Req_Active;
+						s_ns = ALSM_SB_Active_Req;
+					end
+					else if (w_sb_active_req_received_comb) begin
+						w_fdi_pl_rx_active_req_comb = 'b1;
+						s_ns = ALSM_rx_active_2;
+					end
+					else begin
+						s_ns = ALSM_Active_Entry;
+					end
+				ALSM_SB_Active_Req: begin
 					w_sb_state_tx_comb = SB_None;
-					w_MB_retry_clean_boundary_comb = 'b1;
-					s_ns = ALSM_Stall;
+					if (r_sb_active_rsp_received) begin
+						w_MB_tx_enable_comb = 'b1;
+						s_ns 								= ALSM_Active_Req_Await;
+					end 
+					else if (w_sb_active_req_received_comb) begin
+						w_fdi_pl_rx_active_req_comb = 'b1;
+						s_ns = ALSM_rx_active_1;
+					end
+					else begin
+						s_ns = ALSM_SB_Active_Req;
+					end
 				end
-				else if (w_retrain_triggers) begin
+				ALSM_Active_Req_Await:
+					if (w_sb_active_req_received_comb) begin
+						w_fdi_pl_rx_active_req_comb = 'b1;
+						s_ns = ALSM_rx_active_1;
+					end
+					else begin
+						s_ns = ALSM_Active_Req_Await;
+					end
+				ALSM_rx_active_1:
+					if (i_fdi_lp_rx_active_sts && r_sb_active_rsp_received) begin
+						w_sb_state_tx_comb      = SB_Rsp_Active;
+						w_MB_rx_enable_comb 		= 'b1;
+						w_MB_tx_enable_comb 		= 'b1;
+						w_fdi_pl_state_sts_comb = LL_Active;
+						w_Link_Status_comb 			= 'b1;
+						s_ns 										= ALSM_Active;
+					end
+					else if (i_fdi_lp_rx_active_sts && ~r_sb_active_rsp_received) begin
+						w_sb_state_tx_comb  = SB_Rsp_Active;
+						w_MB_rx_enable_comb = 'b1;
+						s_ns 								= ALSM_SB_rsp_received;
+					end
+					else begin
+						s_ns = ALSM_rx_active_1;
+					end
+				ALSM_rx_active_2:
+					if (i_fdi_lp_rx_active_sts) begin
+						w_sb_state_tx_comb 	= SB_Rsp_Active;
+						w_MB_rx_enable_comb = 'b1;
+						s_ns = ALSM_Await_FDI_Active;
+					end
+					else begin
+						s_ns = ALSM_rx_active_2;
+					end
+				ALSM_Await_FDI_Active: begin
 					w_sb_state_tx_comb = SB_None;
-					w_rdi_lp_state_req_comb = Req_Retrain;
-					s_ns = ALSM_Stall;
+					if (i_fdi_lp_state_req == Req_Active) begin
+						w_sb_state_tx_comb = SB_Req_Active;
+						s_ns = ALSM_SB_rsp_received;
+					end
+					else begin
+						s_ns = ALSM_Await_FDI_Active;
+					end
 				end
-				else begin
+				ALSM_SB_rsp_received: begin
 					w_sb_state_tx_comb = SB_None;
-					s_ns = ALSM_Active;
+					if (w_sb_active_rsp_received_comb) begin
+						w_MB_rx_enable_comb 		= 'b1;
+						w_MB_tx_enable_comb 		= 'b1;
+						w_fdi_pl_state_sts_comb = LL_Active;
+						w_Link_Status_comb 			= 'b1;
+						s_ns 										= ALSM_Active;
+					end
+					else begin
+						s_ns = ALSM_SB_rsp_received;
+					end
 				end
-			end
-			ALSM_Stall: begin
-				w_MB_retry_clean_boundary_comb =   i_rdi_pl_stall_req;
-				w_rdi_lp_stall_ack_comb        =   i_MB_retry_clean_boundary_done;
-				w_fdi_pl_rx_active_req_comb    = ~(i_rdi_pl_state_sts == LL_Retrain);
-				if (~i_fdi_lp_rx_active_sts && ~i_rdi_pl_stall_req) begin
-					w_fdi_pl_state_sts_comb 						 = LL_Retrain;
-					w_MB_rx_enable_comb 								 = 'b0;
-					w_MB_tx_enable_comb 								 = 'b0;
-					w_MB_retry_clean_boundary_comb			 = 'b0;
-					w_rdi_lp_stall_ack_comb							 = 'b0;
-					s_ns 																 = ALSM_Retrain;
+				ALSM_Active: begin
+					if (i_rdi_pl_stall_req) begin
+						w_sb_state_tx_comb = SB_None;
+						w_MB_retry_clean_boundary_comb = 'b1;
+						s_ns = ALSM_Stall;
+					end
+					else if (w_retrain_triggers) begin
+						w_sb_state_tx_comb = SB_None;
+						w_rdi_lp_state_req_comb = Req_Retrain;
+						s_ns = ALSM_Stall;
+					end
+					else begin
+						w_sb_state_tx_comb = SB_None;
+						s_ns = ALSM_Active;
+					end
 				end
-				else begin
-					s_ns = ALSM_Stall;
+				ALSM_Stall: begin
+					w_MB_retry_clean_boundary_comb =   i_rdi_pl_stall_req;
+					w_rdi_lp_stall_ack_comb        =   i_MB_retry_clean_boundary_done;
+					w_fdi_pl_rx_active_req_comb    = ~(i_rdi_pl_state_sts == LL_Retrain);
+					if (~i_fdi_lp_rx_active_sts && ~i_rdi_pl_stall_req) begin
+						w_fdi_pl_state_sts_comb 						 = LL_Retrain;
+						w_MB_rx_enable_comb 								 = 'b0;
+						w_MB_tx_enable_comb 								 = 'b0;
+						w_MB_retry_clean_boundary_comb			 = 'b0;
+						w_rdi_lp_stall_ack_comb							 = 'b0;
+						s_ns 																 = ALSM_Retrain;
+					end
+					else begin
+						s_ns = ALSM_Stall;
+					end
 				end
-			end
-			ALSM_Retrain: begin
-				if (i_fdi_lp_state_req == Req_Active && i_rdi_pl_state_sts == LL_Active) begin
-					w_rdi_lp_state_req_comb = Req_Active;
-					s_ns = ALSM_Active_Entry;
+				ALSM_Retrain: begin
+					if (i_fdi_lp_state_req == Req_Active && i_rdi_pl_state_sts == LL_Active) begin
+						w_rdi_lp_state_req_comb = Req_Active;
+						s_ns = ALSM_Active_Entry;
+					end
+					else if (i_fdi_lp_state_req == Req_NOP || i_fdi_lp_state_req == Req_Active) begin
+						w_rdi_lp_state_req_comb = i_fdi_lp_state_req;
+						s_ns = ALSM_Retrain;
+					end
+					else begin
+						s_ns = ALSM_Retrain;
+					end
 				end
-				else if (i_fdi_lp_state_req == Req_NOP || i_fdi_lp_state_req == Req_Active) begin
-					w_rdi_lp_state_req_comb = i_fdi_lp_state_req;
-					s_ns = ALSM_Retrain;
+				ALSM_Error_Entry: begin
+					if (i_rdi_pl_stall_req && i_MB_flush_done) begin
+						w_rdi_lp_stall_ack_comb     = 'b1;
+						w_MB_tx_enable_comb         = 'b0;
+						w_fdi_pl_state_sts_comb     =  LL_LinkError;
+						w_fdi_pl_rx_active_req_comb = 'b0;
+						s_ns = ALSM_LinkError;
+					end
+					else if (i_rdi_pl_state_sts == LL_LinkError && i_rdi_pl_trdy && o_MB_tx_enable) begin
+						w_MB_flush_comb = 'b1;
+						s_ns = ALSM_Error_Entry;
+					end
+					else begin
+						s_ns = ALSM_Error_Entry;
+					end
 				end
-			end
-		endcase
+				ALSM_LinkError: begin
+					w_rdi_lp_stall_ack_comb = i_rdi_pl_stall_req;
+
+					// when fdi rx path is closed, close the mb rx path, otherwise keep it as is
+					w_MB_rx_enable_comb = (i_fdi_lp_rx_active_sts == 'b0) ? 'b0 : o_MB_rx_enable;
+
+					if (~i_Regfile_LinkError            && 
+					     i_rdi_pl_state_sts == LL_Reset &&
+							~i_fdi_lp_rx_active_sts // cannot enter Reset if the rx path of the protocol layer is active according to spec
+							) begin 
+						w_fdi_pl_state_sts_comb = LL_Reset;
+						s_ns = ALSM_Reset;
+					end
+					else if (~i_Regfile_LinkError              &&
+									 ~i_fdi_lp_linkerror               && 
+									  i_fdi_lp_state_req == Req_Active && 
+									 ~i_fdi_lp_rx_active_sts
+						) begin
+						w_rdi_lp_state_req_comb = Req_Active;
+						s_ns = ALSM_Protocol_Exit;
+					end
+					else begin
+						s_ns = ALSM_LinkError;
+					end
+				end
+				ALSM_Protocol_Exit: begin
+					// if rdi is reset, then announce reset on fdi_pl_state_sts
+					w_fdi_pl_state_sts_comb = (i_rdi_pl_state_sts == LL_Reset) ? LL_Reset : o_fdi_pl_state_sts;
+
+					if (i_fdi_lp_state_req == Req_NOP) begin
+						w_rdi_lp_state_req_comb = Req_NOP;
+						s_ns = ALSM_Protocol_Exit;
+					end
+					else if (i_fdi_lp_state_req == Req_Active) begin
+						w_rdi_lp_state_req_comb = Req_Active;
+						s_ns = ALSM_Reset;
+					end
+				end
+			endcase
+	end
 	end
 
 	//! combinational block to set the value of s_in_ALSM_reset
