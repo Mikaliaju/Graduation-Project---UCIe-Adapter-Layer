@@ -32,13 +32,12 @@ logic [CRC_SIZE-1:0] r_crc_reg0;     // Store value of CRC  for CRC0.
 logic [CRC_SIZE-1:0] r_crc_reg1;     // Store value of CRC  for CRC1.
 logic [CRC_SIZE-1:0] r_crc_next;     // Used in Combinational CRC calculation Logic.
 
-logic [1:0]          r_chunk_cnt;    // Count 4chunk of 256B.
-logic                r_compare;       // Enable to make compare process.
+logic [CRC_SIZE-1:0] r_crc0_final;   // Hold final value of CRC  for CRC0 for 1 clk.
+logic [CRC_SIZE-1:0] r_crc1_final;   // Hold final value of CRC  for CRC1 for 1 clk.
+logic [CRC_SIZE-1:0] r_crc0_ch_reg;  // Hold value of i_CRC0_ch.
+logic [CRC_SIZE-1:0] r_crc1_ch_reg;  // Hold value of i_CRC1_ch.
 
-logic [CRC_SIZE-1:0] r_crc0_final;    // Hold final value of CRC  for CRC0 for 1 clk.
-logic [CRC_SIZE-1:0] r_crc1_final;    // Hold final value of CRC  for CRC1 for 1 clk.
-logic [CRC_SIZE-1:0] r_crc0_ch_reg;   // Hold value of i_CRC0_ch.
-logic [CRC_SIZE-1:0] r_crc1_ch_reg;   // Hold value of i_CRC1_ch.
+chunk_state_e r_state;               // Count 4chunk of 256B.
 // ===========================================================================================================
 
 // =========================================================
@@ -68,15 +67,15 @@ endfunction
 // =========================================================
 
 always_ff @(*) begin
-  case (r_chunk_cnt)
+  case (r_state)
     // First 64B of CRC0
-    2'd0: r_crc_next = next_crc16(CRC_INIT, i_crc_payload);
+    S_CHUNK0: r_crc_next = next_crc16(CRC_INIT, i_crc_payload);
     // Second 64B of CRC0
-    2'd1: r_crc_next = next_crc16(r_crc_reg0, i_crc_payload);
+    S_CHUNK1: r_crc_next = next_crc16(r_crc_reg0, i_crc_payload);
     // First 64B of CRC1
-    2'd2: r_crc_next = next_crc16(CRC_INIT, i_crc_payload);
+    S_CHUNK2: r_crc_next = next_crc16(CRC_INIT, i_crc_payload);
     // Second 64B of CRC1
-    2'd3: r_crc_next = next_crc16(r_crc_reg1, i_crc_payload);
+    S_CHUNK3: r_crc_next = next_crc16(r_crc_reg1, i_crc_payload);
 
     default: r_crc_next = CRC_INIT;
   endcase
@@ -90,64 +89,59 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
   if (!i_rst_n) begin
     r_crc_reg0    <= CRC_INIT;
     r_crc_reg1    <= CRC_INIT;
+    r_state       <= S_CHUNK0;
     r_crc0_final  <= 0;
     r_crc1_final  <= 0;
-    r_chunk_cnt   <= 0;
-    r_compare     <= 0;
     o_crc_correct <= 0;
     o_crc_err     <= 0;
   end
   else begin
     o_crc_correct <= 0;
     o_crc_err     <= 0;
-    if (i_crc_payload_valid && !r_compare) begin
-      case (r_chunk_cnt)
+    if (i_crc_payload_valid) begin
+      case (r_state)
         // First 64B ? CRC0 window
-        2'd0: begin
+        S_CHUNK0: begin
           r_crc_reg0  <= r_crc_next;
-          r_chunk_cnt <= 2'd1;
+          r_state     <= S_CHUNK1;
         end
          // Second 64B ? CRC0 window ends (128B total)
-         2'd1: begin
+         S_CHUNK1: begin
            r_crc_reg0  <= r_crc_next;
-           r_chunk_cnt <= 2'd2;
+           r_state     <= S_CHUNK2;
          end
          // Third 64B ? CRC1 window starts
-         2'd2: begin
+         S_CHUNK2: begin
            r_crc_reg1  <= r_crc_next;
-           r_chunk_cnt <= 2'd3;
+           r_state     <= S_CHUNK3;
          end
          // Fourth 64B ? CRC1 window ends
-         2'd3: begin
-           r_crc_reg1  <= r_crc_next;
+         S_CHUNK3: begin
+           r_crc_reg1    <= r_crc_next;
            // Store final CRC in separate register.
            r_crc0_final  <= r_crc_reg0;
            r_crc1_final  <= r_crc_next;
            r_crc0_ch_reg <= i_crc0_ch;   //Store crc0_ch value cause it will chang after cycle 4.
            r_crc1_ch_reg <= i_crc1_ch;   //Store crc1_ch value cause it will chang after cycle 4.
-           r_compare     <= 1'b1;
-           r_chunk_cnt   <= 2'd0;
+           r_state       <= S_COMPARE;
+         end
+         // Compare phase (1 cycle after full flit)
+         S_COMPARE: begin
+           if ( (r_crc0_final == r_crc0_ch_reg)&&(r_crc1_final == r_crc1_ch_reg) ) begin
+             o_crc_correct <= 1'b1;
+             o_crc_err     <= 1'b0;
+           end
+           else begin
+             o_crc_correct <= 1'b0;
+             o_crc_err     <= 1'b1;
+           end
+           // prepare for next flit
+           r_crc_reg0      <= CRC_INIT;
+           r_crc_reg1      <= CRC_INIT;
+           r_state         <= S_CHUNK0;
          end
        endcase
      end
-     // =========================================================
-     // Compare phase (1 cycle after full flit)
-     // =========================================================
-     else if (r_compare) begin
-
-       if ( (r_crc0_final == r_crc0_ch_reg)&&(r_crc1_final == r_crc1_ch_reg) ) begin
-         o_crc_correct <= 1'b1;
-         o_crc_err     <= 1'b0;
-       end
-       else begin
-         o_crc_correct <= 1'b0;
-         o_crc_err     <= 1'b1;
-       end
-     // prepare for next flit
-     r_crc_reg0      <= CRC_INIT;
-     r_crc_reg1      <= CRC_INIT;
-     r_compare       <= 1'b0;
-    end
    end
 end
 
