@@ -1,24 +1,27 @@
+//Author : Fatma Fawzy
+//Module Description : validate the received flits and schedule ACK/NAK flits
+//Date : 28/2/2026
+
 import common_pkg::*;
 
 module ack_nak_discard_rules (
-    input  logic       i_CRC_ERROR,
-    input  phase_t     i_phase,
-    input  logic       i_NOP_PAYLOAD_FLIT,
-    input  replay_command_t i_REPLAY_COMMAND,
-    input  logic [7:0] i_SEQ_NUM,
-    input  logic [7:0] i_IMPLICIT_RX_FLIT_SEQ_NUM,
-    input  logic [7:0] i_NEXT_EXPECT_RX_FLIT_SEQ_NUM,
-    input  logic [7:0] i_TX_ACKNAK_FLIT_SEQ_NUM,
-    input  logic       i_enable,
-    input  logic       init,
-    input  logic       clk, rst,
-    output logic       o_log_UIE,
-    output logic       o_discard_flit, 
-    output logic       o_discard_payload,
-    output logic       o_NAK_SCHEDULED,
-    output logic       o_NAK_SCHEDULE_TYPE,
-    output logic [7:0] o_TX_ACKNAK_FLIT_SEQ_NUM,
-    output logic [7:0] o_NEXT_EXPECT_RX_FLIT_SEQ_NUM
+    input  logic       i_CRC_ERROR, // CRC error in the received flit from Mainband Receiver
+    input  phase_t     i_phase, // Phase of the link 
+    input  logic       i_NOP_PAYLOAD_FLIT, // 1 : NOP, 0 : Payload
+    input  replay_command_t i_REPLAY_COMMAND, // ACK OR NAK OR EXPLICIT
+    input  logic [7:0] i_SEQ_NUM, // Sequence number of the received flit
+    input  logic [7:0] i_IMPLICIT_RX_FLIT_SEQ_NUM, // Implicit sequence number from implicit seq number module (new).
+    input  logic [7:0] i_NEXT_EXPECT_RX_FLIT_SEQ_NUM, //from counter tracker
+    input  logic [7:0] i_TX_ACKNAK_FLIT_SEQ_NUM, //from counter tracker
+    input  logic       init, //software reset
+    input  logic       clk, rst_n,
+    output logic       o_log_UIE, //log Uncorrectable Internal Error in Register file
+    output logic       o_discard_flit, //discard flit
+    output logic       o_discard_payload, //discard payload
+    output logic       o_NAK_SCHEDULED, //NAK scheduled
+    output logic       o_NAK_SCHEDULE_TYPE, //NAK schedule type
+    output logic [7:0] o_TX_ACKNAK_FLIT_SEQ_NUM, //TX ACKNAK flit to counter tracker
+    output logic [7:0] o_NEXT_EXPECT_RX_FLIT_SEQ_NUM //next expect RX flit to counter tracker
 );
 
 logic r_CRC_ERROR_d;
@@ -26,8 +29,9 @@ logic r_NOP_PAYLOAD_FLIT_d;
 logic r_SEQ_NUM_d; 
 logic r_REPLAY_COMMAND_d;
 
-always_ff @ (posedge clk) begin
-    if(rst) begin
+//delay by 1 cycle to wait for implicit rx seq num to be updated
+always_ff @ (posedge clk or negedge rst_n) begin
+    if(rst_n) begin
         r_CRC_ERROR_d <= 0;
         r_NOP_PAYLOAD_FLIT_d <= 0;
         r_SEQ_NUM_d <= 0;
@@ -41,49 +45,47 @@ always_ff @ (posedge clk) begin
     end
 end
 
-always_ff @ (posedge clk) begin
-    if(i_enable) begin
-        if(rst) begin
-            o_log_UIE <= 1'b0;
-            o_discard_flit <= 1'b0;
-            o_discard_payload <= 1'b0;
-            o_NAK_SCHEDULED <= 1'b0;
-            o_NAK_SCHEDULE_TYPE <= 1'b0;
-            o_TX_ACKNAK_FLIT_SEQ_NUM <= 8'b0;
-            o_NEXT_EXPECT_RX_FLIT_SEQ_NUM <= 8'b0;
-        end
-        else begin
-            if(!init) begin
-                if(r_CRC_ERROR_d) begin
-                    if(o_NAK_SCHEDULED) begin
-                        FLIT_DISCARD_1();
-                    end
-                    else begin 
-                        NAK_SCHEDULE_0();
-                    end
+always_ff @ (posedge clk or negedge rst_n) begin
+    if(rst_n) begin
+        o_log_UIE <= 1'b0;
+        o_discard_flit <= 1'b0;
+        o_discard_payload <= 1'b0;
+        o_NAK_SCHEDULED <= 1'b0;
+        o_NAK_SCHEDULE_TYPE <= 1'b0;
+        o_TX_ACKNAK_FLIT_SEQ_NUM <= 8'b0;
+        o_NEXT_EXPECT_RX_FLIT_SEQ_NUM <= 8'b0;
+    end
+    else begin
+        if(!init) begin
+            if(r_CRC_ERROR_d) begin
+                if(o_NAK_SCHEDULED) begin
+                    FLIT_DISCARD_1();
                 end
-                else if(r_REPLAY_COMMAND_d == explicit 
+                else begin 
+                    NAK_SCHEDULE_0();
+                end
+            end
+            else if(r_REPLAY_COMMAND_d == explicit 
                 && i_phase == normal_exchange && r_SEQ_NUM_d == 8'b0) begin
-                    FLIT_DISCARD_2();
-                end
-                else begin
-                    if(!r_NOP_PAYLOAD_FLIT_d) begin
-                        if(bad_nop_sequence_number()) begin
-                            NAK_SCHEDULE_2();
-                        end
-                        else begin
-                            FLIT_DISCARD_0();
-                        end
+                FLIT_DISCARD_2();
+            end
+            else begin
+                if(!r_NOP_PAYLOAD_FLIT_d) begin
+                    if(bad_nop_sequence_number()) begin
+                        NAK_SCHEDULE_2();
                     end
                     else begin
-                        if(o_NAK_SCHEDULED) begin
-                            standard_nak_procedure();
-                        end
-                        else begin
-                            if(duplicate_sequence_number()) FLIT_DISCARD_0();
-                            else if(bad_sequence_number()) NAK_SCHEDULE_2();
-                            else ACK_SCHEDULE_0();
-                        end
+                        FLIT_DISCARD_0();
+                    end
+                end
+                else begin
+                    if(o_NAK_SCHEDULED) begin
+                        standard_nak_procedure();
+                    end
+                    else begin
+                        if(duplicate_sequence_number()) FLIT_DISCARD_0();
+                        else if(bad_sequence_number()) NAK_SCHEDULE_2();
+                        else ACK_SCHEDULE_0();
                     end
                 end
             end
