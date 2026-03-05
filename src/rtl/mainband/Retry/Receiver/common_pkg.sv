@@ -4,8 +4,8 @@ package common_pkg;
 
     typedef enum logic [1:0] {
         explicit = 2'b00,
-        NAK = 2'b10,
-        ACK = 2'b01
+        nak = 2'b10,
+        ack = 2'b01
     } replay_command_t;
 
     typedef enum logic {
@@ -14,8 +14,8 @@ package common_pkg;
     } phase_t;
 
     typedef enum logic {
-        STANDARD_NAK,
-        SELECTIVE_NAK
+        standard_nak,
+        selective_nak
     } nak_schedule_type_t;
 
 endpackage
