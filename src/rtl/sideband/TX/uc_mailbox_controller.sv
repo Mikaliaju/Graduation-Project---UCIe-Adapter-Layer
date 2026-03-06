@@ -233,7 +233,6 @@ always_comb begin
       else if (s_timeout_hit) begin
         // timeout happened -> clear trigger
         o_mailbox_trigger_en = 1'b1;
-
         // If this timeout is the last allowed attempt (threshold-1 because counter starts from 0)
         // then log "CA" else return "UR" 
         if (r_timeout_counter== i_remote_threshold - 1) 
