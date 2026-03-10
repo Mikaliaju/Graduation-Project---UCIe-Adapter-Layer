@@ -4,17 +4,16 @@
 
 import common_pkg::*;
 module receiver_controller_top (
+    input  logic       clk, rst_n,
+    input  logic       init, //software reset
     input  logic [7:0] i_seq_num, // sequence number of the received flit
     input  logic       i_crc_error, // crc error in the received flit from mainband receiver
     input  replay_command_t i_replay_command, // ack or nak or explicit
     input  logic       i_nop_payload_flit, // 1 : nop, 0 : payload
     input  phase_t     i_phase, // phase of the link
-    input  logic       i_enable, //enable
-    input  logic       init, //software reset
     input  logic [7:0] i_ackd_flit_seq_num, // ackd flit from counter tracker (old)
     input  logic [7:0] i_tx_acknak_flit_seq_num, // tx acknak flit from counter tracker (old)
     input  logic [7:0] i_next_expect_rx_flit_seq_num, //next expect rx flit to counter tracker
-    input  logic       clk, rst_n,
     output logic [7:0] o_implicit_rx_flit_seq_num, //implicit sequence number (new)
     output logic       o_log_uie, //log uncorrectable internal error in register file
     output logic       o_discard_flit, //discard flit
@@ -35,19 +34,19 @@ module receiver_controller_top (
         .i_crc_error(i_crc_error),
         .i_replay_command(i_replay_command),
         .i_nop_payload_flit(i_nop_payload_flit),
-        .i_enable(i_enable),
         .clk(clk),
+        .init(init),
         .rst_n(rst_n),
         .o_implicit_rx_flit_seq_num(o_implicit_rx_flit_seq_num)
     );
 
-    ack_nak_proccessing u_ack_nak_proccessing (
+    ack_nak_processing u_ack_nak_processing (
         .i_replay_command(i_replay_command),
         .i_seq_num(i_seq_num),
         .i_tx_acknak_flit_seq_num(i_tx_acknak_flit_seq_num),
         .i_ackd_flit_seq_num(i_ackd_flit_seq_num),
-        .i_enable(i_enable),
         .clk(clk),
+        .init(init),
         .rst_n(rst_n),
         .o_valid_ack_nak(o_valid_ack_nak),
         .o_log_uie(w_log_uie_a),
@@ -63,8 +62,8 @@ module receiver_controller_top (
         .i_implicit_rx_flit_seq_num(o_implicit_rx_flit_seq_num),
         .i_next_expect_rx_flit_seq_num(i_next_expect_rx_flit_seq_num),
         .i_tx_acknak_flit_seq_num(i_tx_acknak_flit_seq_num),
-        .i_enable(i_enable),
         .clk(clk),
+        .init(init),
         .rst_n(rst_n),
         .o_log_uie(w_log_uie_b),
         .o_discard_flit(o_discard_flit),
