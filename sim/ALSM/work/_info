@@ -148,6 +148,9 @@ R0
 R0
 R0
 R0
+R0
+R0
+R0
 !s11f vlog 2021.1 2021.01, Jan 19 2021
 13
 !s112 1.1
@@ -155,149 +158,311 @@ R0
 !i10e 25
 !i10f 100
 cModel Technology
-dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM
+Z1 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM
 T_opt
 !s110 1772230049
 VgJ]^0QNVILIYb1j;d2C=o1
-04 7 4 work ALSM_tb fast 0
+Z2 04 7 4 work ALSM_tb fast 0
 =6-28d043fe16f2-69a215a1-8c-1e64
-!s124 OEM100
-o-quiet -auto_acc_if_foreign -work work +acc
-Z1 tCvgOpt 0
+Z3 !s124 OEM100
+Z4 o-quiet -auto_acc_if_foreign -work work +acc
+Z5 tCvgOpt 0
 n@_opt
-OL;O;2021.1;73
+Z6 OL;O;2021.1;73
+R1
+T_opt1
+Z7 !s110 1773442840
+VVaeibOnnELnFdld=0h;XR2
+R2
+=2-28d043fe16f2-69b49718-27d-33b4
+R3
+R4
+R5
+n@_opt1
+R6
+R1
+T_opt2
+!s110 1773445224
+VT0^h8QSW;<@1nSnJEBmHR0
+04 10 4 work UC_ALSM_tb fast 0
+=1-28d043fe16f2-69b4a068-283-e8
+R3
+R4
+R5
+n@_opt2
+R6
+R1
 vALSM
-Z2 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-Z3 DXx4 work 12 ALSM_package 0 22 PYmc7mil7A0BG65ZefkU_3
-DXx4 work 12 ALSM_sv_unit 0 22 T[L1PVCNMah1j4lGEzZ5W3
-Z4 !s110 1772229318
-Z5 VDg1SIo80bB@j0V0VzS_@n1
+Z8 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z9 DXx4 work 12 ALSM_package 0 22 PYmc7mil7A0BG65ZefkU_3
+DXx4 work 12 ALSM_sv_unit 0 22 i::?bU6>agXT7WTmbJiho2
+R7
+Z10 VDg1SIo80bB@j0V0VzS_@n1
 r1
 !s85 0
 !i10b 1
-!s100 7<OOmfl`W9U942KYEY5n<1
-I08Qg`>h2ZZ:WWMY@fX`ZY1
+!s100 _lfCeQ1mm8=e8AIiFSUgP1
+I2l7JkKWl>^Ji;Ehg4VhP[2
 !s105 ALSM_sv_unit
 S1
-Z6 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM
-Z7 w1772229311
-Z8 8../../src/rtl/LSM/ALSM.sv
-Z9 F../../src/rtl/LSM/ALSM.sv
-!i122 296
-L0 80 628
-Z10 OL;L;2021.1;73
+Z11 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM
+Z12 w1773442834
+Z13 8../../src/rtl/LSM/ALSM.sv
+Z14 F../../src/rtl/LSM/ALSM.sv
+!i122 306
+L0 80 618
+Z15 OL;L;2021.1;73
 31
-Z11 !s108 1772229318.000000
-Z12 !s107 ALSM_tb.sv|../../src/rtl/LSM/ALSM.sv|../../src/rtl/common/ALSM_package.sv|
-Z13 !s90 -reportprogress|300|-f|sources.list|
+Z16 !s108 1773442840.000000
+Z17 !s107 ALSM_tb.sv|../../src/rtl/LSM/ALSM.sv|../../src/rtl/common/ALSM_package.sv|
+Z18 !s90 -reportprogress|300|-f|sources.list|
 !i113 0
-Z14 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
-R1
+Z19 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R5
 n@a@l@s@m
 XALSM_package
-R2
-R4
+R8
+!s110 1773444997
 !i10b 1
 !s100 Wn`m78bYM<_7So0iV]]]c2
-IPYmc7mil7A0BG65ZefkU_3
+IR]4nH6o`5z:Rj<dH?aCd?1
 S1
-R6
-w1772228571
-8../../src/rtl/common/ALSM_package.sv
-F../../src/rtl/common/ALSM_package.sv
-!i122 296
-Z15 L0 1 0
-VPYmc7mil7A0BG65ZefkU_3
-R10
+R11
+w1773440960
+Z20 8../../src/rtl/common/UC_ALSM_package.sv
+Z21 F../../src/rtl/common/UC_ALSM_package.sv
+!i122 308
+Z22 L0 1 0
+VR]4nH6o`5z:Rj<dH?aCd?1
+R15
 r1
 !s85 0
 31
-R11
-R12
-R13
+!s108 1773444997.000000
+!s107 UC_ALSM_tb.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_ALSM_package.sv|
+R18
 !i113 0
-R14
-R1
+R19
+R5
 n@a@l@s@m_package
 XALSM_sv_unit
-R2
-R3
-R4
-VT[L1PVCNMah1j4lGEzZ5W3
+R8
+R9
+R7
+Vi::?bU6>agXT7WTmbJiho2
 r1
 !s85 0
 !i10b 1
-!s100 CbPEmzNA>NkV5F2TL974k1
-IT[L1PVCNMah1j4lGEzZ5W3
+!s100 HMod^6:d88naGm3E[RVGj3
+Ii::?bU6>agXT7WTmbJiho2
 !i103 1
 S1
-R6
-R7
-R8
-R9
-!i122 296
-L0 12 0
-R10
-31
 R11
 R12
 R13
-!i113 0
 R14
-R1
-n@a@l@s@m_sv_unit
-vALSM_tb
-R2
-R3
-DXx4 work 15 ALSM_tb_sv_unit 0 22 m4L`@0>F?RFFW2ah^UX;K3
-Z16 !s110 1772230041
-R5
-r1
-!s85 0
-!i10b 1
-!s100 4UdJ64MSNRZ3>SgcR;^Z72
-IHP7m;o^O]N;1h6R5Je:0D2
-!s105 ALSM_tb_sv_unit
-S1
-R6
-Z17 w1772230028
-Z18 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM/ALSM_tb.sv
-Z19 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM/ALSM_tb.sv
-!i122 301
-L0 70 325
-R10
+!i122 306
+Z23 L0 12 0
+R15
 31
-Z20 !s108 1772230041.000000
-Z21 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM/ALSM_tb.sv|
-Z22 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM/ALSM_tb.sv|
-!i113 0
-R14
-R1
-n@a@l@s@m_tb
-XALSM_tb_sv_unit
-R2
-R3
 R16
-Vm4L`@0>F?RFFW2ah^UX;K3
-r1
-!s85 0
-!i10b 1
-!s100 4>L<l_o:mQKhSW=PSll`Y3
-Im4L`@0>F?RFFW2ah^UX;K3
-!i103 1
-S1
-R6
 R17
 R18
+!i113 0
 R19
-!i122 301
-R15
+R5
+n@a@l@s@m_sv_unit
+vALSM_tb
+R8
+R8
+R9
+DXx4 work 15 ALSM_tb_sv_unit 0 22 [Z`:5@G:f0aXm1_Vg99KV1
+R7
 R10
+r1
+!s85 0
+!i10b 1
+!s100 JaWHP@DU>9<`Gi`kfog:H1
+Ia8SbOM^VR[cCiGlc2JG`53
+!s105 ALSM_tb_sv_unit
+S1
+R11
+Z24 w1773442822
+Z25 8ALSM_tb.sv
+Z26 FALSM_tb.sv
+!i122 306
+Z27 L0 70 444
+R15
 31
+R16
+R17
+R18
+!i113 0
+R19
+R5
+n@a@l@s@m_tb
+XALSM_tb_sv_unit
+R8
+R8
+R9
+R7
+V[Z`:5@G:f0aXm1_Vg99KV1
+r1
+!s85 0
+!i10b 1
+!s100 n2]YPg2El5IzBbgO[5JiB1
+I[Z`:5@G:f0aXm1_Vg99KV1
+!i103 1
+S1
+R11
+R24
+R25
+R26
+!i122 306
+R22
+R15
+31
+R16
+R17
+R18
+!i113 0
+R19
+R5
+n@a@l@s@m_tb_sv_unit
+vUC_ALSM
+R8
+Z28 DXx4 work 15 UC_ALSM_package 0 22 m`J]MNNOL8?hajJZL<Hm?1
+DXx4 work 15 UC_ALSM_sv_unit 0 22 O::fZbD5H3D>@1ANn2G?F3
+Z29 !s110 1773445265
+R10
+r1
+!s85 0
+!i10b 1
+!s100 5P6FeoHYi9NS6AihnFkZ92
+IUI>==VDd9Q8c1>;Y]ClF_3
+!s105 UC_ALSM_sv_unit
+S1
+R11
+Z30 w1773444929
+Z31 8../../src/rtl/LSM/UC_ALSM.sv
+Z32 F../../src/rtl/LSM/UC_ALSM.sv
+!i122 312
+L0 80 612
+R15
+31
+Z33 !s108 1773445265.000000
+Z34 !s107 UC_ALSM_tb.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_ALSM_package.sv|
+R18
+!i113 0
+R19
+R5
+n@u@c_@a@l@s@m
+XUC_ALSM_package
+R8
+R29
+!i10b 1
+!s100 eN4z3[<K2L]]nkH9gNA`[3
+Im`J]MNNOL8?hajJZL<Hm?1
+S1
+R11
+w1773445101
 R20
 R21
+!i122 312
 R22
+Vm`J]MNNOL8?hajJZL<Hm?1
+R15
+r1
+!s85 0
+31
+R33
+R34
+R18
 !i113 0
-R14
-R1
-n@a@l@s@m_tb_sv_unit
+R19
+R5
+n@u@c_@a@l@s@m_package
+XUC_ALSM_sv_unit
+R8
+R28
+R29
+VO::fZbD5H3D>@1ANn2G?F3
+r1
+!s85 0
+!i10b 1
+!s100 hMbWz^_;Y<]F[[UDBg_]Y1
+IO::fZbD5H3D>@1ANn2G?F3
+!i103 1
+S1
+R11
+R30
+R31
+R32
+!i122 312
+R23
+R15
+31
+R33
+R34
+R18
+!i113 0
+R19
+R5
+n@u@c_@a@l@s@m_sv_unit
+vUC_ALSM_tb
+R8
+R8
+R28
+DXx4 work 18 UC_ALSM_tb_sv_unit 0 22 ]7ZS@JPzW_f>M_CzoIi>23
+R29
+R10
+r1
+!s85 0
+!i10b 1
+!s100 S>^;kCKJRblFmz3RoG84@2
+I];?dlU0m`95A6V0WJM23X0
+!s105 UC_ALSM_tb_sv_unit
+S1
+R11
+Z35 w1773445220
+Z36 8UC_ALSM_tb.sv
+Z37 FUC_ALSM_tb.sv
+!i122 312
+R27
+R15
+31
+R33
+R34
+R18
+!i113 0
+R19
+R5
+n@u@c_@a@l@s@m_tb
+XUC_ALSM_tb_sv_unit
+R8
+R8
+R28
+R29
+V]7ZS@JPzW_f>M_CzoIi>23
+r1
+!s85 0
+!i10b 1
+!s100 JmA3NQ8RFab9WPAHXZk>R2
+I]7ZS@JPzW_f>M_CzoIi>23
+!i103 1
+S1
+R11
+R35
+R36
+R37
+!i122 312
+R22
+R15
+31
+R33
+R34
+R18
+!i113 0
+R19
+R5
+n@u@c_@a@l@s@m_tb_sv_unit
