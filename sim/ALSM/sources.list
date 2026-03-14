@@ -1,3 +1,3 @@
-../rtl/common/ALSM_package.sv
-../rtl/ALSM/ALSM.sv
-ALSM_tb.sv
+../../src/rtl/common/UC_ALSM_package.sv
+../../src/rtl/LSM/UC_ALSM.sv
+UC_ALSM_tb.sv
