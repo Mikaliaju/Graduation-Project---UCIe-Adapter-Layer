@@ -1,70 +1,70 @@
-import UC_ALSM_package::*;
+// import UC_ALSM_package::*;
 
-// typedef enum logic [2:0] {
-// 	Active_LSM_response_type    = 'b001,
-// 	L1_LSM_response_type        = 'b010,
-// 	L2_LSM_response_type        = 'b011,
-// 	LinkReset_LSM_response_type = 'b100,
-// 	Disable_LSM_response_type   = 'b101
-// } Adapter_Response;
-// // all lp_state_req encodings
-// typedef enum logic [3:0] { 
-// 	Req_NOP       = 'b0000,
-// 	Req_Active    = 'b0001,
-// 	Req_L1        = 'b0100,
-// 	Req_L2        = 'b1000,
-// 	Req_LinkReset = 'b1001,
-// 	Req_Retrain   = 'b1011,
-// 	Req_Disable   = 'b1100
-// } state_req;
-// // all pl_sts encodings
-// typedef enum logic [3:0] { 
-// 	LL_Reset        = 'b0000,
-// 	LL_Active       = 'b0001,
-// 	LL_Active_PMNAK = 'b0011,
-// 	LL_L1           = 'b0100,
-// 	LL_L2           = 'b1000,
-// 	LL_LinkReset    = 'b1001,
-// 	LL_LinkError    = 'b1010,
-// 	LL_Retrain      = 'b1011,
-// 	LL_Disable      = 'b1100
-// } ll_state;
-// // all valid sb message encodings
-// typedef enum { 
-// 	SB_None,
-// 	SB_Req_Active,
-// 	SB_Req_L1,
-// 	SB_Req_L2,
-// 	SB_Req_LinkReset,
-// 	SB_Req_Disable,
-// 	SB_Rsp_Active,
-// 	SB_Rsp_L1,
-// 	SB_Rsp_L2,
-// 	SB_Rsp_LinkReset,
-// 	SB_Rsp_Disable,
-// 	SB_Rsp_PMNAK
-// } sb_state_msg_encoding;
-// // ------------------------------------------------------------
-// // Adapter Link State Machine state encodings
-// // ------------------------------------------------------------
-// typedef enum {
-//   ALSM_Reset,
-//   ALSM_Param_exch,
-//   ALSM_Active_Entry,
-//   ALSM_SB_Active_Req,
-//   ALSM_Active_Req_Await,
-//   ALSM_rx_active_1,
-//   ALSM_SB_rsp_received,
-//   ALSM_rx_active_2,
-//   ALSM_Await_FDI_Active,
-//   ALSM_Active,
-//   ALSM_Stall,
-//   ALSM_Retrain,
-//   ALSM_Error_Entry,
-//   ALSM_LinkError,
-//   ALSM_Protocol_Exit,
-//   ALSM_Detected_Nop
-// } ALSM_State;
+typedef enum logic [2:0] {
+	Active_LSM_response_type    = 'b001,
+	L1_LSM_response_type        = 'b010,
+	L2_LSM_response_type        = 'b011,
+	LinkReset_LSM_response_type = 'b100,
+	Disable_LSM_response_type   = 'b101
+} Adapter_Response;
+// all lp_state_req encodings
+typedef enum logic [3:0] { 
+	Req_NOP       = 'b0000,
+	Req_Active    = 'b0001,
+	Req_L1        = 'b0100,
+	Req_L2        = 'b1000,
+	Req_LinkReset = 'b1001,
+	Req_Retrain   = 'b1011,
+	Req_Disable   = 'b1100
+} state_req;
+// all pl_sts encodings
+typedef enum logic [3:0] { 
+	LL_Reset        = 'b0000,
+	LL_Active       = 'b0001,
+	LL_Active_PMNAK = 'b0011,
+	LL_L1           = 'b0100,
+	LL_L2           = 'b1000,
+	LL_LinkReset    = 'b1001,
+	LL_LinkError    = 'b1010,
+	LL_Retrain      = 'b1011,
+	LL_Disable      = 'b1100
+} ll_state;
+// all valid sb message encodings
+typedef enum { 
+	SB_None,
+	SB_Req_Active,
+	SB_Req_L1,
+	SB_Req_L2,
+	SB_Req_LinkReset,
+	SB_Req_Disable,
+	SB_Rsp_Active,
+	SB_Rsp_L1,
+	SB_Rsp_L2,
+	SB_Rsp_LinkReset,
+	SB_Rsp_Disable,
+	SB_Rsp_PMNAK
+} sb_state_msg_encoding;
+// ------------------------------------------------------------
+// Adapter Link State Machine state encodings
+// ------------------------------------------------------------
+typedef enum {
+  ALSM_Reset,
+  ALSM_Param_exch,
+  ALSM_Active_Entry,
+  ALSM_SB_Active_Req,
+  ALSM_Active_Req_Await,
+  ALSM_rx_active_1,
+  ALSM_SB_rsp_received,
+  ALSM_rx_active_2,
+  ALSM_Await_FDI_Active,
+  ALSM_Active,
+  ALSM_Stall,
+  ALSM_Retrain,
+  ALSM_Error_Entry,
+  ALSM_LinkError,
+  ALSM_Protocol_Exit,
+  ALSM_Detected_Nop
+} ALSM_State;
 
 
 module UC_ALSM_tb;
@@ -73,62 +73,62 @@ module UC_ALSM_tb;
   localparam CLK_PERIOD = 2;
 
   //Ports
-  logic i_clk;
-  logic i_rst_n;
-  logic i_init;
-  logic i_rdi_pl_inband_pres;
-  logic i_rdi_pl_phyinrecenter;
-  logic [2:0] i_rdi_pl_speedmode;
-  logic [2:0] i_rdi_pl_lnk_cfg;
-  ll_state i_rdi_pl_state_sts;
-  logic i_rdi_pl_clk_req;
-  logic i_rdi_pl_wake_ack;
-  logic i_rdi_pl_stall_req;
-  logic i_rdi_pl_error;
-  logic i_rdi_pl_trdy;
-  logic o_rdi_lp_clk_ack;
-  logic o_rdi_lp_wake_req;
-  logic o_rdi_lp_linkerror;
-  state_req o_rdi_lp_state_req;
-  logic o_rdi_lp_stall_ack;
-  state_req i_fdi_lp_state_req;
-  logic i_fdi_lp_linkerror;
-  logic i_fdi_lp_rx_active_sts;
-  logic i_fdi_lp_stall_ack;
-  logic i_fdi_lp_clk_ack;
-  logic i_fdi_lp_wake_req;
-  logic o_fdi_pl_stallreq;
-  logic o_fdi_pl_phyinrecenter;
-  logic o_fdi_pl_phyinl1;
-  logic o_fdi_pl_phyinl2;
-  logic [2:0] o_fdi_pl_speedmode;
-  logic o_fdi_pl_max_speedmode;
-  logic [2:0] o_fdi_pl_lnk_cfg;
-  ll_state o_fdi_pl_state_sts;
-  logic o_fdi_pl_inband_pres;
-  logic o_fdi_pl_rx_active_req;
-  logic o_fdi_pl_clk_req;
-  logic o_fdi_pl_wake_ack;
+  logic                 i_clk;
+  logic                 i_rst_n;
+  logic                 i_init;
+  logic                 i_rdi_pl_inband_pres;
+  logic                 i_rdi_pl_phyinrecenter;
+  logic [2:0]           i_rdi_pl_speedmode;
+  logic [2:0]           i_rdi_pl_lnk_cfg;
+  ll_state              i_rdi_pl_state_sts;
+  logic                 i_rdi_pl_clk_req;
+  logic                 i_rdi_pl_wake_ack;
+  logic                 i_rdi_pl_stall_req;
+  logic                 i_rdi_pl_error;
+  logic                 i_rdi_pl_trdy;
+  logic                 o_rdi_lp_clk_ack;
+  logic                 o_rdi_lp_wake_req;
+  logic                 o_rdi_lp_linkerror;
+  state_req             o_rdi_lp_state_req;
+  logic                 o_rdi_lp_stall_ack;
+  state_req             i_fdi_lp_state_req;
+  logic                 i_fdi_lp_linkerror;
+  logic                 i_fdi_lp_rx_active_sts;
+  logic                 i_fdi_lp_stall_ack;
+  logic                 i_fdi_lp_clk_ack;
+  logic                 i_fdi_lp_wake_req;
+  logic                 o_fdi_pl_stallreq;
+  logic                 o_fdi_pl_phyinrecenter;
+  logic                 o_fdi_pl_phyinl1;
+  logic                 o_fdi_pl_phyinl2;
+  logic [2:0]           o_fdi_pl_speedmode;
+  logic                 o_fdi_pl_max_speedmode;
+  logic [2:0]           o_fdi_pl_lnk_cfg;
+  ll_state              o_fdi_pl_state_sts;
+  logic                 o_fdi_pl_inband_pres;
+  logic                 o_fdi_pl_rx_active_req;
+  logic                 o_fdi_pl_clk_req;
+  logic                 o_fdi_pl_wake_ack;
   sb_state_msg_encoding i_sb_state_rx;
-  logic i_sb_param_exch_done;
-  logic o_sb_start_param_exch;
+  logic                 i_sb_param_exch_done;
+  logic                 o_sb_start_param_exch;
   sb_state_msg_encoding o_sb_state_tx;
-  logic i_mb_retry_clean_boundary_done;
-  logic i_mb_flush_done;
-  logic i_mb_retrain_trigger;
-  logic i_mb_rx_path_empty;
-  logic o_mb_flush;
-  logic o_mb_retry_clean_boundary;
-  logic o_mb_tx_enable;
-  logic o_mb_rx_enable;
-  logic i_regfile_linkerror;
-  logic i_regfile_start_retrain;
-  Adapter_Response o_adpater_lsm_response_type;
-  logic o_uce_adapter_timeout_non_active;
-  logic o_uce_adapter_timeout_active;
-  logic o_error_valid;
-  logic o_link_status;
-  logic o_ce_adapter_transition_retrain;
+  logic                 i_mb_retry_clean_boundary_done;
+  logic                 i_mb_flush_done;
+  logic                 i_mb_retrain_trigger;
+  logic                 i_mb_rx_path_empty;
+  logic                 o_mb_flush;
+  logic                 o_mb_retry_clean_boundary;
+  logic                 o_mb_tx_enable;
+  logic                 o_mb_rx_enable;
+  logic                 i_regfile_linkerror;
+  logic                 i_regfile_start_retrain;
+  Adapter_Response      o_adpater_lsm_response_type;
+  logic                 o_uce_adapter_timeout_non_active;
+  logic                 o_uce_adapter_timeout_active;
+  logic                 o_error_valid;
+  logic                 o_link_status;
+  logic                 o_ce_adapter_transition_retrain;
 
   UC_ALSM  U0_ALSM_UP (
     .i_clk                             (i_clk),
@@ -353,6 +353,7 @@ task retratin_to_active();
   @(negedge i_clk);
   @(negedge i_clk);
 endtask
+
 task protocol_exit_linkerror();
   i_fdi_lp_linkerror = 'b1;
   @(negedge i_clk);
