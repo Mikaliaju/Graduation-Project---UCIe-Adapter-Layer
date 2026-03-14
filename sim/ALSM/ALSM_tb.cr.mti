@@ -1,6 +1,15 @@
-D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/ALSM_package.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/ALSM_package.sv
+D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/UC_ALSM.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/LSM/UC_ALSM.sv
 QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
--- Compiling package ALSM_package
+-- Compiling package UC_ALSM_sv_unit
+-- Importing package UC_ALSM_package
+-- Compiling module UC_ALSM
+
+Top level modules:
+	UC_ALSM
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_ALSM_package.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_ALSM_package.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_ALSM_package
 
 Top level modules:
 	--none--
