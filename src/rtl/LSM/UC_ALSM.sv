@@ -212,8 +212,8 @@ module UC_ALSM (
 																				(s_cs != ALSM_Protocol_Exit);
 
 	assign s_error_entry_state_condition = (i_rdi_pl_state_sts == LL_LinkError)   && // if RDI is in LinkError
-																			   (w_mb_tx_enable_comb && i_rdi_pl_trdy) && // the mb is enabled and rdi_pl_trdy is on (can drain)
-																			   (s_cs != ALSM_Error_Entry)							&& // Not already in ALSM_Error_Entry
+																			   (o_mb_tx_enable && i_rdi_pl_trdy)      && // the mb is enabled and rdi_pl_trdy is on (can drain)
+																			   (s_cs != ALSM_Error_Entry)						  && // Not already in ALSM_Error_Entry
 																			   (s_cs != ALSM_LinkError);								 // Not already in ALSM_LinkError
 	//! current state logic
 	always_ff @(negedge i_rst_n, posedge i_clk) begin : current_state_block
@@ -421,7 +421,7 @@ module UC_ALSM (
 			s_ns = ALSM_Error_Entry;
 		end
 		else if ((s_cs != ALSM_Error_Entry) && (s_cs != ALSM_LinkError) && (i_fdi_lp_linkerror || i_regfile_linkerror)) begin
-			w_rdi_lp_linkerror_comb <= 'b1;
+			w_rdi_lp_linkerror_comb = 'b1;
 			s_ns = ALSM_Error_Entry;
 		end
 		else begin
