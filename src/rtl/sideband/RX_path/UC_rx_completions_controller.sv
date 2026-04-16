@@ -1,5 +1,5 @@
 // ================================================================================================================================
-//  FILENAME    : UC_rx_completions_controller.sv (FIXED SYNTAX ERRORS)
+//  FILENAME    : UC_rx_completions_controller.sv 
 //  MODULE      : UC_rx_completions_controller
 //  PROJECT     : UCIe 3.0 Adapter Layer
 //  AUTHOR      : Ashraf Sherif, Shahd Mohamed
