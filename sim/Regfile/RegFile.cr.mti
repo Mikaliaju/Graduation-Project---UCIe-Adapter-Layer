@@ -1,0 +1,9 @@
+D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_regfile_sv_unit
+-- Compiling module UC_regfile
+
+Top level modules:
+	UC_regfile
+
+} {} {}}
