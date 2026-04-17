@@ -7,6 +7,7 @@ Description:
   The FDI Packer Block is responsible for handling local register access requests
   originating from the Protocol Layer. Its role is to construct the appropriate
   sideband packets for transmission over the sideband interface.
+  
 */
 
 module UC_sb_FDI_Packer #(
@@ -21,7 +22,7 @@ module UC_sb_FDI_Packer #(
     input  logic               i_lp_cfg_valid,  // chunk valid
     input  logic               i_full,          // FDI FIFO full flag
     input  logic [4:0]         i_opcode,        // request opcode (phase-0 bits [4:0])
-    input  logic               i_init,          // active-low SW reset
+    input  logic               i_init_n,          // active-low SW reset
 
     // -----------------------------------------------------------------------
     //  Outputs
@@ -30,7 +31,7 @@ module UC_sb_FDI_Packer #(
     output logic               o_wr_en,            // push enable (1-cycle pulse)
     output logic               o_is_config,        // decoded: configuration access
     output logic               o_read_req,         // decoded: read request (write = ~o_read_req)
-    output logic               o_operation_32bit,  // decoded: 32-bit operation   ← ADDED
+    output logic               o_operation_32bit,  // decoded: 32-bit operation
     output logic [4:0]         o_comp_opcode,      // decoded completion opcode
     output logic               o_fifo_overflow,    // overflow pulse (FIFO was full)
     output logic               o_opcode_error      // invalid / unsupported opcode pulse
@@ -42,22 +43,22 @@ module UC_sb_FDI_Packer #(
 
     // --- FSM states ---
     typedef enum logic [1:0] {
-        S_IDLE    = 2'b00,
-        S_COLLECT = 2'b01,
-        S_PUSH    = 2'b10
+        S_IDLE    = 2'b00,   // FIFO_READY  equivalent: waiting for first valid chunk
+        S_COLLECT = 2'b01,   // FIFO_COLLECT equivalent: accumulating remaining chunks
+        S_PUSH    = 2'b10    // write assembled packet to FDI FIFO
     } fdi_state_e;
 
-    // --- Decode result struct (extended with is_32bit) ---
+    // --- Decode result struct ---
     typedef struct packed {
         logic        valid;
         logic        is_read;
-        logic        is_32bit;          // 32-bit operation flag  ← NEW
+        logic        is_32bit;          // 32-bit operation flag
         logic        is_conf;
         logic [6:0]  data_bits;         // payload bits: 0 / 32 / 64
         logic [4:0]  completion_opcode;
     } fdi_dec_t;
 
-    // --- Opcode constants ---
+    // --- Opcode constants 
     localparam logic [4:0] FDI_OP_MEM_RD_32    = 5'b00000;
     localparam logic [4:0] FDI_OP_MEM_WR_32    = 5'b00001;
     localparam logic [4:0] FDI_OP_CFG_RD_32    = 5'b00100;
@@ -70,57 +71,99 @@ module UC_sb_FDI_Packer #(
     localparam logic [4:0] FDI_OP_COMP_32_DATA = 5'b10001;
     localparam logic [4:0] FDI_OP_COMP_64_DATA = 5'b11001;
 
-    // --- Opcode decode function ---
+    // For P_IN_W = 32: max = 4 phases (128 bit), half = 2 phases (64 bit)
+    localparam int LP_TX_MAX_WRITES  = 128 / P_IN_W;  // phases for 128-bit packet
+    localparam int LP_TX_HALF_WRITES = 64  / P_IN_W;  // phases for  64-bit packet
+
+    // --- Opcode decode function 
     function automatic fdi_dec_t fdi_decode_opcode(input logic [4:0] op);
         fdi_dec_t r;
-        r = '0;
+        r        = '0;
+        r.valid  = 1'b0;
+       
         unique case (op)
 
-            // 32-bit Memory / Config READ  (no payload → 64-bit packet)
-            FDI_OP_MEM_RD_32,
-            FDI_OP_CFG_RD_32: begin
+            // 32-bit Memory READ  (no payload → 64-bit packet)
+            FDI_OP_MEM_RD_32: begin
                 r.valid             = 1'b1;
                 r.is_read           = 1'b1;
                 r.is_32bit          = 1'b1;
-                r.is_conf           = (op == FDI_OP_CFG_RD_32);
+                r.is_conf           = 1'b0;
                 r.data_bits         = 7'd0;
                 r.completion_opcode = FDI_OP_COMP_32_DATA;
             end
 
-            // 64-bit Memory / Config READ  (no payload → 64-bit packet)
-            FDI_OP_MEM_RD_64,
-            FDI_OP_CFG_RD_64: begin
-                r.valid             = 1'b1;
-                r.is_read           = 1'b1;
-                r.is_32bit          = 1'b0;
-                r.is_conf           = (op == FDI_OP_CFG_RD_64);
-                r.data_bits         = 7'd0;
-                r.completion_opcode = FDI_OP_COMP_64_DATA;
-            end
-
-            // 32-bit Memory / Config WRITE  (32-bit payload → 128-bit packet)
-            FDI_OP_MEM_WR_32,
-            FDI_OP_CFG_WR_32: begin
+            // 32-bit Memory WRITE  (32-bit payload → 128-bit packet)
+            FDI_OP_MEM_WR_32: begin
                 r.valid             = 1'b1;
                 r.is_read           = 1'b0;
                 r.is_32bit          = 1'b1;
-                r.is_conf           = (op == FDI_OP_CFG_WR_32);
+                r.is_conf           = 1'b0;
                 r.data_bits         = 7'd32;
                 r.completion_opcode = FDI_OP_COMP_NO_DATA;
             end
 
-            // 64-bit Memory / Config WRITE  (64-bit payload → 128-bit packet)
-            FDI_OP_MEM_WR_64,
-            FDI_OP_CFG_WR_64: begin
+            // 32-bit Config READ  (no payload → 64-bit packet)
+            FDI_OP_CFG_RD_32: begin
+                r.valid             = 1'b1;
+                r.is_read           = 1'b1;
+                r.is_32bit          = 1'b1;
+                r.is_conf           = 1'b1;
+                r.data_bits         = 7'd0;
+                r.completion_opcode = FDI_OP_COMP_32_DATA;
+            end
+
+            // 32-bit Config WRITE  (32-bit payload → 128-bit packet)
+            FDI_OP_CFG_WR_32: begin
+                r.valid             = 1'b1;
+                r.is_read           = 1'b0;
+                r.is_32bit          = 1'b1;
+                r.is_conf           = 1'b1;
+                r.data_bits         = 7'd32;
+                r.completion_opcode = FDI_OP_COMP_NO_DATA;
+            end
+
+            // 64-bit Memory READ  (no payload → 64-bit packet)
+            FDI_OP_MEM_RD_64: begin
+                r.valid             = 1'b1;
+                r.is_read           = 1'b1;
+                r.is_32bit          = 1'b0;
+                r.is_conf           = 1'b0;
+                r.data_bits         = 7'd0;
+                r.completion_opcode = FDI_OP_COMP_64_DATA;
+            end
+
+            // 64-bit Memory WRITE  (64-bit payload → 128-bit packet)
+            FDI_OP_MEM_WR_64: begin
                 r.valid             = 1'b1;
                 r.is_read           = 1'b0;
                 r.is_32bit          = 1'b0;
-                r.is_conf           = (op == FDI_OP_CFG_WR_64);
+                r.is_conf           = 1'b0;
                 r.data_bits         = 7'd64;
                 r.completion_opcode = FDI_OP_COMP_NO_DATA;
             end
 
-            // Unsupported opcode (including completion opcodes as inputs)
+            // 64-bit Config READ  (no payload → 64-bit packet)
+            FDI_OP_CFG_RD_64: begin
+                r.valid             = 1'b1;
+                r.is_read           = 1'b1;
+                r.is_32bit          = 1'b0;
+                r.is_conf           = 1'b1;
+                r.data_bits         = 7'd0;
+                r.completion_opcode = FDI_OP_COMP_64_DATA;
+            end
+
+            // 64-bit Config WRITE  (64-bit payload → 128-bit packet)
+            FDI_OP_CFG_WR_64: begin
+                r.valid             = 1'b1;
+                r.is_read           = 1'b0;
+                r.is_32bit          = 1'b0;
+                r.is_conf           = 1'b1;
+                r.data_bits         = 7'd64;
+                r.completion_opcode = FDI_OP_COMP_NO_DATA;
+            end
+
+            // Unsupported opcode → valid = 0, opcode_error implied
             default: begin
                 r.valid = 1'b0;
             end
@@ -141,9 +184,23 @@ module UC_sb_FDI_Packer #(
     logic [8:0]   r_bit_cnt;        // bits collected so far
     logic [8:0]   r_target_bits;    // target bits for this packet
 
+    // Phase counter 
+    logic [$clog2(LP_TX_MAX_WRITES)-1:0] r_phases_counter;
+
+    // Reach flags 
+    logic s_reach_max;
+    logic s_reach_half;
+
     logic r_wr_en;
     logic r_fifo_overflow;
     logic r_opcode_error;
+
+// ===========================================================================
+//  Reach flags (combinational)
+// ===========================================================================
+
+    assign s_reach_max  = (r_phases_counter == LP_TX_MAX_WRITES  - 1);
+    assign s_reach_half = (r_phases_counter == LP_TX_HALF_WRITES - 1);
 
 // ===========================================================================
 //  Append-chunk helper function
@@ -170,14 +227,14 @@ module UC_sb_FDI_Packer #(
     end
 
 // ===========================================================================
-//  Combinational outputs  (driven from latched decode of current packet)
+//  Combinational outputs  
 // ===========================================================================
 
     always_comb begin : comb_outputs
         o_data_in         = r_sb_packet;
         o_is_config       = r_dec_lat.is_conf;
         o_read_req        = r_dec_lat.is_read;
-        o_operation_32bit = r_dec_lat.is_32bit;       // ← ADDED
+        o_operation_32bit = r_dec_lat.is_32bit;
         o_comp_opcode     = r_dec_lat.completion_opcode;
         o_wr_en           = r_wr_en;
         o_fifo_overflow   = r_fifo_overflow;
@@ -186,32 +243,37 @@ module UC_sb_FDI_Packer #(
 
 // ===========================================================================
 //  FSM  (sequential)
+//    S_IDLE    → FIFO_READY
+//    S_COLLECT → FIFO_COLLECT  
+//    S_PUSH    → write phase
 // ===========================================================================
 
     always_ff @(posedge i_clk or negedge i_rst_n) begin : seq_fsm
 
         // ----- HW reset (async) -----
         if (!i_rst_n) begin
-            r_state         <= S_IDLE;
-            r_dec_lat       <= '0;
-            r_sb_packet     <= '0;
-            r_bit_cnt       <= '0;
-            r_target_bits   <= '0;
-            r_wr_en         <= 1'b0;
-            r_fifo_overflow <= 1'b0;
-            r_opcode_error  <= 1'b0;
+            r_state          <= S_IDLE;
+            r_dec_lat        <= '0;
+            r_sb_packet      <= '0;
+            r_bit_cnt        <= '0;
+            r_target_bits    <= '0;
+            r_phases_counter <= '0;
+            r_wr_en          <= 1'b0;
+            r_fifo_overflow  <= 1'b0;
+            r_opcode_error   <= 1'b0;
         end
 
         // ----- SW reset (sync) -----
-        else if (!i_init) begin
-            r_state         <= S_IDLE;
-            r_dec_lat       <= '0;
-            r_sb_packet     <= '0;
-            r_bit_cnt       <= '0;
-            r_target_bits   <= '0;
-            r_wr_en         <= 1'b0;
-            r_fifo_overflow <= 1'b0;
-            r_opcode_error  <= 1'b0;
+        else if (!i_init_n) begin
+            r_state          <= S_IDLE;
+            r_dec_lat        <= '0;
+            r_sb_packet      <= '0;
+            r_bit_cnt        <= '0;
+            r_target_bits    <= '0;
+            r_phases_counter <= '0;
+            r_wr_en          <= 1'b0;
+            r_fifo_overflow  <= 1'b0;
+            r_opcode_error   <= 1'b0;
         end
 
         // ----- Normal operation -----
@@ -224,26 +286,36 @@ module UC_sb_FDI_Packer #(
             unique case (r_state)
 
                 // -----------------------------------------------------------
-                //  IDLE – wait for first valid chunk
+                //  S_IDLE (FIFO_READY)
+                //  Wait for the first valid chunk from Protocol Layer.
+                //  If FIFO is full and a valid chunk arrives → overflow.
+                //  If opcode is invalid → error pulse, stay idle (FIFO_ERROR
+                //  behaviour: wait until i_lp_cfg_valid deasserts, which
+                //  naturally happens as the Protocol Layer backs off).
                 // -----------------------------------------------------------
                 S_IDLE: begin
                     if (i_lp_cfg_valid) begin
-                        if (!w_dec.valid) begin
-                            // Invalid opcode → raise error, stay in IDLE
+                        if (i_full) begin
+                            // FIFO full on arrival – overflow
+                            r_fifo_overflow <= 1'b1;
+                            r_state         <= S_IDLE;
+                        end else if (!w_dec.valid) begin
                             r_opcode_error <= 1'b1;
                             r_state        <= S_IDLE;
                         end else begin
-                            // Latch the decoded fields for this packet
-                            r_dec_lat     <= w_dec;
-                            r_target_bits <= w_tgt_bits;
+                            // Valid first chunk – latch decode and start collect
+                            r_dec_lat        <= w_dec;
+                            r_target_bits    <= w_tgt_bits;
 
-                            // Place the first chunk at bit position 0
-                            r_sb_packet             <= '0;
-                            r_sb_packet[P_IN_W-1:0] <= i_lp_cfg;
-                            r_bit_cnt               <= 9'(P_IN_W);
+                            // Place first chunk at bit position 0
+                            r_sb_packet                  <= '0;
+                            r_sb_packet[P_IN_W-1:0]      <= i_lp_cfg;
+                            r_bit_cnt                    <= 9'(P_IN_W);
+                            r_phases_counter             <= 1;  // first phase consumed
 
-                            // If first chunk already covers the whole packet, go straight to PUSH
-                            if (P_IN_W >= w_tgt_bits)
+                            if ((9'(P_IN_W) >= w_tgt_bits) ||
+                                (w_dec.data_bits == 7'd0  && s_reach_half) ||
+                                (w_dec.data_bits != 7'd0  && s_reach_max))
                                 r_state <= S_PUSH;
                             else
                                 r_state <= S_COLLECT;
@@ -252,26 +324,52 @@ module UC_sb_FDI_Packer #(
                 end
 
                 // -----------------------------------------------------------
-                //  COLLECT – accumulate remaining chunks
+                //  S_COLLECT (FIFO_COLLECT)
+                //  Accumulate remaining chunks until packet is complete.
+                //    - if vld drops before completion → error 
+                //    - if opcode error appears mid-packet → error
+                //    - complete on s_reach_max (128-bit) or s_reach_half (64-bit)
                 // -----------------------------------------------------------
                 S_COLLECT: begin
-                    if (i_lp_cfg_valid) begin
-                        r_sb_packet <= append_bits(r_sb_packet, i_lp_cfg, r_bit_cnt);
-                        r_bit_cnt   <= r_bit_cnt + 9'(P_IN_W);
+                    if (!i_lp_cfg_valid) begin
+                        // Protocol Layer dropped valid mid-packet → alignment error
+                        r_opcode_error   <= 1'b1;   // reuse error flag for misalign
+                        r_phases_counter <= '0;
+                        r_state          <= S_IDLE;
+                    end else if (!w_dec.valid) begin
+                        // Opcode error detected during collect (FIFO_ERROR path)
+                        r_opcode_error   <= 1'b1;
+                        r_phases_counter <= '0;
+                        r_state          <= S_IDLE;
+                    end else begin
+                        // Append this chunk into the accumulator
+                        r_sb_packet      <= append_bits(r_sb_packet, i_lp_cfg, r_bit_cnt);
+                        r_bit_cnt        <= r_bit_cnt + 9'(P_IN_W);
+                        r_phases_counter <= r_phases_counter + 1;
 
-                        if ((r_bit_cnt + 9'(P_IN_W)) >= r_target_bits)
+                        // Check completion:
+                        //   64-bit packet  (data_bits == 0)  → complete at HALF
+                        //   128-bit packet (data_bits != 0)  → complete at MAX
+                        if ((r_dec_lat.data_bits == 7'd0  && s_reach_half) ||
+                            (r_dec_lat.data_bits != 7'd0  && s_reach_max)  ||
+                            ((r_bit_cnt + 9'(P_IN_W)) >= r_target_bits))
                             r_state <= S_PUSH;
+                        // else stay in S_COLLECT
                     end
                 end
 
                 // -----------------------------------------------------------
-                //  PUSH – write assembled packet to FDI FIFO
+                //  S_PUSH
+                //  Write assembled packet to FDI FIFO.
+                //  One-cycle write-enable pulse, then back to IDLE.
+                //  If FIFO becomes full between collect and push → overflow.
                 // -----------------------------------------------------------
                 S_PUSH: begin
+                    r_phases_counter <= '0;   // reset phase counter for next packet
                     if (!i_full) begin
-                        r_wr_en <= 1'b1;         // one-cycle write-enable pulse
+                        r_wr_en <= 1'b1;      // one-cycle write-enable pulse
                     end else begin
-                        r_fifo_overflow <= 1'b1; // FIFO full → signal overflow
+                        r_fifo_overflow <= 1'b1;  // FIFO full → signal overflow
                     end
                     r_state <= S_IDLE;
                 end
