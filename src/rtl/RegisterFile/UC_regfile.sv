@@ -14,8 +14,8 @@ typedef enum logic [2:0] {
 	Disable_LSM_response_type   = 'b101
 } Adapter_Response;
 
-module UC_regfile # (
-) (
+module UC_regfile
+(
 
   input logic i_init,
   input logic i_clk,
@@ -44,7 +44,7 @@ module UC_regfile # (
 
 	// ALSM Inputs
 	input Adapter_Response i_adpater_lsm_response_type,       //! state at which timeout happened
-	input logic            i_lsm_error_valid, 						  	//! error valid signal to Regfile
+	// input logic            i_lsm_error_valid, 						  	//! error valid signal to Regfile
 	input logic            i_link_status, 										//! Link Status indication
 	input logic            i_ce_adapter_transition_retrain,   //! ALSM in retrain indication
 	input logic       		 i_ALSM_start_param_exch,           //! ALSM trigger for parameter exchange to SB
@@ -57,7 +57,7 @@ module UC_regfile # (
   input  logic        i_MB_Receiver_Overflow,
   input  logic        i_MB_CRC_Error_Detected,
   input  logic        i_MB_Correctable_Internal_Error,
-  input  logic        i_MB_Error_Valid,
+  // input  logic        i_MB_Error_Valid,
 
 
   // Inputs from SB
@@ -185,7 +185,28 @@ logic [31:0] w_correctable_error_status_comb;
 
 logic w_fdi_pl_cerror_comb, w_fdi_pl_nferror_comb, w_fdi_pl_trainerror_comb;
 
+function automatic void calc_config_lanes(
+    input  int          byte_idx,
+    input  logic [11:0] base_addr,
+    output logic [11:0] word_lane,
+    output logic [1:0]  byte_lane
+);
+    word_lane = base_addr + byte_idx;
+    byte_lane =  base_addr[1:0] + byte_idx;
+endfunction
+
+function automatic void calc_mem_lanes(
+    input  int          byte_idx,
+    input  logic [19:0] base_addr,
+    output logic [19:0] word_lane,
+    output logic [1:0]  byte_lane
+);
+    word_lane = base_addr + byte_idx;
+    byte_lane =  base_addr[1:0] + byte_idx;
+endfunction
+
 assign w_fdi_pl_cerror_comb     = |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] & mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]};
+
 assign w_fdi_pl_nferror_comb    = |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] &
                                     mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]   &
                                    ~mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]
@@ -274,15 +295,13 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
         dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_fromat_status;
       end
       if (i_sb_write_en && i_sb_config_req) begin
-        logic [11:0] word_lane;
-        logic [1:0]  byte_lane;
-        for (logic [2:0] i = 0; i < 8; i = i + 1) begin
+        logic [11:0] wl;
+        logic [1:0]  bl;
+        for (int i = 0; i < 8; i = i + 1) begin
           if (i_sb_32_B && i == 4) break;
           if (i_sb_BE[i]) begin
-            word_lane = i_sb_address[11:0] + i;
-            byte_lane = i_sb_address[1:0] + i;
-            // word_offset = byte_offset/4,  bit_offset = byte_offset * 8
-            dvsec[word_lane >> 2][(byte_lane << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
+            calc_config_lanes(i, i_sb_address[11:0], wl, bl);
+            dvsec[wl >> 2][(bl << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
           end
         end
       end
@@ -337,22 +356,20 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : MEM_BLOCK
       mem_block[FIN_CAP_CXL_WORD_OFFSET + 1] <= i_sb_cxl_fincap[63:32];
     end
     if (i_sb_write_en && ~i_sb_config_req) begin
-      logic [19:0] word_lane;
-      logic [1:0]  byte_lane;
-      for (logic [2:0] i = 0; i < 8; i = i + 1) begin
-        if (i_sb_32_B && i == 4) break;
-        if (i_sb_BE[i]) begin
-          word_lane = i_sb_address[19:0] + i;
-          byte_lane = i_sb_address[1:0] + i;
-          // word_offset = byte_offset/4,  bit_offset = byte_offset * 8
-          mem_block[word_lane >> 2][(byte_lane << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
-        end
+      logic [19:0] wl;
+      logic [1:0]  bl;
+      for (int i = 0; i < 8; i = i + 1) begin
+          if (i_sb_32_B && i == 4) break;
+          if (i_sb_BE[i]) begin
+              calc_mem_lanes(i, i_sb_address[19:0], wl, bl);
+              mem_block[wl >> 2][(bl << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
+          end
       end
     end
   end
 end
 
-always_ff @(posedge i_clk, negedge i_rst_n) begin : OUTPUT_BLOCK
+always_ff @(posedge i_clk , negedge i_rst_n) begin : OUTPUT_BLOCK
   if (~i_rst_n) begin
     o_fdi_pl_cerror             <= 'b0;
     o_fdi_pl_nferror            <= 'b0;
@@ -389,11 +406,11 @@ always_ff @(posedge i_clk, negedge i_rst_n) begin : OUTPUT_BLOCK
 end
 
 always_comb begin : UNCORRECTABLE_ERROR_BLOCK
-  w_adapter_timeout_comb             =  i_sb_local_timeout     | i_sb_remote_timeout;
-  w_receiver_overflow_comb           =  i_MB_Receiver_Overflow | i_sb_fdi_overflow  | i_sb_rdi_overflow;
-  w_internal_error_comb              =  i_fdi_lp_linkerror     | i_sb_parity_error  | i_sb_invalid_opcode_id;
-  w_sb_fatal_error_received_comb     = (i_sb_in_error_msg_encoding == FATAL_Err);
-  w_sb_non_fatal_error_received_comb = (i_sb_in_error_msg_encoding == NON_FATAL_Err);
+  w_adapter_timeout_comb             =  i_sb_local_timeout     | i_sb_remote_timeout | i_sb_param_exch_timeout;
+  w_receiver_overflow_comb           =  i_MB_Receiver_Overflow | i_sb_fdi_overflow   | i_sb_rdi_overflow;
+  w_internal_error_comb              =  i_fdi_lp_linkerror     | i_sb_parity_error   | i_sb_invalid_opcode_id;
+  w_sb_fatal_error_received_comb     = (i_sb_in_error_msg_encoding == FATAL_Err)     | i_rdi_pl_trainerror;
+  w_sb_non_fatal_error_received_comb = (i_sb_in_error_msg_encoding == NON_FATAL_Err) | i_rdi_pl_nferror;
   w_invalid_parameter_exchange_comb  = (i_sb_invalid_param_exch);
   w_uncorrectable_error_status_comb  = {26'b0, w_invalid_parameter_exchange_comb, w_sb_non_fatal_error_received_comb, w_sb_fatal_error_received_comb,
                                         w_internal_error_comb, w_receiver_overflow_comb, w_adapter_timeout_comb};
@@ -402,7 +419,7 @@ end
 always_comb begin : CORRECTABLE_ERROR_BLOCK
   w_crc_error_detected_comb               = i_MB_CRC_Error_Detected;
   w_adapter_lsm_transition_retrain_comb   = i_ce_adapter_transition_retrain;
-  w_correctable_internal_error_comb       = i_MB_Correctable_Internal_Error;
+  w_correctable_internal_error_comb       = i_MB_Correctable_Internal_Error | i_rdi_pl_error | i_rdi_pl_cerror;
   w_sideband_cerror_msg_received_comb     = (i_sb_in_error_msg_encoding == Correctable_Err);
   w_correctable_error_status_comb         = {27'b0, w_crc_error_detected_comb, w_adapter_lsm_transition_retrain_comb,
                                              w_correctable_internal_error_comb, w_sideband_cerror_msg_received_comb};
@@ -440,10 +457,10 @@ always_comb begin : HEADER_LOG2_BLOCK
   if (r_header_log2[22:18] == 'b0) begin
     casex ({mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET][5], mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET][3:0]})
       'b1xxxx: w_header_log2_comb[22:18] = 'h4;
-      'bx1xxx: w_header_log2_comb[22:18] = 'h3;
-      'bxx1xx: w_header_log2_comb[22:18] = 'h2;
-      'bxxx1x: w_header_log2_comb[22:18] = 'h1;
-      'bxxxx1: w_header_log2_comb[22:18] = 'h0;
+      'b01xxx: w_header_log2_comb[22:18] = 'h3;
+      'b001xx: w_header_log2_comb[22:18] = 'h2;
+      'b0001x: w_header_log2_comb[22:18] = 'h1;
+      'b00001: w_header_log2_comb[22:18] = 'h0;
       default: w_header_log2_comb[22:18] = 'h0; // no meaning
     endcase
   end
@@ -453,11 +470,11 @@ always_comb begin : HEADER_LOG2_BLOCK
 end
 
 always_comb begin : READ_DATA_BLOCK
-  o_sb_read_data <= 'b0;
+  o_sb_read_data = 'b0;
   if (i_sb_config_req) begin
     logic [11:0] word_lane;
     logic [1:0]  byte_lane;
-    for (logic [2:0] i = 0; i < 8; i = i + 1) begin
+    for (int i = 0; i < 8; i = i + 1) begin
       word_lane = i_sb_address[11:0] + i;
       byte_lane = i_sb_address[1:0] + i;
       if (i_sb_32_B && i == 4) break;
@@ -473,13 +490,13 @@ always_comb begin : READ_DATA_BLOCK
   else begin
     logic [19:0] word_lane;
     logic [1:0]  byte_lane;
-    for (logic [2:0] i = 0; i < 8; i = i + 1) begin
+    for (int i = 0; i < 8; i = i + 1) begin
       word_lane = i_sb_address[19:0] + i;
       byte_lane = i_sb_address[1:0] + i;
       if (i_sb_32_B && i == 4) break;
       if (i_sb_BE[i]) begin
         // word_offset = byte_offset/4,  bit_offset = byte_offset * 8
-        o_sb_read_data = mem_block[word_lane >> 2][(byte_lane << 3) +: 8];
+        o_sb_read_data[(i << 3) +: 8] = mem_block[word_lane >> 2][(byte_lane << 3) +: 8];
       end
       else begin
         o_sb_read_data[(i << 3) +: 8] = 'b0;
@@ -487,5 +504,4 @@ always_comb begin : READ_DATA_BLOCK
     end
   end
 end
-
 endmodule
