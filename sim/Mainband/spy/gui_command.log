@@ -1,0 +1,19 @@
+read_file -type verilog {UC_MB_Mainband_pkg.sv UC_MB_Packer.sv UC_MB_Unpacker.sv UC_MB_CRC_Generator.sv}
+set_option enableSV yes
+
+
+
+current_goal Design_Read -alltop
+
+
+
+
+current_goal lint/lint_rtl -alltop
+run_goal
+
+
+
+
+save_project -force /home/ICer/spyglass-1/MB/MB
+gui_exit
+gui_exit
