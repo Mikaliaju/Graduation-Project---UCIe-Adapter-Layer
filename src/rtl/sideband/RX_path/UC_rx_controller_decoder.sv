@@ -10,6 +10,7 @@
 //               - Completions               → Completions FIFO (phase by phase)
 //               - Messages                  → Messages FIFO (phase by phase)
 // ================================================================================================================================
+import UC_sb_rx_pkg::* ;
 module UC_rx_controller_decoder #(parameter NC = 32) (
 
     input  logic                  i_clk,               // Clock of operation "lclk"
@@ -36,36 +37,14 @@ module UC_rx_controller_decoder #(parameter NC = 32) (
 
     /* Error Handler */
     output logic                  o_rsvd_opcode_err,   // Indicates that a reserved opcode has been received
-    `ifdef END_POINT
+   
     output logic                  o_req_parity_err     // Indicates that a request packet has a parity error -> Fatal UIE
-    `endif
+   
 );
-
-//================================================== ENUMS ====================================================
-
-    // Local enum — prefix RXD_ (RX Decoder)
-    typedef enum logic [3:0] {
-        RXD_IDLE              = 4'd0,
-        RXD_COMP_WITHOUT_DATA = 4'd1,
-        RXD_COMP_WITH_DATA    = 4'd2,
-        RXD_MSG_WITHOUT_DATA  = 4'd3,
-        RXD_MSG_WITH_DATA     = 4'd4,
-        RXD_ERROR             = 4'd5
-        `ifdef END_POINT
-        ,
-        RXD_COLLECT_READ_REQ  = 4'd6,   // Collecting a Read Request  (2 phases)
-        RXD_COLLECT_WRITE_REQ = 4'd7,   // Collecting a Write Request (4 phases)
-        RXD_REQ_PARITY_CHK    = 4'd8,   // Parity check on the fully collected request packet
-        RXD_REQ_PARITY_ERR    = 4'd9    // Stuck state on parity error — until HW/SW reset
-        `endif
-    } rxd_state_e;
-
 //================================================== Internal Signals ====================================================
 
-    rxd_state_e  rxd_state, rxd_nextstate;              // Current state, Next state
-    rxd_state_e  w_opcode_state;                        // Decoded next state from opcode
-
-    localparam CHUNK_COUNTER_WIDTH = $clog2(128/NC);    // Width of the chunks counter
+    rxd_sts  rxd_state, rxd_nextstate;              // Current state, Next state
+    rxd_sts  w_opcode_state;                        // Decoded next state from opcode
     logic [CHUNK_COUNTER_WIDTH-1:0] r_chunk_counter;   // Counts received chunks for the current packet
 
     `ifdef END_POINT

@@ -6,7 +6,6 @@
 // ================================================================================================================================
 //  Description : Sync Fifo with Overflow Signal
 // ================================================================================================================================
-
 module UC_rx_sync_fifo #(
     parameter FIFO_DEPTH = 32,             // Depth of the FIFO (number of entries)
     parameter DATA_WIDTH = 32              // Width of each data entry in the FIFO
@@ -29,54 +28,90 @@ module UC_rx_sync_fifo #(
 // ============================================= Parameter ==============================================
   parameter POINTER_WIDTH = $clog2(FIFO_DEPTH); // Width of the pointer based on FIFO depth
 
-// ============================================= Internal Signals ======================================
-  logic [POINTER_WIDTH:0] write_ptr, read_ptr;   // Write and read pointers
-  logic [DATA_WIDTH-1:0] fifo_mem[FIFO_DEPTH];    // FIFO memory
-  logic MSB_NOT_EQUAL;                           // Signal to check MSB for pointers
+// =============================================== Internal Logic ==============================================
 
-// ============================================== Output Logic ==========================================
-  // Write data into FIFO
-  always_ff @(posedge clk, negedge rst_n) begin : write_fifo_logic
-    if(~rst_n) begin 
-      write_ptr <= 0;
-      foreach (fifo_mem[i]) begin
-        fifo_mem[i] <= 0;
-      end
-    end else if (~init_n) begin
-      write_ptr <= 0;
-      foreach (fifo_mem[i]) begin
-        fifo_mem[i] <= 0;
-      end
-    end else if(fifo_write_enable & !fifo_full) begin
-      fifo_mem[write_ptr[POINTER_WIDTH-1:0]] <= fifo_data_in; // Write data to FIFO
-      write_ptr <= write_ptr + 1; // Increment write pointer
+logic [DATA_WIDTH-1:0] r_mem [FIFO_DEPTH-1:0];  // Memory array to store FIFO data
+logic [POINTER_WIDTH-1:0] r_wr_ptr, r_rd_ptr;    // Write and read pointers
+logic [POINTER_WIDTH:0]   r_fifo_elements_counter; // Counter to track the number of elements in the FIFO
+
+// =============================================== Writing Operation ==============================================
+
+always_ff @(posedge clk or negedge rst_n) begin : writing_operation_proc
+    if (!rst_n) begin
+        // Reset the FIFO memory, write pointer and overflow flag
+        for (int i = 0; i < FIFO_DEPTH; i = i + 1) begin
+            r_mem[i] <= 'b0; 
+        end
+        r_wr_ptr <= 0;
+        fifo_overflow <= 0;
     end
-  end
-
-  // Read data from FIFO
-  always_ff @(posedge clk or negedge rst_n) begin : read_fifo_logic
-    if(~rst_n) begin 
-      read_ptr <= 0;
-    end else if (~init_n) begin
-      read_ptr <= 0;
-    end else if (fifo_read_enable & !fifo_empty) begin
-      read_ptr <= read_ptr + 1; // Increment read pointer
+    else if (!init_n) begin
+        for (int i = 0; i < FIFO_DEPTH; i = i + 1) begin
+            r_mem[i] <= 'b0; 
+        end
+        r_wr_ptr <= 0;
+        fifo_overflow <= 0;
     end
-  end
+    else if (fifo_write_enable && r_fifo_elements_counter < FIFO_DEPTH) begin
+        // Write data into the FIFO if not full
+        r_mem[r_wr_ptr] <= fifo_data_in;
+        r_wr_ptr <= r_wr_ptr + 1;
+        fifo_overflow <= 0; 
+    end
+    else begin 
+        // Set overflow flag if FIFO is full and a write is attempted
+        if (fifo_full && fifo_write_enable)
+            fifo_overflow <= 1;
+        else
+            fifo_overflow <= 0;
+    end
+end
 
-  // MSB check for write and read pointers
-  assign MSB_NOT_EQUAL = write_ptr[POINTER_WIDTH] ^ read_ptr[POINTER_WIDTH];  
+// =============================================== Reading Operation ==============================================
 
-  // FIFO Full condition: MSB of write and read pointers are different and remaining bits are same
-  assign fifo_full = MSB_NOT_EQUAL & (write_ptr[POINTER_WIDTH-1:0] == read_ptr[POINTER_WIDTH-1:0]);
+always_ff @(posedge clk or negedge rst_n) begin : reading_operation_proc
+    if (!rst_n) begin
+        // Reset the read pointer and output data
+        r_rd_ptr <= 0;
+        fifo_data_out <= 0;
+    end
+    else if (!init_n) begin
+        r_rd_ptr <= 0;
+        fifo_data_out <= 0;
+    end
+    else if (fifo_read_enable && r_fifo_elements_counter != 0) begin
+        // Read data from the FIFO if not empty
+        fifo_data_out <= r_mem[r_rd_ptr];
+        r_rd_ptr <= r_rd_ptr + 1;
+    end
+end
 
-  // FIFO Empty condition: Write and read pointers are the same
-  assign fifo_empty = (write_ptr == read_ptr);
+// =============================================== FIFO Elements Counter Handler ==============================================
 
-  // FIFO data output
-  assign fifo_data_out = fifo_mem[read_ptr[POINTER_WIDTH-1:0]]; // Read data from FIFO based on read pointer
+always_ff @(posedge clk or negedge rst_n) begin : fifo_elements_counter_proc
+    if (!rst_n) begin
+        // Reset the counter
+        r_fifo_elements_counter <= 0;
+    end
+    else if (!init_n) begin
+        r_fifo_elements_counter <= 0;
+    end
+    else begin
+        // Update the counter based on write and read operations
+        if      (({fifo_write_enable, fifo_read_enable} == 2'b10) && !fifo_full) 
+            r_fifo_elements_counter <= r_fifo_elements_counter + 1;  // Increment on write
+        else if (({fifo_write_enable, fifo_read_enable} == 2'b01) && !fifo_empty)
+            r_fifo_elements_counter <= r_fifo_elements_counter - 1;  // Decrement on read
+        else if (({fifo_write_enable, fifo_read_enable} == 2'b11) && fifo_empty) 
+            r_fifo_elements_counter <= r_fifo_elements_counter + 1;  // Increment on simultaneous write and read (empty case)
+        else if (({fifo_write_enable, fifo_read_enable} == 2'b11) && fifo_full)
+            r_fifo_elements_counter <= r_fifo_elements_counter - 1;  // Decrement on simultaneous write and read (full case)
+    end
+end
 
-  // Overflow condition: FIFO is full and a write operation is attempted
-  assign fifo_overflow = fifo_full && fifo_write_enable;  // Assert overflow if write is attempted when FIFO is full
+// =============================================== Full and Empty Flags ==============================================
+
+assign fifo_full = (r_fifo_elements_counter == FIFO_DEPTH) ? 1 : 0;  // Set full flag if FIFO is full
+assign fifo_empty = (r_fifo_elements_counter == 0) ? 1 : 0;             // Set empty flag if FIFO is empty
 
 endmodule

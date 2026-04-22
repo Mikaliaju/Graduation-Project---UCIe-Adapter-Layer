@@ -10,28 +10,8 @@
 //                Requests are forwarded directly from the Decoder to the remote die
 //                (EP only) — no Request FIFO.
 // ================================================================================================================================
-
-typedef enum logic [3:0] {
-    NONE,
-    ACTIVE_REQ, 
-    L1_REQ, 
-    L2_REQ, 
-    LINKRESET_REQ, 
-    DISABLED_REQ, 
-    ACTIVE_RESP,
-    PMNAK_RESP, 
-    L1_RESP, 
-    L2_RESP, 
-    LINKRESET_RESP, 
-    DISABLED_RESP
-} sb_state_msg_encoding;
-typedef enum logic [1:0] {
-    NONE_ERR, 
-    Correctable_Err , 
-    NON_FATAL_Err, 
-    FATAL_Err
-} sb_error_msg_encoding; 
-module UC_rx_top #(
+import UC_sb_rx_pkg::*; 
+    module UC_sb_rx_top #(
     parameter int NC                  = 32,  // Number of config bits per phase/chunk
     parameter int NUM_OF_COMP_PKTS    = 4,   // Max completion packets the completions FIFO can store
     parameter int NUM_OF_MSG_PKTS     = 2    // Max message packets the messages FIFO can store
@@ -109,12 +89,6 @@ module UC_rx_top #(
     output logic [127:0]      o_rx_msg,             // Received parameter exchange message
     output logic              o_rx_msg_vld          // Valid indicator for parameter exchange message
 );
-
-// ======================================================================= //
-//  Local Parameters
-// ======================================================================= //
-
-    localparam int PKT_CHUNKS_NUM = 128 / NC;  // Max number of chunks per packet
 
 // ======================================================================= //
 //  Internal Signals — Completions FIFO

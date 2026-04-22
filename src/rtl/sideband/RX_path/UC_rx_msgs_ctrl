@@ -9,6 +9,7 @@
 //               collected, parity checked, then forwarded to their dedicated
 //               handling block.
 // ================================================================================================================================
+import UC_sb_rx_pkg::*;
 module UC_rx_msgs_ctrl #(parameter NC = 32) (
 
     input  logic               i_clk,
@@ -40,18 +41,8 @@ module UC_rx_msgs_ctrl #(parameter NC = 32) (
     output logic               o_msg_parity_err,
     output logic               o_msg_invld_id_err
 );
-// ================================================== FSM State Encoding ==================================================
-    typedef enum logic [2:0] {
-        MSGC_IDLE         = 3'd0,
-        MSGC_COLLECT_PKT  = 3'd1,
-        MSGC_PARITY_CHK   = 3'd2,
-        MSGC_PARITY_ERR   = 3'd3,
-        MSGC_INVLD_ID_ERR = 3'd4
-    } msgc_state_e;
 // ================================================== Internal Signals ==================================================
-    localparam int CHUNK_COUNTER_WIDTH = $clog2(128/NC);
-
-    msgc_state_e  r_state, w_next_state;
+    msgc_sts  r_state, w_next_state;
 
     logic [CHUNK_COUNTER_WIDTH-1:0] r_phase_count;
     logic [127:0]                   r_packet_buf;
