@@ -10,7 +10,7 @@
 //                Requests are forwarded directly from the Decoder to the remote die
 //                (EP only) — no Request FIFO.
 // ================================================================================================================================
-import UC_sb_rx_pkg::*; 
+import UC_sb_pkg::*; 
     module UC_sb_rx_top #(
     parameter int NC                  = 32,  // Number of config bits per phase/chunk
     parameter int NUM_OF_COMP_PKTS    = 4,   // Max completion packets the completions FIFO can store
