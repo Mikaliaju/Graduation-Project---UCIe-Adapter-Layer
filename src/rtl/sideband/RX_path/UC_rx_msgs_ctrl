@@ -9,7 +9,7 @@
 //               collected, parity checked, then forwarded to their dedicated
 //               handling block.
 // ================================================================================================================================
-import UC_sb_rx_pkg::*;
+import UC_sb_pkg::*;
 module UC_rx_msgs_ctrl #(parameter NC = 32) (
 
     input  logic               i_clk,
