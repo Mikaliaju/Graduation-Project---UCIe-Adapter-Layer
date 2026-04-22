@@ -8,7 +8,7 @@
 //               and determine based on the tag field whether it was for a local 
 //               or remote request.
 // ================================================================================================================================
-import UC_sb_rx_pkg::*;
+import UC_sb_pkg::*;
 module UC_rx_completions_controller #(parameter NC = 32) (
     // ------------------------------------------------------------------ //
     //  Global Signals
