@@ -1,0 +1,56 @@
+read_file -type verilog UC_regfile.sv
+set_option top UC_regfile
+set_option enableSV yes
+set_option mthresh 40000
+current_goal Design_Read -top UC_regfile
+
+
+current_goal lint/lint_rtl -top UC_regfile
+run_goal
+
+
+
+
+gui_select_message -rule STARC05-1.3.1.3 -msg {Asynchronous reset signal 'UC_regfile.i_rst_n' (flop: 'UC_regfile.dvsec[0]') used as non-reset/synchronous-reset at instance 'UC_regfile.\wl_reg[0] .EN' (File Name: 'UC_regfile.sv' ,Line no.: '310')}
+gui_select_message -rule STARC05-1.3.1.3 -msg {Asynchronous reset signal 'UC_regfile.i_rst_n' (flop: 'UC_regfile.dvsec[0]') used as non-reset/synchronous-reset at instance 'UC_regfile.\wl_reg[0] .EN' (File Name: 'UC_regfile.sv' ,Line no.: '310')}
+
+
+
+current_goal Design_Read -top UC_regfile
+
+
+link_design -force
+
+
+
+current_goal lint/lint_rtl -top UC_regfile
+run_goal
+
+
+
+
+gui_select_message -rule W415a -msg {Signal word_lane is being assigned multiple times ( assignment within same for-loop ) in same always block [Hierarchy: ':UC_regfile:READ_DATA_BLOCK']}
+
+
+
+current_goal Design_Read -top UC_regfile
+
+
+
+
+current_goal Design_Read -top UC_regfile
+read_file -type verilog UC_regfile.sv
+set_option top UC_regfile
+set_option enableSV yes
+set_option mthresh 40000
+current_goal Design_Read -top UC_regfile
+
+
+current_goal lint/lint_rtl -top UC_regfile
+run_goal
+
+
+
+
+gui_exit
+gui_exit

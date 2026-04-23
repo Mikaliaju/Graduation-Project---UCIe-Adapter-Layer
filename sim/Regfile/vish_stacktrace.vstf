@@ -1,0 +1,101 @@
+# Current time Mon Apr 20 23:51:04 2026
+# Program = vish
+# Id = "2021.1"
+# Version = "2021.01"
+# Date = "Jan 19 2021"
+# Platform = win64
+
+Exception c0000005 has occurred at address 744aef4a. Traceback:
+# 0    0x744aef4a: 'TkSetFocusWin + 0x36a'
+# 1    0x7444f90c: 'Tk_SetGrid + 0x2a7c'
+# 2    0x744544b4: 'Tk_SetGrid + 0x7624'
+# 3    0x74627103: 'TclNRRunCallbacks + 0x63'
+# 4    0xd5380d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 5    0xd5381f5b: 'Itcl_ExecMethod + 0x23b'
+# 6    0xd5389a19: 'Itcl_EvalArgs + 0x1c9'
+# 7    0xd5384cf1: 'Itcl_HandleInstance + 0x2c1'
+# 8    0x74627103: 'TclNRRunCallbacks + 0x63'
+# 9    0xd5380d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 10   0xd5381f5b: 'Itcl_ExecMethod + 0x23b'
+# 11   0xd5389a19: 'Itcl_EvalArgs + 0x1c9'
+# 12   0xd5384cf1: 'Itcl_HandleInstance + 0x2c1'
+# 13   0x74627103: 'TclNRRunCallbacks + 0x63'
+# 14   0x74627103: 'TclNRRunCallbacks + 0x63'
+# 15   0xd5380d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 16   0xd5381f5b: 'Itcl_ExecMethod + 0x23b'
+# 17   0xd5389a19: 'Itcl_EvalArgs + 0x1c9'
+# 18   0xd5384cf1: 'Itcl_HandleInstance + 0x2c1'
+# 19   0x74627103: 'TclNRRunCallbacks + 0x63'
+# 20   0x74628974: 'Tcl_EvalEx + 0xa34'
+# 21   0x74627f68: 'Tcl_EvalEx + 0x28'
+# 22   0x7446431a: 'Tk_BindEvent + 0x91a'
+# 23   0x7449bd41: 'TkBindEventProc + 0x291'
+# 24   0x744ac614: 'Tk_HandleEvent + 0x2f4'
+# 25   0x744ab2da: 'TkDeleteThreadExitHandler + 0x31a'
+# 26   0x746da56d: 'Tcl_ServiceEvent + 0xed'
+# 27   0x746da9e4: 'Tcl_DoOneEvent + 0x184'
+# 28   0x744aaee5: 'Tk_MainLoop + 0x25'
+# 29   0x744ed282: 'Tk_MainEx + 0x932'
+# 30   0x401ab032: 'Mtirpc_Init + 0x23642'
+# 31   0x401adc14: 'Mtirpc_Init + 0x26224'
+# 32   0x40771eb0: 'Tclsqlite3_Init + 0x1c000'
+# 33   0xebd1e8d7: 'BaseThreadInitThunk + 0x17'
+# 34   0xedfec3fc: 'RtlUserThreadStart + 0x2c'
+StackWalk failed 0
+# End of Stack Trace
+
+# Current time Thu Apr 23 22:45:27 2026
+# Program = vish
+# Id = "2021.1"
+# Version = "2021.01"
+# Date = "Jan 19 2021"
+# Platform = win64
+
+Exception c0000005 has occurred at address 755aef4a. Traceback:
+# 0    0x755aef4a: 'TkSetFocusWin + 0x36a'
+# 1    0x7554f90c: 'Tk_SetGrid + 0x2a7c'
+# 2    0x755544b4: 'Tk_SetGrid + 0x7624'
+# 3    0x75727103: 'TclNRRunCallbacks + 0x63'
+# 4    0xaade0d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 5    0xaade1f5b: 'Itcl_ExecMethod + 0x23b'
+# 6    0xaade9a19: 'Itcl_EvalArgs + 0x1c9'
+# 7    0xaade4cf1: 'Itcl_HandleInstance + 0x2c1'
+# 8    0x75727103: 'TclNRRunCallbacks + 0x63'
+# 9    0xaade0d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 10   0xaade1f5b: 'Itcl_ExecMethod + 0x23b'
+# 11   0xaade9a19: 'Itcl_EvalArgs + 0x1c9'
+# 12   0xaade4cf1: 'Itcl_HandleInstance + 0x2c1'
+# 13   0x75727103: 'TclNRRunCallbacks + 0x63'
+# 14   0x75728974: 'Tcl_EvalEx + 0xa34'
+# 15   0x757291a8: 'Tcl_Eval + 0x38'
+# 16   0x7572a4f0: 'Tcl_GlobalEval + 0x30'
+# 17   0x4012abe5: '<unknown (@0x4012abe5)>'
+# 18   0x4012b3d5: '<unknown (@0x4012b3d5)>'
+# 19   0x4012c035: '<unknown (@0x4012c035)>'
+# 20   0x401298e5: '<unknown (@0x401298e5)>'
+# 21   0x75725226: 'TclInvokeStringCommand + 0xc6'
+# 22   0x75727103: 'TclNRRunCallbacks + 0x63'
+# 23   0x75727103: 'TclNRRunCallbacks + 0x63'
+# 24   0xaade0d9a: 'Itcl_EvalMemberCode + 0x3ba'
+# 25   0xaade1f5b: 'Itcl_ExecMethod + 0x23b'
+# 26   0xaade9a19: 'Itcl_EvalArgs + 0x1c9'
+# 27   0xaade4cf1: 'Itcl_HandleInstance + 0x2c1'
+# 28   0x75727103: 'TclNRRunCallbacks + 0x63'
+# 29   0x75728974: 'Tcl_EvalEx + 0xa34'
+# 30   0x75727f68: 'Tcl_EvalEx + 0x28'
+# 31   0x7556431a: 'Tk_BindEvent + 0x91a'
+# 32   0x7559bd41: 'TkBindEventProc + 0x291'
+# 33   0x755ac614: 'Tk_HandleEvent + 0x2f4'
+# 34   0x755ab2da: 'TkDeleteThreadExitHandler + 0x31a'
+# 35   0x757da56d: 'Tcl_ServiceEvent + 0xed'
+# 36   0x757da9e4: 'Tcl_DoOneEvent + 0x184'
+# 37   0x755aaee5: 'Tk_MainLoop + 0x25'
+# 38   0x755ed282: 'Tk_MainEx + 0x932'
+# 39   0x401ab032: 'Mtirpc_Init + 0x23642'
+# 40   0x401adc14: 'Mtirpc_Init + 0x26224'
+# 41   0x40771eb0: 'Tclsqlite3_Init + 0x1c000'
+# 42   0xe32ae8d7: 'BaseThreadInitThunk + 0x17'
+# 43   0xe4aac3fc: 'RtlUserThreadStart + 0x2c'
+StackWalk failed 0
+# End of Stack Trace
+

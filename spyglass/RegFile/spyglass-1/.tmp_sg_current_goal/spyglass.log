@@ -1,0 +1,54 @@
+SpyGlass run started at 08:32:27 am on Apr 18 2026 
+
+SpyGlass Predictive Analyzer(R) - Version SpyGlass_vL-2016.06
+Last compiled on May 20 2016
+
+All Rights Reserved. Use, disclosure or duplication
+without prior written permission of Synopsys Inc. is prohibited.
+Technical support: email spyglass_support@synopsys.com.
+
+Loading Policy: spyglass (Version: SpyGlass_vL-2016.06) from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/spyglass
+Loading Shared library libspyglassrules-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libspyglassrules-Linux4.spyso 
+Loading Shared library libsdcInitRules-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libsdcInitRules-Linux4.spyso 
+Loading Shared library librmerules-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/librmerules-Linux4.spyso 
+Loading perl file for 'openmore' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/openmore/openmore-policy.pl
+Version of Policy 'openmore': SpyGlass_vL-2016.06
+Loading Shared library libCoreRules-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libCoreRules-Linux4.spyso 
+Loading Shared library libLexRules-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libLexRules-Linux4.spyso 
+Loading Shared library libVeLint-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libVeLint-Linux4.spyso 
+Loading Shared library libVhLint-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/lib/libVhLint-Linux4.spyso 
+Loading perl file for 'starc' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc/starc-policy.pl
+Version of Policy 'starc': SpyGlass_vL-2016.06
+Loading Shared library libVeStarc-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc/libVeStarc-Linux4.spyso 
+Loading Shared library libVhStarc-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc/libVhStarc-Linux4.spyso 
+Loading perl file for 'starc2005' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2005/starc2005-policy.pl
+Version of Policy 'starc2005': SpyGlass_vL-2016.06
+Loading Shared library libVeStarc2002-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2002/libVeStarc2002-Linux4.spyso 
+Loading Shared library libVhStarc2002-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2002/libVhStarc2002-Linux4.spyso 
+Loading Shared library libVmixedStarc2002-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2002/libVmixedStarc2002-Linux4.spyso 
+Loading Shared library libVeStarc2005-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2005/libVeStarc2005-Linux4.spyso 
+Loading Shared library libVmixedStarc2005-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2005/libVmixedStarc2005-Linux4.spyso 
+Loading Shared library libVhStarc2005-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/starc2005/libVhStarc2005-Linux4.spyso 
+Loading perl file for 'erc' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/erc/erc-policy.pl
+Version of Policy 'erc': SpyGlass_vL-2016.06
+Loading Shared library liberc-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/erc/liberc-Linux4.spyso 
+Loading perl file for 'simulation' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/simulation/simulation-policy.pl
+Version of Policy 'simulation': SpyGlass_vL-2016.06
+Loading Shared library libvcs-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/simulation/libvcs-Linux4.spyso 
+Loading perl file for 'lint' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/lint/lint-policy.pl
+Version of Policy 'lint': SpyGlass_vL-2016.06
+Loading perl file for 'latch' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/latch/latch-policy.pl
+Version of Policy 'latch': SpyGlass_vL-2016.06
+Loading Shared library liblatch-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/latch/liblatch-Linux4.spyso 
+Loading perl file for 'spyglass' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/spyglass/spyglass-policy.pl
+Loading perl file for 'morelint' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/morelint/morelint-policy.pl
+Version of Policy 'morelint': SpyGlass_vL-2016.06
+Loading Shared library libVeMoreLint-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/morelint/libVeMoreLint-Linux4.spyso 
+Loading Shared library libVhMoreLint-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/morelint/libVhMoreLint-Linux4.spyso 
+Loading perl file for 'timing' policy from path: /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/timing/timing-policy.pl
+Version of Policy 'timing': SpyGlass_vL-2016.06
+Loading Shared library libtiming-Linux4.spyso from /home/synopsys/SpyGlass-L2016.06/SPYGLASS_HOME/policies/timing/libtiming-Linux4.spyso 
+Version of Policy 'starc2002': SpyGlass_vL-2016.06
+ Reading waiver file "./spyglass-1/UC_regfile/lint/lint_rtl/spyglass_spysch/waiver/pragma2Waiver.swl" ...
+ Reading included SGDC file "./spyglass-1/UC_regfile/lint/lint_rtl/spyglass_spysch/waiver/pragma2Waiver_varfile.swl" ....
+0 {Rule-checking completed with warnings}

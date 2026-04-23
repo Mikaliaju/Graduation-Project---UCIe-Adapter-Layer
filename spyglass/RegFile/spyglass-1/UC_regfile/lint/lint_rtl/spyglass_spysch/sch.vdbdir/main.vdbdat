@@ -1,0 +1,248 @@
+#x HLBEGIN S.1
+#x {}
+#x 77 { @@n 0 @@p 0 }
+#x HLEND
+#x HLBEGIN S.2
+#x {}
+#x 77 { @@n 3 @@p 3 }
+#x HLEND
+#x HLBEGIN S.3
+#x {}
+#x 77 { @@n 4 @@p 4 }
+#x HLEND
+#x HLBEGIN S.4
+#x {}
+#x 77 { @@n 8 @@p 8 }
+#x HLEND
+#x HLBEGIN S.5
+#x {}
+#x 77 { @@n 9 @@p 9 }
+#x HLEND
+#x HLBEGIN S.6
+#x {}
+#x 77 { @@n 10 @@p 10 }
+#x HLEND
+#x HLBEGIN S.7
+#x {}
+#x 77 { @@n 11 @@p 11 }
+#x HLEND
+#x HLBEGIN S.8
+#x {}
+#x 77 { @@n 12 @@p 12 }
+#x HLEND
+#x HLBEGIN S.9
+#x {}
+#x 77 { @@n 14 @@p 14 }
+#x HLEND
+#x HLBEGIN S.10
+#x {}
+#x 77 { @@n 18 @@p 18 }
+#x HLEND
+#x HLBEGIN S.11
+#x {}
+#x 77 { @@n 22 @@p 22 }
+#x HLEND
+#x HLBEGIN S.12
+#x {}
+#x 77 { @@n 25 @@p 25 }
+#x HLEND
+#x HLBEGIN S.13
+#x {}
+#x 77 { @@n 26 @@p 26 }
+#x HLEND
+#x HLBEGIN S.14
+#x {}
+#x 77 { @@n 27 @@p 27 }
+#x HLEND
+#x HLBEGIN S.15
+#x {}
+#x 77 { @@n 28 @@p 28 }
+#x HLEND
+#x HLBEGIN S.16
+#x {}
+#x 77 { @@n 30 @@p 30 }
+#x HLEND
+#x HLBEGIN S.17
+#x {}
+#x 77 { @@n 31 @@p 31 }
+#x HLEND
+#x HLBEGIN S.18
+#x {}
+#x 77 { @@n 32 @@p 32 }
+#x HLEND
+#x HLBEGIN S.19
+#x {}
+#x 77 { @@n 34 @@p 34 }
+#x HLEND
+#x HLBEGIN S.20
+#x {}
+#x 77 { @@n 67 @@p 67 }
+#x HLEND
+#x HLBEGIN S.21
+#x {}
+#x 77 { @@n 100 @@p 100 }
+#x HLEND
+#x HLBEGIN S.22
+#x {}
+#x 77 { @@n 102 @@p 102 }
+#x HLEND
+#x HLBEGIN S.23
+#x {}
+#x 77 { @@n 103 @@p 103 }
+#x HLEND
+#x HLBEGIN S.24
+#x {}
+#x 77 { @@n 105 @@p 105 }
+#x HLEND
+#x HLBEGIN S.25
+#x {}
+#x 77 { @@n 169 @@p 169 }
+#x HLEND
+#x HLBEGIN S.26
+#x {}
+#x 77 { @@n 171 @@p 171 }
+#x HLEND
+#x HLBEGIN S.27
+#x {}
+#x 77 { @@n 235 @@p 235 }
+#x HLEND
+#x HLBEGIN S.28
+#x {}
+#x 77 { @@n 237 @@p 237 }
+#x HLEND
+#x HLBEGIN S.29
+#x {}
+#x 77 { @@n 301 @@p 301 }
+#x HLEND
+#x HLBEGIN S.30
+#x {}
+#x 77 { @@n 303 @@p 303 }
+#x HLEND
+#x HLBEGIN S.31
+#x {}
+#x 77 { @@n 367 @@p 367 }
+#x HLEND
+#x HLBEGIN S.32
+#x {}
+#x 77 { @@n 369 @@p 369 }
+#x HLEND
+#x HLBEGIN S.33
+#x {}
+#x 77 { @@n 433 @@p 433 }
+#x HLEND
+#x HLBEGIN S.34
+#x {}
+#x 77 { @@n 435 @@p 435 }
+#x HLEND
+#x HLBEGIN S.35
+#x {}
+#x 77 { @@n 440 @@p 440 }
+#x HLEND
+#x HLBEGIN S.36
+#x {}
+#x 77 { @@n 442 @@p 442 }
+#x HLEND
+#x HLBEGIN S.37
+#x {}
+#x 77 { @@n 506 @@p 506 }
+#x HLEND
+#x HLBEGIN S.38
+#x {}
+#x 77 { @@n 508 @@p 508 }
+#x HLEND
+#x HLBEGIN S.39
+#x {}
+#x 77 { @@n 517 @@p 517 }
+#x HLEND
+#x HLBEGIN S.40
+#x {}
+#x 77 { @@n 541 @@p 541 }
+#x HLEND
+#x HLBEGIN S.41
+#x {}
+#x 77 { @@n 542 @@p 542 }
+#x HLEND
+#x HLBEGIN S.42
+#x {}
+#x 77 { @@n 543 @@p 543 }
+#x HLEND
+#x HLBEGIN S.43
+#x {}
+#x 77 { @@n 544 @@p 544 }
+#x HLEND
+#x HLBEGIN S.44
+#x {}
+#x 77 { @@n 545 @@p 545 }
+#x HLEND
+#x HLBEGIN S.45
+#x {}
+#x 77 { @@n 546 @@p 546 }
+#x HLEND
+#x HLBEGIN S.46
+#x {}
+#x 77 { @@n 547 @@p 547 }
+#x HLEND
+#x HLBEGIN S.47
+#x {}
+#x 77 { @@n 548 @@p 548 }
+#x HLEND
+#x HLBEGIN S.48
+#x {}
+#x 77 { @@n 549 @@p 549 }
+#x HLEND
+#x HLBEGIN S.49
+#x {}
+#x 77 { @@n 550 @@p 550 }
+#x HLEND
+#x HLBEGIN S.50
+#x {}
+#x 77 { @@n 551 @@p 551 }
+#x HLEND
+#x HLBEGIN S.51
+#x {}
+#x 77 { @@n 553 @@p 553 }
+#x HLEND
+#x HLBEGIN S.52
+#x {}
+#x 77 { @@n 799 @@p 799 }
+#x HLEND
+#x HLBEGIN S.53
+#x {}
+#x 77 { @@n 803 @@p 803 }
+#x HLEND
+#x HLBEGIN S.54
+#x {}
+#x 77 { @@n 807 @@p 807 }
+#x HLEND
+#x HLBEGIN S.55
+#x {}
+#x 77 { @@n 874 @@p 874 }
+#x HLEND
+#x HLBEGIN S.56
+#x {}
+#x 77 { @@n 875 @@p 875 }
+#x HLEND
+#x HLBEGIN S.57
+#x {}
+#x 77 { @@n 877 @@p 877 }
+#x HLEND
+#x HLBEGIN S.58
+#x {}
+#x 77 { @@n 910 @@p 910 }
+#x HLEND
+#x HLBEGIN S.59
+#x {}
+#x 77 { @@n 943 @@p 943 }
+#x HLEND
+#x HLBEGIN S.60
+#x {}
+#x 77 { @@n 945 @@p 945 }
+#x HLEND
+#x HLBEGIN S.61
+#x {{COLOR=>1;}{COLOR=>2;}{COLOR=>3;}{COLOR=>4;}}
+#x !{-8 0 0 -4 1 0}
+#x 77 { @@i 1261 a 0 @@i 1260 a 0 @@i 98676 a 0 @@i 98676 a 1 @@i 172255 a 2
+#x @@i 174559 a 3 @@t0 0 174559 3 @@t0 1 1261 0 @@t0 2 1261 1 @@t0 3 1260 0
+#x @@t0 4 1260 1 @@t0 5 98676 0 @@t0 6 98676 1 @@p0 7 2 @@t1 0 172255 3
+#x @@t1 1 98676 0 @@t1 2 98676 1 @@p1 3 2 }
+#x HLEND

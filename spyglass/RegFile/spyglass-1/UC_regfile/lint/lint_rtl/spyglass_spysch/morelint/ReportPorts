@@ -1,0 +1,83 @@
+SCHEMA@@PName@@Dir@@Msb@@Lsb@@Desc@@DU@@DU_BBOX
+VALUE@@i_init@@INPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@i_clk@@INPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@i_rst_n@@INPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@i_fdi_lp_linkerror@@INPUT@@0@@0@@Must be used in the Uncorrectabl...@@UC_regfile@@No
+VALUE@@o_fdi_pl_error@@OUTPUT@@0@@0@@masked@@UC_regfile@@No
+VALUE@@o_fdi_pl_cerror@@OUTPUT@@0@@0@@logged@@UC_regfile@@No
+VALUE@@o_fdi_pl_nferror@@OUTPUT@@0@@0@@logged only@@UC_regfile@@No
+VALUE@@o_fdi_pl_trainerror@@OUTPUT@@0@@0@@any internal errors set this sig...@@UC_regfile@@No
+VALUE@@i_rdi_pl_trainerror@@INPUT@@0@@0@@phy Error@@UC_regfile@@No
+VALUE@@i_rdi_pl_error@@INPUT@@0@@0@@recoverable through retrain@@UC_regfile@@No
+VALUE@@i_rdi_pl_cerror@@INPUT@@0@@0@@logged correctable error@@UC_regfile@@No
+VALUE@@i_rdi_pl_nferror@@INPUT@@0@@0@@logged only@@UC_regfile@@No
+VALUE@@i_rdi_pl_phyinrecenter@@INPUT@@0@@0@@used to tell whether the link is...@@UC_regfile@@No
+VALUE@@i_rdi_pl_speedmode@@INPUT@@2@@0@@logging@@UC_regfile@@No
+VALUE@@i_rdi_pl_lnk_cfg@@INPUT@@2@@0@@logging @@UC_regfile@@No
+VALUE@@i_adpater_lsm_response_type@@INPUT@@0@@0@@! state at which timeout happened@@UC_regfile@@No
+VALUE@@i_link_status@@INPUT@@0@@0@@! Link Status indication@@UC_regfile@@No
+VALUE@@i_ce_adapter_transition_retrain@@INPUT@@0@@0@@! ALSM in retrain indication@@UC_regfile@@No
+VALUE@@i_ALSM_start_param_exch@@INPUT@@0@@0@@! ALSM trigger for parameter exc...@@UC_regfile@@No
+VALUE@@o_linkerror@@OUTPUT@@0@@0@@! Uncorrectable error signal fro...@@UC_regfile@@No
+VALUE@@o_start_retrain@@OUTPUT@@0@@0@@! SW retrain through Register File@@UC_regfile@@No
+VALUE@@i_MB_Receiver_Overflow@@INPUT@@0@@0@@Inputs from MB@@UC_regfile@@No
+VALUE@@i_MB_CRC_Error_Detected@@INPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@i_MB_Correctable_Internal_Error@@INPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@i_sb_mailbox_data_low@@INPUT@@31@@0@@Completion data low written back...@@UC_regfile@@No
+VALUE@@i_sb_mailbox_data_high@@INPUT@@31@@0@@Completion data high written bac...@@UC_regfile@@No
+VALUE@@i_sb_mailbox_status@@INPUT@@1@@0@@Mailbox status encoding (success...@@UC_regfile@@No
+VALUE@@i_sb_mailbox_data_vld@@INPUT@@0@@0@@Indicates mailbox data is valid ...@@UC_regfile@@No
+VALUE@@i_sb_mailbox_trigger_en@@INPUT@@0@@0@@Used to clear trigger after comp...@@UC_regfile@@No
+VALUE@@i_sb_Header_log1@@INPUT@@63@@0@@Log header for error cases (UR/CA)@@UC_regfile@@No
+VALUE@@i_sb_Header_log1_valid@@INPUT@@0@@0@@Pulse to indicate log is valid@@UC_regfile@@No
+VALUE@@i_sb_adapter_advcap@@INPUT@@63@@0@@Logging: advertised adapter cap ...@@UC_regfile@@No
+VALUE@@i_sb_adapter_advcap_valid@@INPUT@@0@@0@@Write enable for advertised adap...@@UC_regfile@@No
+VALUE@@i_sb_cxl_advcap@@INPUT@@63@@0@@Logging: advertised CXL cap valu...@@UC_regfile@@No
+VALUE@@i_sb_cxl_advcap_valid@@INPUT@@0@@0@@Write enable for advertised CXL ...@@UC_regfile@@No
+VALUE@@i_sb_adapter_fincap@@INPUT@@63@@0@@Logging: finalized adapter cap w...@@UC_regfile@@No
+VALUE@@i_sb_adapter_fincap_valid@@INPUT@@0@@0@@Write enable for finalized adapt...@@UC_regfile@@No
+VALUE@@i_sb_cxl_fincap@@INPUT@@63@@0@@Logging: finalized CXL cap writt...@@UC_regfile@@No
+VALUE@@i_sb_cxl_fincap_valid@@INPUT@@0@@0@@Write enable for cxl fincap stat...@@UC_regfile@@No
+VALUE@@i_sb_flit_fromat_status@@INPUT@@4@@0@@Writes final negotiated flit for...@@UC_regfile@@No
+VALUE@@i_sb_flitfmt_valid@@INPUT@@0@@0@@Write enable for flit format sta...@@UC_regfile@@No
+VALUE@@i_sb_write_data@@INPUT@@63@@0@@Write data of the request@@UC_regfile@@No
+VALUE@@i_sb_write_en@@INPUT@@0@@0@@Write enable@@UC_regfile@@No
+VALUE@@i_sb_BE@@INPUT@@7@@0@@Byte enable@@UC_regfile@@No
+VALUE@@i_sb_address@@INPUT@@23@@0@@Address of request@@UC_regfile@@No
+VALUE@@i_sb_config_req@@INPUT@@0@@0@@Config or memory request flag@@UC_regfile@@No
+VALUE@@i_sb_32_B@@INPUT@@0@@0@@32 or 64 bits for data flag@@UC_regfile@@No
+VALUE@@i_sb_invalid_param_exch@@INPUT@@0@@0@@Invalid parameter exchange@@UC_regfile@@No
+VALUE@@i_sb_local_timeout@@INPUT@@0@@0@@Timeout due to local request@@UC_regfile@@No
+VALUE@@i_sb_remote_timeout@@INPUT@@0@@0@@Timeout due to remote request@@UC_regfile@@No
+VALUE@@i_sb_fdi_overflow@@INPUT@@0@@0@@FDI overflow@@UC_regfile@@No
+VALUE@@i_sb_rdi_overflow@@INPUT@@0@@0@@RDI overflow@@UC_regfile@@No
+VALUE@@i_sb_parity_error@@INPUT@@0@@0@@Parity error from TX or RX@@UC_regfile@@No
+VALUE@@i_sb_param_exch_timeout@@INPUT@@0@@0@@Parameter exchange timeout@@UC_regfile@@No
+VALUE@@i_sb_invalid_opcode_id@@INPUT@@0@@0@@Uncorrectable error due to inval...@@UC_regfile@@No
+VALUE@@i_sb_param_exch_done@@INPUT@@0@@0@@SB finished parameter exchange s...@@UC_regfile@@No
+VALUE@@i_sb_in_error_msg_encoding@@INPUT@@0@@0@@Receiving err msg from remote di...@@UC_regfile@@No
+VALUE@@o_sb_mailbox_trigger@@OUTPUT@@0@@0@@Mailbox trigger bit@@UC_regfile@@No
+VALUE@@o_sb_mailbox_index_low@@OUTPUT@@31@@0@@Contains opcode/BE/address lower...@@UC_regfile@@No
+VALUE@@o_sb_mailbox_index_high@@OUTPUT@@4@@0@@Upper bits of address@@UC_regfile@@No
+VALUE@@o_sb_mailbox_data_low@@OUTPUT@@31@@0@@Payload lower 32b@@UC_regfile@@No
+VALUE@@o_sb_mailbox_data_high@@OUTPUT@@31@@0@@Payload upper 32b@@UC_regfile@@No
+VALUE@@o_sb_remote_threshold@@OUTPUT@@3@@0@@Max allowed number of timeouts b...@@UC_regfile@@No
+VALUE@@o_sb_adapter_advcap@@OUTPUT@@63@@0@@Local Advertised Adapter Capabil...@@UC_regfile@@No
+VALUE@@o_sb_cxl_advcap@@OUTPUT@@63@@0@@Local Advertised CXL Capabilitie...@@UC_regfile@@No
+VALUE@@o_sb_flit_fmt_status@@OUTPUT@@4@@0@@Current negotiated flit format f...@@UC_regfile@@No
+VALUE@@o_sb_status@@OUTPUT@@2@@0@@Completion status@@UC_regfile@@No
+VALUE@@o_sb_read_data@@OUTPUT@@63@@0@@Read data from register@@UC_regfile@@No
+VALUE@@o_sb_out_error_msg_encoding@@OUTPUT@@0@@0@@Sending err msg from remote die ...@@UC_regfile@@No
+VALUE@@i_sb_format4_enabled@@OUTPUT@@0@@0@@Enable format 4@@UC_regfile@@No
+VALUE@@i_sb_format6_enabled@@OUTPUT@@0@@0@@Enable format 6@@UC_regfile@@No
+VALUE@@i_sw_mailbox_data_low@@INPUT@@31@@0@@Completion data low written back...@@UC_regfile@@No
+VALUE@@i_sw_mailbox_data_high@@INPUT@@31@@0@@Completion data high written bac...@@UC_regfile@@No
+VALUE@@i_sw_mailbox_status@@INPUT@@1@@0@@Mailbox status encoding (success...@@UC_regfile@@No
+VALUE@@i_sw_mailbox_trigger_en@@INPUT@@0@@0@@Used to clear trigger after comp...@@UC_regfile@@No
+VALUE@@o_sw_mailbox_trigger@@OUTPUT@@0@@0@@Mailbox trigger bit@@UC_regfile@@No
+VALUE@@o_sw_mailbox_index_low@@OUTPUT@@31@@0@@Contains opcode/BE/address lower...@@UC_regfile@@No
+VALUE@@o_sw_mailbox_index_high@@OUTPUT@@4@@0@@Upper bits of address@@UC_regfile@@No
+VALUE@@o_sw_mailbox_data_low@@OUTPUT@@31@@0@@Payload lower 32b@@UC_regfile@@No
+VALUE@@o_sw_mailbox_data_high@@OUTPUT@@31@@0@@Payload upper 32b@@UC_regfile@@No
+VALUE@@o_uncorrectable_error_IRQ@@OUTPUT@@0@@0@@-@@UC_regfile@@No
+VALUE@@o_correctable_error_IRQ@@OUTPUT@@0@@0@@-@@UC_regfile@@No

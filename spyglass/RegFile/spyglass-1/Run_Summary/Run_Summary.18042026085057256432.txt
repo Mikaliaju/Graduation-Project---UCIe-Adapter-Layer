@@ -1,0 +1,14 @@
+Date Created     : 18-04-2026 08:50:57
+SpyGlass Version : SpyGlass_vL-2016.06
+Project Name     : spyglass-1
+Goal Name        : Design_Read
+Scenario Name    : default_scenario
+Top              : UC_regfile
+
+Message Summary
+Severity   Non-Waived  Waived
+FATAL           0         0
+ERROR           0         0
+WARNING         0         0
+INFO            2         0
+

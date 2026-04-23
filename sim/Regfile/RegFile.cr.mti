@@ -1,0 +1,43 @@
+D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_regfile_sv_unit
+-- Importing package UC_ALSM_package
+-- Importing package UC_SB_package
+-- Importing package UC_regfile_package
+-- Compiling module UC_regfile
+
+Top level modules:
+	UC_regfile
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_ALSM_package.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_ALSM_package.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_ALSM_package
+
+Top level modules:
+	--none--
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_SB_package.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_SB_package.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_SB_package
+
+Top level modules:
+	--none--
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Regfile/UC_regfile_tb.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Regfile/UC_regfile_tb.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_regfile_tb_sv_unit
+-- Importing package UC_ALSM_package
+-- Importing package UC_SB_package
+-- Compiling module UC_regfile_tb
+
+Top level modules:
+	UC_regfile_tb
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_regfile_package.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_regfile_package.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_regfile_package
+
+Top level modules:
+	--none--
+
+} {} {}}

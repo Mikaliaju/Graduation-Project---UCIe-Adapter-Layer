@@ -1,0 +1,57 @@
+-1 "DetectTopDesignUnits" 2
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+-1 "ElabSummary" 2
+"RULEGROUP"
+["Design Read"]
+"BUILTIN"
+"1"
+-1 "RegInputOutput-ML" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[63]
+"RULEGROUP"
+["morelint"]
+-1 "ReportPortInfo-ML" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[42]
+"RULEGROUP"
+["morelint"]
+-1 "STARC05-1.3.1.3" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[80]
+"RULEGROUP"
+["starc2005/s05_Construct/s05_Construct1","starc2005/Basic_Design_Constraint_05"]
+-1 "STARC05-2.2.3.3" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[45]
+"RULEGROUP"
+["starc2005/s05_Quality/s05_Quality1","starc2005/RTL_Description_Technique_05"]
+-1 "W240" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[53]
+"RULEGROUP"
+["lint/Lint_Elab_Rules","lint/Usage"]
+-1 "W415a" 3
+"TEMPLATE"
+["lint/lint_rtl"]
+"RULE_ORDER"
+[91]
+"RULEGROUP"
+["lint/MultipleDriver"]
+-1 "checkCMD_duplicate03" 2
+"RULEGROUP"
+["Command-line read"]
+"BUILTIN"
+"1"
