@@ -1,6 +1,110 @@
 m255
 K4
 z2
+Z0 !s99 nomlopt
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
 !s11f MIXED_VERSIONS
 13
 !s112 1.1
@@ -8,57 +112,207 @@ z2
 !i10e 25
 !i10f 100
 cModel Technology
-Z0 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Regfile
+Z1 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Regfile
+T_opt
+!s110 1776979895
+V9P>ljONkWDYhK?hI>J1oB2
+04 13 4 work UC_regfile_tb fast 0
+=1-28d043fe16f2-69ea8fb6-3d7-2d90
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work +acc
+Z2 tCvgOpt 0
+n@_opt
+OL;O;2021.1;73
+XUC_ALSM_package
+Z3 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z4 !s110 1776979894
+!i10b 1
+!s100 eN4z3[<K2L]]nkH9gNA`[3
+Im`J]MNNOL8?hajJZL<Hm?1
+S1
+R1
+w1773445101
+8../../src/rtl/common/UC_ALSM_package.sv
+F../../src/rtl/common/UC_ALSM_package.sv
+!i122 315
+Z5 L0 1 0
+Vm`J]MNNOL8?hajJZL<Hm?1
+Z6 OL;L;2021.1;73
+r1
+!s85 0
+31
+Z7 !s108 1776979894.000000
+Z8 !s107 UC_regfile_tb.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_SB_package.sv|../../src/rtl/common/UC_ALSM_package.sv|
+Z9 !s90 -reportprogress|300|-f|sources.list|
+!i113 0
+Z10 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2
+n@u@c_@a@l@s@m_package
 vUC_regfile
-Z1 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-DXx4 work 18 UC_regfile_sv_unit 0 22 <92LGfDXEWmdLE5c:YQcB3
-Z2 !s110 1776392966
-VDg1SIo80bB@j0V0VzS_@n1
+R3
+Z11 DXx4 work 15 UC_ALSM_package 0 22 m`J]MNNOL8?hajJZL<Hm?1
+Z12 DXx4 work 13 UC_SB_package 0 22 k8G5^GeE7cMm72]Am]I_U0
+Z13 DXx4 work 18 UC_regfile_package 0 22 6j9^o8820BXjSR5]HO0Sl3
+DXx4 work 18 UC_regfile_sv_unit 0 22 8PnT[Uj_BAc6L^o<C`PY>3
+R4
+Z14 VDg1SIo80bB@j0V0VzS_@n1
 r1
 !s85 0
 !i10b 1
-!s100 YM[n2kHkmnC^0]8:o2Q[^2
-ILf_=TbF;c6AzSV9@0J8;Q2
+!s100 HUSl`PE5IkRN5?ebOORz40
+ILmWSSmdgD5UTf@3:R=gfz1
 !s105 UC_regfile_sv_unit
 S1
-R0
-Z3 w1776392682
-Z4 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv
-Z5 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv
-!i122 1
-L0 17 332
-Z6 OL;L;2021.1;73
-31
-Z7 !s108 1776392966.000000
-!s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv|
-Z8 !s90 -reportprogress|300|-work|work|-vopt|-sv|-stats=none|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv|
-!i113 0
-Z9 o-work work -sv -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
-Z10 tCvgOpt 0
-n@u@c_regfile
-XUC_regfile_sv_unit
 R1
-R2
-V<92LGfDXEWmdLE5c:YQcB3
-r1
-!s85 0
-!i10b 1
-!s100 71k:^g9@^<zOTEDT80JFm2
-I<92LGfDXEWmdLE5c:YQcB3
-!i103 1
-S1
-R0
-R3
-R4
-R5
-!i122 1
-L0 3 0
+Z15 w1776979802
+Z16 8../../src/rtl/RegisterFile/UC_regfile.sv
+Z17 F../../src/rtl/RegisterFile/UC_regfile.sv
+!i122 315
+L0 19 440
 R6
 31
 R7
-Z11 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/RegisterFile/UC_regfile.sv|
 R8
-!i113 0
 R9
+!i113 0
 R10
+R2
+n@u@c_regfile
+XUC_regfile_package
+R3
+R4
+!i10b 1
+!s100 C[ID>4P@AP`;ViZ<]`@6W1
+I6j9^o8820BXjSR5]HO0Sl3
+S1
+R1
+w1776979787
+8../../src/rtl/common/UC_regfile_package.sv
+F../../src/rtl/common/UC_regfile_package.sv
+!i122 315
+L0 2 0
+V6j9^o8820BXjSR5]HO0Sl3
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 0
+R10
+R2
+n@u@c_regfile_package
+XUC_regfile_sv_unit
+R3
+R11
+R12
+R13
+R4
+V8PnT[Uj_BAc6L^o<C`PY>3
+r1
+!s85 0
+!i10b 1
+!s100 7FRPe90oc71Jj2KheV`jM2
+I8PnT[Uj_BAc6L^o<C`PY>3
+!i103 1
+S1
+R1
+R15
+R16
+R17
+!i122 315
+R5
+R6
+31
+R7
+R8
+R9
+!i113 0
+R10
+R2
 n@u@c_regfile_sv_unit
+vUC_regfile_tb
+R3
+R3
+R11
+R12
+DXx4 work 21 UC_regfile_tb_sv_unit 0 22 hd=;`h49:gXW0f8L;0UaU3
+R4
+R14
+r1
+!s85 0
+!i10b 1
+!s100 `PWG1V[`VQcgRFjo[acMZ1
+IRhPGNWi46;73`FO>h]d=20
+!s105 UC_regfile_tb_sv_unit
+S1
+R1
+Z18 w1776979686
+Z19 8UC_regfile_tb.sv
+Z20 FUC_regfile_tb.sv
+!i122 315
+L0 18 406
+R6
+31
+R7
+R8
+R9
+!i113 0
+R10
+R2
+n@u@c_regfile_tb
+XUC_regfile_tb_sv_unit
+R3
+R3
+R11
+R12
+R4
+Vhd=;`h49:gXW0f8L;0UaU3
+r1
+!s85 0
+!i10b 1
+!s100 G?2VP=b[BZL:dNYPnM@242
+Ihd=;`h49:gXW0f8L;0UaU3
+!i103 1
+S1
+R1
+R18
+R19
+R20
+!i122 315
+R5
+R6
+31
+R7
+R8
+R9
+!i113 0
+R10
+R2
+n@u@c_regfile_tb_sv_unit
+XUC_SB_package
+R3
+R4
+!i10b 1
+!s100 <5dTk]_zJP]?o3e:h4YT93
+Ik8G5^GeE7cMm72]Am]I_U0
+S1
+R1
+w1776710447
+8../../src/rtl/common/UC_SB_package.sv
+F../../src/rtl/common/UC_SB_package.sv
+!i122 315
+R5
+Vk8G5^GeE7cMm72]Am]I_U0
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 0
+R10
+R2
+n@u@c_@s@b_package

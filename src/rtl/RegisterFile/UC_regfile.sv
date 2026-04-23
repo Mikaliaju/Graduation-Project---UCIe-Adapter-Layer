@@ -1,34 +1,36 @@
+import UC_ALSM_package::*;
+import UC_SB_package::*;
+import UC_regfile_package::*;
 
-// import UC_ALSM_package::*;
-typedef enum logic [1:0] {
-    NONE_ERR, 
-    Correctable_Err, 
-    NON_FATAL_Err, 
-    FATAL_Err
-} sb_error_msg_encoding;
-typedef enum logic [2:0] {
-	Active_LSM_response_type    = 'b001,
-	L1_LSM_response_type        = 'b010,
-	L2_LSM_response_type        = 'b011,
-	LinkReset_LSM_response_type = 'b100,
-	Disable_LSM_response_type   = 'b101
-} Adapter_Response;
+// typedef enum logic [1:0] {
+//     NONE_ERR, 
+//     Correctable_Err, 
+//     NON_FATAL_Err, 
+//     FATAL_Err
+// } sb_error_msg_encoding;
+// typedef enum logic [2:0] {
+// 	Active_LSM_response_type    = 'b001,
+// 	L1_LSM_response_type        = 'b010,
+// 	L2_LSM_response_type        = 'b011,
+// 	LinkReset_LSM_response_type = 'b100,
+// 	Disable_LSM_response_type   = 'b101
+// } Adapter_Response;
 
 module UC_regfile
 (
 
-  input logic i_init,
-  input logic i_clk,
-  input logic i_rst_n,
+  input logic       i_init,
+  input logic       i_clk,
+  input logic       i_rst_n,
 
   // FDI Inputs
-  input logic i_fdi_lp_linkerror,                        // Must be used in the Uncorrectable Error reg
+  input logic       i_fdi_lp_linkerror,                        // Must be used in the Uncorrectable Error reg
   
   // FDI Outputs
-  output logic o_fdi_pl_error,                          // masked
-  output logic o_fdi_pl_cerror,                         // logged
-  output logic o_fdi_pl_nferror,                        // logged only
-  output logic o_fdi_pl_trainerror,                     // any internal errors set this signal
+  // output logic      o_fdi_pl_error,                          // masked
+  output logic      o_fdi_pl_cerror,                         // logged
+  output logic      o_fdi_pl_nferror,                        // logged only
+  output logic      o_fdi_pl_trainerror,                     // any internal errors set this signal
 
 
   // RDI Inputs
@@ -50,8 +52,8 @@ module UC_regfile
 	input logic       		 i_ALSM_start_param_exch,           //! ALSM trigger for parameter exchange to SB
 
 	// ALSM Outputs
-	output logic            o_linkerror, 		                 //! Uncorrectable error signal from regfile
-	output logic 			      o_start_retrain,                 //! SW retrain through Register File
+	output logic        o_linkerror, 		                 //! Uncorrectable error signal from regfile
+	output logic 			  o_start_retrain,                 //! SW retrain through Register File
 
   // Inputs from MB
   input  logic        i_MB_Receiver_Overflow,
@@ -116,8 +118,8 @@ module UC_regfile
 
   output sb_error_msg_encoding  o_sb_out_error_msg_encoding,     // Sending err msg from remote die (fatal, non fatal, etc)
 
-  output  logic        i_sb_format4_enabled,           // Enable format 4
-  output  logic        i_sb_format6_enabled,           // Enable format 6
+  output  logic       o_sb_format4_enabled,           // Enable format 4
+  output  logic       o_sb_format6_enabled,           // Enable format 6
 
   // Input to SW
   input  logic [31:0] i_sw_mailbox_data_low,          // Completion data low written back to mailbox
@@ -137,35 +139,6 @@ module UC_regfile
 
 );
 
-localparam DVSEC_DEPTH       = 'h48;
-localparam DATA_WIDTH        = 'd32;
-localparam MEM_BLOCK_DEPTH   = 'd4096 / 4;
-
-localparam [DVSEC_DEPTH - 1 : 0] PCIE_EX_WORD_OFFSET               = 'h0  / 'd4;
-localparam [DVSEC_DEPTH - 1 : 0] LINK_CAPABILITY_WORD_OFFSET       = 'hA  / 'd4;
-localparam [DVSEC_DEPTH - 1 : 0] LINK_CONTROL_WORD_OFFSET          = 'h10 / 'd4;
-localparam [DVSEC_DEPTH - 1 : 0] LINK_STATUS_WORD_OFFSET           = 'h14 / 'd4;
-localparam [DVSEC_DEPTH - 1 : 0] LINK_NOTIFICATION_WORD_OFFSET     = 'h18 / 'd4;
-localparam [DVSEC_DEPTH - 1 : 0] ERROR_AND_TESTING_WORD_OFFSET     = 'h30;
-localparam [DVSEC_DEPTH - 1 : 0] MAILBOX_INDEX_LOW_WORD_OFFSET     = 'd24;
-localparam [DVSEC_DEPTH - 1 : 0] MAILBOX_INDEX_HIGH_WORD_OFFSET    = MAILBOX_INDEX_LOW_WORD_OFFSET + 1;
-localparam [DVSEC_DEPTH - 1 : 0] MAILBOX_DATA_LOW_WORD_OFFSET      = MAILBOX_INDEX_LOW_WORD_OFFSET + 2;
-localparam [DVSEC_DEPTH - 1 : 0] MAILBOX_DATA_HIGH_WORD_OFFSET     = MAILBOX_INDEX_LOW_WORD_OFFSET + 3;
-
-localparam [MEM_BLOCK_DEPTH - 1 : 0] VENDOR_ID_WORD_OFFSET                    = 'd0;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] VENDOR_REGISTER_WORD_OFFSET              = 'd2;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET   = 'h10 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] UNCORRECTABLE_ERROR_MASK_WORD_OFFSET     = 'h14 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] UNCORRECTABLE_ERROR_SEVERITY_WORD_OFFSET = 'h18 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] CORRECTABLE_ERROR_STATUS_WORD_OFFSET     = 'h1C / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] CORRECTABLE_ERROR_MASK_WORD_OFFSET       = 'h20 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] HEADER_LOG1_WORD_OFFSET                  = 'h24 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] HEADER_LOG2_WORD_OFFSET                  = 'h2C / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] ADV_CAP_WORD_OFFSET                      = 'h54 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] FIN_CAP_WORD_OFFSET                      = 'h5C / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] ADV_CAP_CXL_WORD_OFFSET                  = 'h64 / 'd4;
-localparam [MEM_BLOCK_DEPTH - 1 : 0] FIN_CAP_CXL_WORD_OFFSET                  = 'h6C / 'd4;
-
 logic w_mailbox_control_bit;
 logic [1:0] w_mailbox_status;
 
@@ -183,27 +156,8 @@ logic w_crc_error_detected_comb, w_adapter_lsm_transition_retrain_comb,
       w_correctable_internal_error_comb, w_sideband_cerror_msg_received_comb;
 logic [31:0] w_correctable_error_status_comb;
 
+logic [63:0] w_sb_read_data_comb;
 logic w_fdi_pl_cerror_comb, w_fdi_pl_nferror_comb, w_fdi_pl_trainerror_comb;
-
-function automatic void calc_config_lanes(
-    input  int          byte_idx,
-    input  logic [11:0] base_addr,
-    output logic [11:0] word_lane,
-    output logic [1:0]  byte_lane
-);
-    word_lane = base_addr + byte_idx;
-    byte_lane =  base_addr[1:0] + byte_idx;
-endfunction
-
-function automatic void calc_mem_lanes(
-    input  int          byte_idx,
-    input  logic [19:0] base_addr,
-    output logic [19:0] word_lane,
-    output logic [1:0]  byte_lane
-);
-    word_lane = base_addr + byte_idx;
-    byte_lane =  base_addr[1:0] + byte_idx;
-endfunction
 
 assign w_fdi_pl_cerror_comb     = |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] & mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]};
 
@@ -217,26 +171,26 @@ assign w_fdi_pl_trainerror_comb = |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OF
                                     mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]
                                    };
 
-
 assign o_start_retrain         =  dvsec[LINK_CONTROL_WORD_OFFSET][11];
 assign o_linkerror             =  mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET][5] | {|dvsec[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET][3:0]};
 assign w_mailbox_control_bit   =  dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0];
 assign w_mailbox_status        =  dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8];
 
-assign r_header_log2           = mem_block[HEADER_LOG2_WORD_OFFSET];
+assign r_header_log2           =  mem_block[HEADER_LOG2_WORD_OFFSET];
 
-assign o_sb_mailbox_trigger    = w_mailbox_control_bit;
-assign o_sb_mailbox_index_low  = dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
-assign o_sb_mailbox_index_high = dvsec[MAILBOX_INDEX_HIGH_WORD_OFFSET];
-assign o_sb_mailbox_data_low   = dvsec[MAILBOX_DATA_LOW_WORD_OFFSET];
-assign o_sb_mailbox_data_high  = dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET];
-assign o_sb_remote_threshold   = dvsec[ERROR_AND_TESTING_WORD_OFFSET][3:0];
-assign o_sb_adapter_advcap     = {mem_block[ADV_CAP_WORD_OFFSET + 1], mem_block[ADV_CAP_WORD_OFFSET]};
-assign o_sb_cxl_advcap         = {mem_block[ADV_CAP_CXL_WORD_OFFSET + 1], mem_block[ADV_CAP_CXL_WORD_OFFSET]};
-assign o_sb_flit_fmt_status    = w_mailbox_status;
+assign o_sb_mailbox_trigger    =  w_mailbox_control_bit;
+assign o_sb_mailbox_index_low  =  dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
+assign o_sb_mailbox_index_high =  dvsec[MAILBOX_INDEX_HIGH_WORD_OFFSET];
+assign o_sb_mailbox_data_low   =  dvsec[MAILBOX_DATA_LOW_WORD_OFFSET];
+assign o_sb_mailbox_data_high  =  dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET];
+assign o_sb_remote_threshold   =  dvsec[ERROR_AND_TESTING_WORD_OFFSET][3:0];
+assign o_sb_adapter_advcap     =  {mem_block[ADV_CAP_WORD_OFFSET + 1], mem_block[ADV_CAP_WORD_OFFSET]};
+assign o_sb_cxl_advcap         =  {mem_block[ADV_CAP_CXL_WORD_OFFSET + 1], mem_block[ADV_CAP_CXL_WORD_OFFSET]};
+assign o_sb_flit_fmt_status    =  w_mailbox_status;
 
-assign i_sb_format4_enabled = 'b0;
-assign i_sb_format6_enabled = 'b0;
+assign o_sb_format4_enabled = 'b0;
+assign o_sb_format6_enabled = 'b0;
+assign o_sb_status          = 'b0;
 
 assign o_sw_mailbox_trigger    = w_mailbox_control_bit;
 assign o_sw_mailbox_index_low  = dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
@@ -276,33 +230,29 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
     dvsec[LINK_STATUS_WORD_OFFSET][16]    <= i_ce_adapter_transition_retrain | i_rdi_pl_phyinrecenter;
     dvsec[LINK_STATUS_WORD_OFFSET][17]    <= i_link_status ^ dvsec[LINK_STATUS_WORD_OFFSET][15];
 
-    if (w_mailbox_control_bit) begin
-      if (i_sb_mailbox_data_vld) begin
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sb_mailbox_data_high;
-        dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sb_mailbox_data_low;
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sb_mailbox_status;
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= i_sb_mailbox_trigger_en;
-      end
+    if (w_mailbox_control_bit && i_sb_mailbox_data_vld && i_sb_mailbox_trigger_en) begin
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sb_mailbox_data_high;
+      dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sb_mailbox_data_low;
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sb_mailbox_status;
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b0;
     end
-    else begin
-      if (i_sw_mailbox_trigger_en) begin
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sw_mailbox_data_high;
-        dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sw_mailbox_data_low;
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sw_mailbox_status;
-        dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= i_sw_mailbox_trigger_en;
-      end
-      if (i_sb_flitfmt_valid) begin
-        dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_fromat_status;
-      end
-      if (i_sb_write_en && i_sb_config_req) begin
-        logic [11:0] wl;
-        logic [1:0]  bl;
-        for (int i = 0; i < 8; i = i + 1) begin
-          if (i_sb_32_B && i == 4) break;
-          if (i_sb_BE[i]) begin
-            calc_config_lanes(i, i_sb_address[11:0], wl, bl);
-            dvsec[wl >> 2][(bl << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
-          end
+    else if (~w_mailbox_control_bit && i_sw_mailbox_trigger_en) begin
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sw_mailbox_data_high;
+      dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sw_mailbox_data_low;
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sw_mailbox_status;
+      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b1;
+    end
+    if (i_sb_flitfmt_valid) begin
+      dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_fromat_status;
+    end
+    if (i_sb_write_en && i_sb_config_req) begin
+      logic [11:0] wl;
+      logic [4:0]  bl;
+      for (int i = 0; i < 8; i = i + 1) begin
+        if (i_sb_32_B && i == 4) break;
+        if (i_sb_BE[i]) begin
+          calc_config_lanes(i, i_sb_address[11:0], wl, bl);
+          dvsec[wl][bl +: 8] <= i_sb_write_data[i * 8 +: 8];
         end
       end
     end
@@ -357,12 +307,12 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : MEM_BLOCK
     end
     if (i_sb_write_en && ~i_sb_config_req) begin
       logic [19:0] wl;
-      logic [1:0]  bl;
+      logic [4:0]  bl;
       for (int i = 0; i < 8; i = i + 1) begin
           if (i_sb_32_B && i == 4) break;
           if (i_sb_BE[i]) begin
               calc_mem_lanes(i, i_sb_address[19:0], wl, bl);
-              mem_block[wl >> 2][(bl << 3) +: 8] <= i_sb_write_data[(i << 3) +: 8];
+              mem_block[wl][bl +: 8] <= i_sb_write_data[i * 8 +: 8];
           end
       end
     end
@@ -377,6 +327,7 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : OUTPUT_BLOCK
     o_uncorrectable_error_IRQ   <= 'b0;
     o_correctable_error_IRQ     <= 'b0;
     o_sb_out_error_msg_encoding <= NONE_ERR;
+    o_sb_read_data              <= 'b0;
   end
   else if (~i_init) begin
     o_fdi_pl_cerror             <= 'b0;
@@ -385,6 +336,7 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : OUTPUT_BLOCK
     o_uncorrectable_error_IRQ   <= 'b0;
     o_correctable_error_IRQ     <= 'b0;
     o_sb_out_error_msg_encoding <= NONE_ERR;
+    o_sb_read_data              <= 'b0;
   end
   else begin
     if (o_fdi_pl_cerror) begin
@@ -402,6 +354,7 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : OUTPUT_BLOCK
     o_fdi_pl_trainerror       <= w_fdi_pl_trainerror_comb;
     o_uncorrectable_error_IRQ <= |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] | mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]};
     o_correctable_error_IRQ   <= |{mem_block[CORRECTABLE_ERROR_STATUS_WORD_OFFSET]   | mem_block[CORRECTABLE_ERROR_MASK_WORD_OFFSET]};
+    o_sb_read_data            <= w_sb_read_data_comb;
   end
 end
 
@@ -470,36 +423,34 @@ always_comb begin : HEADER_LOG2_BLOCK
 end
 
 always_comb begin : READ_DATA_BLOCK
-  o_sb_read_data = 'b0;
+  w_sb_read_data_comb = 'b0;
   if (i_sb_config_req) begin
-    logic [11:0] word_lane;
-    logic [1:0]  byte_lane;
+    logic [11:0] wl;
+    logic [4:0]  bl;
     for (int i = 0; i < 8; i = i + 1) begin
-      word_lane = i_sb_address[11:0] + i;
-      byte_lane = i_sb_address[1:0] + i;
       if (i_sb_32_B && i == 4) break;
       if (i_sb_BE[i]) begin
+        calc_config_lanes(i, i_sb_address[11:0], wl, bl);
         // word_offset = byte_offset/4,  bit_offset = byte_offset * 8
-        o_sb_read_data[(i << 3) +: 8] = dvsec[word_lane >> 2][(byte_lane << 3) +: 8];
+        w_sb_read_data_comb[i * 8 +: 8] = dvsec[wl][bl +: 8];
       end
       else begin
-        o_sb_read_data[(i << 3) +: 8] = 'b0;
+        w_sb_read_data_comb[i * 8 +: 8] = 'b0;
       end
     end
   end
   else begin
-    logic [19:0] word_lane;
-    logic [1:0]  byte_lane;
+    logic [19:0] wl;
+    logic [4:0]  bl;
     for (int i = 0; i < 8; i = i + 1) begin
-      word_lane = i_sb_address[19:0] + i;
-      byte_lane = i_sb_address[1:0] + i;
       if (i_sb_32_B && i == 4) break;
       if (i_sb_BE[i]) begin
+        calc_mem_lanes(i, i_sb_address[19:0], wl, bl);
         // word_offset = byte_offset/4,  bit_offset = byte_offset * 8
-        o_sb_read_data[(i << 3) +: 8] = mem_block[word_lane >> 2][(byte_lane << 3) +: 8];
+        w_sb_read_data_comb[i * 8 +: 8] = mem_block[wl][bl +: 8];
       end
       else begin
-        o_sb_read_data[(i << 3) +: 8] = 'b0;
+        w_sb_read_data_comb[i * 8 +: 8] = 'b0;
       end
     end
   end
