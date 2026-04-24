@@ -2,6 +2,8 @@
 // File: UC_rdi_if.sv
 // Description: RDI (Raw D2D Interface) Interface
 // ============================================================
+// `ifndef UC_RDI_IF
+// `define UC_RDI_IF
 import UC_ALSM_package::*;
 
 interface UC_rdi_if #(
@@ -132,3 +134,4 @@ interface UC_rdi_if #(
     );
 
 endinterface : UC_rdi_if
+// `endif // UC_RDI_IF

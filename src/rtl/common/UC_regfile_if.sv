@@ -2,6 +2,8 @@
 // File: UC_regfile_if.sv
 // Description: Register File Interface
 // ============================================================
+// `ifndef UC_REGFILE_IF
+// `define UC_REGFILE_IF
 import UC_ALSM_package::*;
 import UC_sb_pkg::*;
 
@@ -279,3 +281,4 @@ interface UC_regfile_if (
     );
 
 endinterface : UC_regfile_if
+// `endif // UC_REGFILE_IF

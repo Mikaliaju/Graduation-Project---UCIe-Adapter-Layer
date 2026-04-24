@@ -3,6 +3,9 @@
 // Description: Wrapper binding interfaces to UC_sb_top ports
 // ============================================================
 import UC_sb_pkg::*;
+// `include "UC_rdi_if.sv"
+// `include "UC_fdi_if.sv"
+// `include "UC_regfile_if.sv"
 
 module UC_sb_top_wrap #(
     parameter int P_NC                  = 32,

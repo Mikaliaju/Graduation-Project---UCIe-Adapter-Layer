@@ -10,6 +10,10 @@ import UC_sb_pkg::*;
 import UC_MB_Mainband_pkg::*;
 import UC_regfile_package::*;
 
+// `include "UC_rdi_if.sv"
+// `include "UC_fdi_if.sv"
+// `include "UC_regfile_if.sv"
+
 module UC_TOP #(
     //----------------------------------------------------------
     // Sideband Parameters

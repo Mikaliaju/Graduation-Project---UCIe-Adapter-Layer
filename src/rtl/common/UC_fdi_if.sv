@@ -2,6 +2,8 @@
 // File: UC_fdi_if.sv
 // Description: FDI (Flit-aware D2D Interface) Interface
 // ============================================================
+// `ifndef UC_FDI_IF
+// `define UC_FDI_IF
 
 import UC_ALSM_package::*;
 
@@ -159,3 +161,4 @@ interface UC_fdi_if #(
     );
 
 endinterface : UC_fdi_if
+// `endif // UC_FDI_IF

@@ -4,6 +4,10 @@
 // ============================================================
 import UC_ALSM_package::*;
 import UC_sb_pkg::*;
+// `include "UC_rdi_if.sv"
+// `include "UC_fdi_if.sv"
+// `include "UC_regfile_if.sv"
+
 
 module UC_regfile_wrap (
     input  logic        i_clk,
