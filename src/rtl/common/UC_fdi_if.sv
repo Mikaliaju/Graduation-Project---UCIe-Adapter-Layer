@@ -6,7 +6,6 @@
 // `define UC_FDI_IF
 
 import UC_ALSM_package::*;
-
 interface UC_fdi_if #(
     parameter int P_NC       = 32,
     parameter int DATA_PATH  = 512,
