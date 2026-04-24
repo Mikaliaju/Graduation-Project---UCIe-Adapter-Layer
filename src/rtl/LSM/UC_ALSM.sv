@@ -516,8 +516,8 @@ module UC_ALSM (
 			s_ns = ALSM_Error_Entry;
 		end
 		else if ((s_cs != ALSM_Error_Entry) && (s_cs != ALSM_LinkError) && (i_fdi_lp_linkerror || i_regfile_linkerror)) begin
-			w_rdi_lp_linkerror_comb <= 'b1;
-			w_mb_drain_comb         <= 'b0;
+			w_rdi_lp_linkerror_comb  = 'b1;
+			w_mb_drain_comb          = 'b0;
 			s_ns = ALSM_Error_Entry;
 		end
 		else if   (~s_in_linkreset_flow          && ~s_in_disable_flow          &&
