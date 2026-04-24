@@ -2,8 +2,8 @@
 // File: UC_regfile_if.sv
 // Description: Register File Interface
 // ============================================================
-inclue UC_ALSM_package::*;
-include UC_sb_pkg::*;
+import UC_ALSM_package::*;
+import UC_sb_pkg::*;
 
 interface UC_regfile_if (
     input logic i_clk

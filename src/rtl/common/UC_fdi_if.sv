@@ -3,7 +3,7 @@
 // Description: FDI (Flit-aware D2D Interface) Interface
 // ============================================================
 
-include UC_ALSM_package::*;
+import UC_ALSM_package::*;
 
 interface UC_fdi_if #(
     parameter int P_NC       = 32,

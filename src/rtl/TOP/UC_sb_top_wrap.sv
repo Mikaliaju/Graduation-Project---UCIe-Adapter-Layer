@@ -2,7 +2,8 @@
 // File: UC_sb_top_wrap.sv
 // Description: Wrapper binding interfaces to UC_sb_top ports
 // ============================================================
-include UC_sb_pkg::*;
+import UC_sb_pkg::*;
+
 module UC_sb_top_wrap #(
     parameter int P_NC                  = 32,
     parameter int P_RX_NUM_OF_COMP_PKTS = 4,

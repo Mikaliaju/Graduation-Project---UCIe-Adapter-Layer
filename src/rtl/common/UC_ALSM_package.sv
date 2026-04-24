@@ -42,20 +42,20 @@ package UC_ALSM_package;
   // ------------------------------------------------------------
   // All valid sideband message encodings
   // ------------------------------------------------------------
-  // typedef enum {
-  //   SB_None,
-  //   SB_Req_Active,
-  //   SB_Req_L1,
-  //   SB_Req_L2,
-  //   SB_Req_LinkReset,
-  //   SB_Req_Disable,
-  //   SB_Rsp_Active,
-  //   SB_Rsp_L1,
-  //   SB_Rsp_L2,
-  //   SB_Rsp_LinkReset,
-  //   SB_Rsp_Disable,
-  //   SB_Rsp_PMNAK
-  // } sb_state_msg_encoding;
+  typedef enum {
+    SB_None,
+    SB_Req_Active,
+    SB_Req_L1,
+    SB_Req_L2,
+    SB_Req_LinkReset,
+    SB_Req_Disable,
+    SB_Rsp_Active,
+    SB_Rsp_L1,
+    SB_Rsp_L2,
+    SB_Rsp_LinkReset,
+    SB_Rsp_Disable,
+    SB_Rsp_PMNAK
+  } sb_state_msg_encoding;
 
   // ------------------------------------------------------------
   // Adapter Link State Machine state encodings

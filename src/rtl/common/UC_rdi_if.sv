@@ -2,7 +2,7 @@
 // File: UC_rdi_if.sv
 // Description: RDI (Raw D2D Interface) Interface
 // ============================================================
-include UC_ALSM_package::*;
+import UC_ALSM_package::*;
 
 interface UC_rdi_if #(
     parameter int P_NC      = 32,

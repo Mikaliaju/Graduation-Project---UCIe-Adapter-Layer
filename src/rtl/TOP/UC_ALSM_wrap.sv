@@ -3,8 +3,8 @@
 // Description: Wrapper binding interfaces to UC_ALSM
 // ============================================================
 
-include UC_ALSM_package::*;
-include UC_sb_pkg::*;
+import UC_ALSM_package::*;
+import UC_sb_pkg::*;
 
 module UC_ALSM_wrap (
     input  logic        i_clk,
