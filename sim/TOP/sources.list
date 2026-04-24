@@ -13,6 +13,7 @@
 ../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv
 ../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv
 ../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv
+../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv
 
 ../../src/rtl/sideband/TX/UC_remote_decoder.sv
 ../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv
@@ -22,6 +23,7 @@
 ../../src/rtl/sideband/TX/UC_sync_fifo.sv
 ../../src/rtl/sideband/TX/uc_mailbox_controller.sv
 ../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
+../../src/rtl/sideband/TX/UC_sb_tx_top.sv
 
 ../../src/rtl/sideband/common/UC_parameterexchange.sv
 ../../src/rtl/sideband/common/UC_sb_credit_loop.sv

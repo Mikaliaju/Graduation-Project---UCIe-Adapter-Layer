@@ -10,7 +10,7 @@ import UC_sb_pkg::*;
 import UC_MB_Mainband_pkg::*;
 import UC_regfile_package::*;
 
-module UC_TOP #(
+module UC_top #(
     //----------------------------------------------------------
     // Sideband Parameters
     //----------------------------------------------------------
@@ -675,4 +675,4 @@ module UC_TOP #(
         .o_correctable_error_IRQ    ( o_correctable_error_IRQ   )
     );
 
-endmodule
+endmodule : UC_top

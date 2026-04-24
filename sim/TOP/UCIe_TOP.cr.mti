@@ -7,13 +7,6 @@ QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
 Top level modules:
 	UC_sb_top_wrap
 
-} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_sb_pkg.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_sb_pkg.sv
-QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
--- Compiling package UC_sb_pkg
-
-Top level modules:
-	--none--
-
 } {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/TOP/UC_MB_Mainband_wrap.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/TOP/UC_MB_Mainband_wrap.sv
 QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
 -- Compiling module UC_MB_Mainband_wrap
