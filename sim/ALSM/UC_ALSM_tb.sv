@@ -7,7 +7,6 @@ import UC_ALSM_package::*;
 // 	LinkReset_LSM_response_type = 'b100,
 // 	Disable_LSM_response_type   = 'b101
 // } Adapter_Response;
-// // all lp_state_req encodings
 // typedef enum logic [3:0] { 
 // 	Req_NOP       = 'b0000,
 // 	Req_Active    = 'b0001,
@@ -17,7 +16,6 @@ import UC_ALSM_package::*;
 // 	Req_Retrain   = 'b1011,
 // 	Req_Disable   = 'b1100
 // } state_req;
-// // all pl_sts encodings
 // typedef enum logic [3:0] { 
 // 	LL_Reset        = 'b0000,
 // 	LL_Active       = 'b0001,
@@ -29,7 +27,6 @@ import UC_ALSM_package::*;
 // 	LL_Retrain      = 'b1011,
 // 	LL_Disable      = 'b1100
 // } ll_state;
-// // all valid sb message encodings
 // typedef enum { 
 // 	SB_None,
 // 	SB_Req_Active,
@@ -44,26 +41,29 @@ import UC_ALSM_package::*;
 // 	SB_Rsp_Disable,
 // 	SB_Rsp_PMNAK
 // } sb_state_msg_encoding;
-// // ------------------------------------------------------------
-// // Adapter Link State Machine state encodings
-// // ------------------------------------------------------------
 // typedef enum {
-//   ALSM_Reset,
-//   ALSM_Param_exch,
-//   ALSM_Active_Entry,
-//   ALSM_SB_Active_Req,
-//   ALSM_Active_Req_Await,
-//   ALSM_rx_active_1,
-//   ALSM_SB_rsp_received,
-//   ALSM_rx_active_2,
-//   ALSM_Await_FDI_Active,
-//   ALSM_Active,
-//   ALSM_Stall,
-//   ALSM_Retrain,
-//   ALSM_Error_Entry,
-//   ALSM_LinkError,
-//   ALSM_Protocol_Exit,
-//   ALSM_Detected_Nop
+// 	ALSM_Reset,
+// 	ALSM_Param_exch,
+// 	ALSM_Active_Entry,
+// 	ALSM_SB_Active_Req,
+// 	ALSM_Active_Req_Await,
+// 	ALSM_rx_active_1,
+// 	ALSM_SB_rsp_received,
+// 	ALSM_rx_active_2,
+// 	ALSM_Await_FDI_Active,
+// 	ALSM_Active,
+// 	ALSM_Stall,
+// 	ALSM_Retrain,
+// 	ALSM_LinkReset_Entry,      // handles drain + SB req/await combined
+// 	ALSM_LinkReset_Transition,
+// 	ALSM_LinkReset,
+// 	ALSM_Disable_Entry,        // handles drain + SB req/await combined
+// 	ALSM_Disable_Transition,
+// 	ALSM_Disable,
+// 	ALSM_Error_Entry,
+// 	ALSM_LinkError,
+// 	ALSM_Protocol_Exit,
+// 	ALSM_Detected_Nop
 // } ALSM_State;
 
 
@@ -180,6 +180,16 @@ module UC_ALSM_tb;
   logic                 o_link_status_DP;
   logic                 o_ce_adapter_transition_retrain_DP;
 
+  logic                 i_regfile_start_link_train_UP;
+  logic                 o_regfile_start_link_train_clear_UP;
+  logic                 o_mb_drain_UP;
+  logic                 i_mb_drain_done_UP;
+
+  logic                 i_regfile_start_link_train_DP;
+  logic                 o_regfile_start_link_train_clear_DP;
+  logic                 o_mb_drain_DP;
+  logic                 i_mb_drain_done_DP;
+
   UC_ALSM  U0_ALSM_UP (
     .i_clk                             (i_clk),
     .i_rst_n                           (i_rst_n),
@@ -225,18 +235,22 @@ module UC_ALSM_tb;
     .i_mb_flush_done                   (i_mb_flush_done_UP),
     .i_mb_retrain_trigger              (i_mb_retrain_trigger_UP),
     .i_mb_rx_path_empty                (i_mb_rx_path_empty_UP),
+    .i_mb_drain_done                   (i_mb_drain_done_DP),
     .o_mb_flush                        (o_mb_flush_UP),
     .o_mb_retry_clean_boundary         (o_mb_retry_clean_boundary_UP),
     .o_mb_tx_enable                    (o_mb_tx_enable_UP),
     .o_mb_rx_enable                    (o_mb_rx_enable_UP),
+    .o_mb_drain                        (o_mb_drain_UP),
     .i_regfile_linkerror               (i_regfile_linkerror_UP),
     .i_regfile_start_retrain           (i_regfile_start_retrain_UP),
+    .i_regfile_start_link_train        (i_regfile_start_link_train_UP),
     .o_adpater_lsm_response_type       (o_adpater_lsm_response_type_UP),
     .o_uce_adapter_timeout_non_active  (o_uce_adapter_timeout_non_active_UP),
     .o_uce_adapter_timeout_active      (o_uce_adapter_timeout_active_UP),
     .o_error_valid                     (o_error_valid_UP),
     .o_link_status                     (o_link_status_UP),
-    .o_ce_adapter_transition_retrain   (o_ce_adapter_transition_retrain_UP)
+    .o_ce_adapter_transition_retrain   (o_ce_adapter_transition_retrain_UP),
+    .o_regfile_start_link_train_clear  (o_regfile_start_link_train_clear_UP)
   );
 
   UC_ALSM  U1_ALSM_DP (
@@ -284,18 +298,22 @@ module UC_ALSM_tb;
     .i_mb_flush_done                   (i_mb_flush_done_DP),
     .i_mb_retrain_trigger              (i_mb_retrain_trigger_DP),
     .i_mb_rx_path_empty                (i_mb_rx_path_empty_DP),
+    .i_mb_drain_done                   (i_mb_drain_done_DP),
     .o_mb_flush                        (o_mb_flush_DP),
     .o_mb_retry_clean_boundary         (o_mb_retry_clean_boundary_DP),
     .o_mb_tx_enable                    (o_mb_tx_enable_DP),
     .o_mb_rx_enable                    (o_mb_rx_enable_DP),
+    .o_mb_drain                        (o_mb_drain_DP),
     .i_regfile_linkerror               (i_regfile_linkerror_DP),
     .i_regfile_start_retrain           (i_regfile_start_retrain_DP),
+    .i_regfile_start_link_train        (i_regfile_start_link_train_DP),
     .o_adpater_lsm_response_type       (o_adpater_lsm_response_type_DP),
     .o_uce_adapter_timeout_non_active  (o_uce_adapter_timeout_non_active_DP),
     .o_uce_adapter_timeout_active      (o_uce_adapter_timeout_active_DP),
     .o_error_valid                     (o_error_valid_DP),
     .o_link_status                     (o_link_status_DP),
-    .o_ce_adapter_transition_retrain   (o_ce_adapter_transition_retrain_DP)
+    .o_ce_adapter_transition_retrain   (o_ce_adapter_transition_retrain_DP),
+    .o_regfile_start_link_train_clear  (o_regfile_start_link_train_clear_DP)
   );
 
 
@@ -342,18 +360,6 @@ end
 assign i_fdi_lp_wake_req = 'b1;
 assign i_rdi_pl_clk_req = 'b1;
 
-// initial begin : OLD_UP_TEST
-//   reset_values();
-//   rdi_active_UP();
-//   parameter_exchange_UP();
-//   local_die_start_scenario_UP();
-//   // remote_die_start_scenario_UP();
-//   retratin_to_active_UP();
-//   protocol_exit_linkerror_UP();
-//   $stop();
-//   $finish();
-// end
-
 initial begin : BOTH_ALSM_TEST
   reset_values();
   bringup_UP_first();
@@ -362,6 +368,7 @@ initial begin : BOTH_ALSM_TEST
   bringup_both_at_same_time();
   link_error_entry_both();
   bringup_both_at_same_time();
+
   $stop();
   $finish();
 end
@@ -404,6 +411,7 @@ task link_error_entry_both();
   end
   assert(o_rdi_lp_state_req_UP == Req_Active);
 endtask
+
 task retrain_entry_both();
   repeat(2) begin
     @(negedge i_clk);
@@ -435,6 +443,7 @@ task retrain_entry_both();
   assert(o_fdi_pl_state_sts_UP == LL_Retrain);
   assert(o_fdi_pl_state_sts_DP == LL_Retrain);
 endtask
+
 task bringup_both_at_same_time();
   i_rdi_pl_inband_pres  = 'b1;
   i_rdi_pl_state_sts_UP = LL_Active;
@@ -496,6 +505,8 @@ task reset_values();
   i_mb_rx_path_empty_UP          = 'b0;
   i_rdi_pl_stall_req_UP          = 'b0;
   i_regfile_start_retrain_UP     = 'b0;
+  i_mb_drain_done_UP             = 'b0;
+  i_regfile_start_link_train_UP  = 'b0;
 
   i_rdi_pl_state_sts_DP          = LL_Reset;
   i_regfile_linkerror_DP         = 'b0;
@@ -509,6 +520,9 @@ task reset_values();
   i_mb_rx_path_empty_DP          = 'b0;
   i_rdi_pl_stall_req_DP          = 'b0;
   i_regfile_start_retrain_DP     = 'b0;
+  i_mb_drain_done_DP             = 'b0;
+  i_regfile_start_link_train_DP  = 'b0;
+
   repeat(2) begin
     @(negedge i_clk);
   end
@@ -526,135 +540,4 @@ task rdi_active_UP();
   i_rdi_pl_trdy = 'b1;
 endtask
 
-// task parameter_exchange_UP();
-//   @(negedge i_clk);
-//   param_exch_start: assert (o_sb_start_param_exch_UP)
-//     else $error("Assertion param_exch_start failed!");
-//   @(negedge i_clk);
-//   param_exch_stop: assert (~o_sb_start_param_exch_UP)
-//     else $error("Assertion param_exch_stop failed!");
-//   i_sb_param_exch_done_UP = 'b1;
-//   @(negedge i_clk);
-// endtask
-
-// task local_die_start_scenario_UP();
-//   i_fdi_lp_state_req_UP = Req_Active;
-//   @(negedge i_clk);
-//   sb_active_req: assert (o_sb_state_tx_UP == SB_Req_Active)
-//     else $error("Assertion sb_active_req failed!");
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   i_sb_state_rx_UP = SB_Rsp_Active;
-//   // i_sb_state_rx = SB_Req_Active;
-//   @(negedge i_clk);
-//   i_sb_state_rx_UP = SB_None;
-//   // i_sb_state_rx = SB_Rsp_Active;
-//   @(negedge i_clk);
-//   mb_enabled: assert (o_mb_tx_enable_UP)
-//     else $error("Assertion mb_enabled failed!");
-//   i_sb_state_rx_UP = SB_Req_Active;
-//   @(negedge i_clk);
-//   i_sb_state_rx_UP = SB_None;
-//   @(negedge i_clk);
-//   i_fdi_lp_rx_active_sts_UP = 'b1;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-// endtask
-
-// task remote_die_start_scenario_UP();
-//   i_sb_state_rx_UP = SB_Req_Active;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   i_fdi_lp_rx_active_sts_UP = o_fdi_pl_rx_active_req_UP;
-//   @(negedge i_clk);
-//   sent_sb_active_and_mb_enable: assert (o_sb_state_tx_UP == SB_Rsp_Active && o_mb_rx_enable_UP)
-//     else $error("Assertion sent_sb_active_and_mb_enable failed!");
-//   i_fdi_lp_state_req_UP = Req_Active;
-//   @(negedge i_clk);
-//   sb_active_req_sent: assert (o_sb_state_tx_UP == SB_Req_Active)
-//     else $error("Assertion sb_active_req_sent failed!");
-//   i_sb_state_rx_UP = SB_Rsp_Active;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   assert (o_fdi_pl_state_sts_UP == LL_Active && o_mb_tx_enable_UP && o_mb_rx_enable_UP && o_link_status_UP);
-// endtask
-
-// task retratin_to_active_UP();
-//   i_mb_retrain_trigger_UP = 'b1;
-//   @(negedge i_clk);
-//   assert (o_rdi_lp_state_req_UP == Req_Retrain)
-//     else $error("Assertion failed!");
-//   i_mb_retrain_trigger_UP = 'b0;
-//   @(negedge i_clk);
-//   i_rdi_pl_stall_req_UP = 'b1;
-//   @(negedge i_clk);
-//   assert (o_mb_retry_clean_boundary_UP)
-//     else $error("Assertion failed");
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   assert (o_rdi_lp_stall_ack_UP)
-//     else $error("Assertion failed");
-//   i_rdi_pl_state_sts_UP = LL_Retrain;
-//   i_rdi_pl_stall_req_UP = 'b0;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   assert (o_fdi_pl_state_sts_UP == LL_Retrain)
-//     else $error("Assertion failed");
-//   $display("state is %s", U0_ALSM_UP.s_cs.name());
-//   i_rdi_pl_state_sts_UP = LL_Active;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   i_sb_state_rx_UP = SB_Rsp_Active;
-//   @(negedge i_clk);
-//   i_sb_state_rx_UP = SB_Req_Active;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-// endtask
-
-// task protocol_exit_linkerror_UP();
-//   i_fdi_lp_linkerror_UP = 'b1;
-//   @(negedge i_clk);
-//   i_rdi_pl_trdy      = 'b1;
-//   i_rdi_pl_state_sts_UP = LL_LinkError;
-//   i_rdi_pl_stall_req_UP = 'b1; 
-//   @(negedge i_clk);
-//   assert(o_mb_flush_UP);
-//   @(negedge i_clk);
-//   i_mb_flush_done_UP = 'b1;
-//   @(negedge i_clk);
-//   assert(o_fdi_pl_state_sts_UP == LL_LinkError);
-//   assert(o_rdi_lp_stall_ack_UP);
-//   assert(~o_link_status_UP);
-//   assert(~o_mb_tx_enable_UP);
-//   assert(~o_fdi_pl_inband_pres_UP);
-//   assert(~o_fdi_pl_rx_active_req_UP);
-//   i_rdi_pl_stall_req_UP = 'b0;
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-//   assert(~o_mb_rx_enable_UP);
-//   i_fdi_lp_linkerror_UP = 'b0;
-//   i_fdi_lp_state_req_UP =  Req_Active;
-//   @(negedge i_clk);
-//   assert(o_rdi_lp_state_req_UP == Req_Active);
-//   i_rdi_pl_state_sts_UP = LL_Reset;
-//   i_regfile_linkerror_UP     = 'b0;
-//   @(negedge i_clk);
-//   assert(o_fdi_pl_state_sts_UP == LL_Reset);
-//   i_fdi_lp_state_req_UP =  Req_NOP;
-//   @(negedge i_clk);
-//   assert(o_rdi_lp_state_req_UP == Req_NOP);
-//   @(negedge i_clk);
-//   assert(o_rdi_lp_state_req_UP == Req_NOP);
-//   i_fdi_lp_state_req_UP =  Req_Active;
-//   @(negedge i_clk);
-//   assert(o_rdi_lp_state_req_UP == Req_Active);
-//   @(negedge i_clk);
-//   @(negedge i_clk);
-// endtask
 endmodule

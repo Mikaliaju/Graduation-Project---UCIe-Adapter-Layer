@@ -73,10 +73,16 @@ package UC_ALSM_package;
     ALSM_Active,
     ALSM_Stall,
     ALSM_Retrain,
+    ALSM_LinkReset_Entry,      
+    ALSM_LinkReset_Transition,
+    ALSM_LinkReset,
+    ALSM_Disable_Entry,        
+    ALSM_Disable_Transition,
+    ALSM_Disable,
     ALSM_Error_Entry,
     ALSM_LinkError,
     ALSM_Protocol_Exit,
     ALSM_Detected_Nop
-  } ALSM_State;
+} ALSM_State;
 
 endpackage : UC_ALSM_package
