@@ -92,22 +92,22 @@ always_comb begin : Output_Logic
         `endif
     end
     else begin
-        if (i_lsm_msg!= NONE && !i_msgs_fifo_full) begin
+        if (i_lsm_msg!= SB_None && !i_msgs_fifo_full) begin
             o_tx_msg_valid  = 1'b1;
             o_tx_msg_length = 1'b0;
             case(i_lsm_msg) 
-                ACTIVE_REQ     : o_tx_msg = {64'h1,64'h05000001_2000C012};
-                L1_REQ         : o_tx_msg = {64'h1,64'h05000004_2000C012};
-                L2_REQ         : o_tx_msg = {64'h1,64'h05000008_2000C012};
-                LINKRESET_REQ  : o_tx_msg = {64'h1,64'h45000009_2000C012};
-                DISABLED_REQ   : o_tx_msg = {64'h1,64'h4500000C_2000C012};
+                SB_Req_Active     : o_tx_msg = {64'h1,64'h05000001_2000C012};
+                SB_Req_L1         : o_tx_msg = {64'h1,64'h05000004_2000C012};
+                SB_Req_L2         : o_tx_msg = {64'h1,64'h05000008_2000C012};
+                SB_Req_LinkReset  : o_tx_msg = {64'h1,64'h45000009_2000C012};
+                SB_Req_Disable    : o_tx_msg = {64'h1,64'h4500000C_2000C012};
 
-                ACTIVE_RESP    : o_tx_msg = {64'h0,64'h45000001_20010012};
-                PMNAK_RESP     : o_tx_msg = {64'h0,64'h45000002_20010012};    
-                L1_RESP        : o_tx_msg = {64'h0,64'h45000004_20010012};
-                L2_RESP        : o_tx_msg = {64'h0,64'h45000008_20010012};    
-                LINKRESET_RESP : o_tx_msg = {64'h0,64'h05000009_20010012};
-                DISABLED_RESP  : o_tx_msg = {64'h0,64'h0500000C_20010012};
+                SB_Rsp_Active     : o_tx_msg = {64'h0,64'h45000001_20010012};
+                SB_Rsp_PMNAK      : o_tx_msg = {64'h0,64'h45000002_20010012};    
+                SB_Rsp_L1         : o_tx_msg = {64'h0,64'h45000004_20010012};
+                SB_Rsp_L2         : o_tx_msg = {64'h0,64'h45000008_20010012};    
+                SB_Rsp_LinkReset  : o_tx_msg = {64'h0,64'h05000009_20010012};
+                SB_Rsp_Disable    : o_tx_msg = {64'h0,64'h0500000C_20010012};
             endcase
         end
        `ifdef END_POINT    

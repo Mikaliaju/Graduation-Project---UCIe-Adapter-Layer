@@ -83,7 +83,7 @@ typedef enum logic {
     SB_Rsp_L1        =4'd7,
     SB_Rsp_L2        =4'd8,
     SB_Rsp_LinkReset =4'd9,
-    SB_Rsp_Disable=  =4'd10,
+    SB_Rsp_Disable   =4'd10,
     SB_Rsp_PMNAK     =4'd11
   } sb_state_msg_encoding;
 
