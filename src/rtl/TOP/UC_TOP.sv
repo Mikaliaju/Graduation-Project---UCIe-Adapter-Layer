@@ -592,7 +592,7 @@ module UC_TOP #(
     //----------------------------------------------------------
     // 2. Mainband
     //----------------------------------------------------------
-    UC_MB_Mainband_wrap #(
+    UC_MB_Mainband_wrap u_mainband (
         .DATA_PATH              ( DATA_PATH             ),
         .DLLP                   ( DLLP                  )
     ) u_mb (
