@@ -213,22 +213,22 @@ module UC_TOP #(
 //==============================================================
 
     fdi_if #(
-        .P_NC       ( P_NC      ),
+        .P_NC       ( P_NC ),
         .DATA_PATH  ( DATA_PATH ),
-        .DLLP       ( DLLP      )
+        .DLLP       ( DLLP )
     ) fdi_bus (
-        .i_clk      ( i_clk     )
+        .i_clk      ( i_clk )
     );
 
     rdi_if #(
-        .P_NC       ( P_NC      ),
+        .P_NC       ( P_NC ),
         .DATA_PATH  ( DATA_PATH )
     ) rdi_bus (
-        .i_clk      ( i_clk     )
+        .i_clk      ( i_clk )
     );
 
     regfile_if rf_bus (
-        .i_clk      ( i_clk     )
+        .i_clk      ( i_clk )
     );
 
 //==============================================================
