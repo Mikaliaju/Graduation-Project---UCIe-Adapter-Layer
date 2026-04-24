@@ -4,8 +4,8 @@
 // ============================================================
 // `ifndef UC_RDI_IF
 // `define UC_RDI_IF
-import UC_ALSM_package::*;
 
+import UC_ALSM_package::*;
 interface UC_rdi_if #(
     parameter int P_NC      = 32,
     parameter int DATA_PATH = 512
