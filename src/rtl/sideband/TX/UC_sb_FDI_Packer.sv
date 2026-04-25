@@ -272,15 +272,15 @@ module UC_sb_FDI_Packer #(
                 //  behaviour: wait until i_lp_cfg_valid deasserts, which
                 //  naturally happens as the Protocol Layer backs off).
                 // -----------------------------------------------------------
-                S_IDLE: begin
+                S_IDLE_SB: begin
                     if (i_lp_cfg_valid) begin
                         if (i_full) begin
                             // FIFO full on arrival – overflow
                             r_fifo_overflow <= 1'b1;
-                            r_state         <= S_IDLE;
+                            r_state         <= S_IDLE_SB;
                         end else if (!w_dec.valid) begin
                             r_opcode_error <= 1'b1;
-                            r_state        <= S_IDLE;
+                            r_state        <= S_IDLE_SB;
                         end else begin
                             // Valid first chunk – latch decode and start collect
                             r_dec_lat        <= w_dec;
@@ -296,7 +296,7 @@ module UC_sb_FDI_Packer #(
                                 (w_dec.data_bits != 7'd0  && s_reach_max))
                                 r_state <= S_PUSH;
                             else
-                                r_state <= S_COLLECT;
+                                r_state <= S_COLLECT_SB;
                         end
                     end
                 end
@@ -308,17 +308,17 @@ module UC_sb_FDI_Packer #(
                 //    - if opcode error appears mid-packet → error
                 //    - complete on s_reach_max (128-bit) or s_reach_half (64-bit)
                 // -----------------------------------------------------------
-                S_COLLECT: begin
+                S_COLLECT_SB: begin
                     if (!i_lp_cfg_valid) begin
                         // Protocol Layer dropped valid mid-packet → alignment error
                         r_opcode_error   <= 1'b1;   // reuse error flag for misalign
                         r_phases_counter <= '0;
-                        r_state          <= S_IDLE;
+                        r_state          <= S_IDLE_SB;
                     end else if (!w_dec.valid) begin
                         // Opcode error detected during collect (FIFO_ERROR path)
                         r_opcode_error   <= 1'b1;
                         r_phases_counter <= '0;
-                        r_state          <= S_IDLE;
+                        r_state          <= S_IDLE_SB;
                     end else begin
                         // Append this chunk into the accumulator
                         r_sb_packet      <= append_bits(r_sb_packet, i_lp_cfg, r_bit_cnt);
@@ -349,11 +349,11 @@ module UC_sb_FDI_Packer #(
                     end else begin
                         r_fifo_overflow <= 1'b1;  // FIFO full → signal overflow
                     end
-                    r_state <= S_IDLE;
+                    r_state <= S_IDLE_SB;
                 end
 
                 default: begin
-                    r_state <= S_IDLE;
+                    r_state <= S_IDLE_SB;
                 end
 
             endcase
