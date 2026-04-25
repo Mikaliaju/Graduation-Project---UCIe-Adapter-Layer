@@ -14,9 +14,9 @@ module UC_regfile_wrap (
     input  logic        i_rst_n,
     input  logic        i_init,
 
-    fdi_if.regfile      fdi,
-    rdi_if.regfile      rdi,
-    regfile_if.regfile  rf,
+    UC_fdi_if.regfile      fdi,
+    UC_rdi_if.regfile      rdi,
+    UC_regfile_if.regfile  rf,
 
     // SW Interface
     input  logic [31:0] i_sw_mailbox_data_low,

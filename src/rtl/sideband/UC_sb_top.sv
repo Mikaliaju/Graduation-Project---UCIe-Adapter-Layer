@@ -10,29 +10,7 @@
                and LSM Message Controller.
 =========================================================================== 
 */
-
-typedef enum logic [3:0] {
-    NONE,
-    ACTIVE_REQ, 
-    L1_REQ, 
-    L2_REQ, 
-    LINKRESET_REQ, 
-    DISABLED_REQ, 
-    ACTIVE_RESP,
-    PMNAK_RESP, 
-    L1_RESP, 
-    L2_RESP, 
-    LINKRESET_RESP, 
-    DISABLED_RESP
-} sb_state_msg_encoding;
-
-typedef enum logic [1:0] {
-    NONE_ERR, 
-    Correctable_Err, 
-    NON_FATAL_Err, 
-    FATAL_Err
-} sb_error_msg_encoding;
-
+import UC_sb_pkg::* ;
 module UC_sb_top #(
     /*---------------------------------------------
       Sideband Parameters
@@ -226,7 +204,7 @@ logic              s_rx__opid_err;
 //                    1. UC_sb_rx_top
 // ===========================================================================
 
-UC_rx_top #(
+UC_sb_rx_top #(
     .NC                 (P_NC),
     .NUM_OF_COMP_PKTS   (P_RX_NUM_OF_COMP_PKTS),
     .NUM_OF_MSG_PKTS    (P_RX_NUM_OF_MSG_PKTS)

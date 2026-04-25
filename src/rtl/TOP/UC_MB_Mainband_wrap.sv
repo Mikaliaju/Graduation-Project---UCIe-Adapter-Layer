@@ -14,8 +14,8 @@ module UC_MB_Mainband_wrap #(
     input  logic        i_rst_n,
     input  logic        i_init,
 
-    fdi_if.mb           fdi,
-    rdi_if.mb           rdi,
+    UC_fdi_if.mb           fdi,
+    UC_rdi_if.mb           rdi,
 
     // LSM Packer Interface
     input  logic        i_packer_en,
@@ -98,10 +98,11 @@ module UC_MB_Mainband_wrap #(
     //----------------------------------------------------------
     // DUT Instantiation
     //----------------------------------------------------------
-    UC_MB_Mainband #(
+    /* UC_MB_Mainband #(
         .DATA_PATH ( DATA_PATH ),
         .DLLP      ( DLLP )
-    ) u_UC_MB_Mainband (
+    ) */
+      UC_MB_Mainband u_UC_MB_Mainband (
         .i_clk                  ( i_clk ),
         .i_rst_n                ( i_rst_n ),
         .i_init                 ( i_init ),

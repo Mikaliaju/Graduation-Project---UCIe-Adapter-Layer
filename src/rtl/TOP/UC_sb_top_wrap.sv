@@ -20,9 +20,9 @@ module UC_sb_top_wrap #(
     input  logic        i_rst_n,
     input  logic        i_init_n,
 
-    rdi_if.sb_top       rdi,
-    fdi_if.sb_top       fdi,
-    regfile_if.sb_top   rf,
+    UC_rdi_if.sb_top       rdi,
+    UC_fdi_if.sb_top       fdi,
+    UC_regfile_if.sb_top   rf,
 
     // LSM Control (not in interfaces)
     input  logic                    i_sb_start_param_exch,

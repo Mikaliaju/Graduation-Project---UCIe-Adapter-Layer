@@ -212,7 +212,7 @@ module UC_TOP #(
 // Interface Instantiations
 //==============================================================
 
-    fdi_if #(
+    UC_fdi_if #(
         .P_NC       ( P_NC ),
         .DATA_PATH  ( DATA_PATH ),
         .DLLP       ( DLLP )
@@ -220,14 +220,14 @@ module UC_TOP #(
         .i_clk      ( i_clk )
     );
 
-    rdi_if #(
+    UC_rdi_if #(
         .P_NC       ( P_NC ),
         .DATA_PATH  ( DATA_PATH )
     ) rdi_bus (
         .i_clk      ( i_clk )
     );
 
-    regfile_if rf_bus (
+    UC_regfile_if rf_bus (
         .i_clk      ( i_clk )
     );
 
@@ -449,7 +449,7 @@ module UC_TOP #(
 //==============================================================
 // Internal Signal → RegFile Interface Assignments
 //==============================================================
-
+/*
     // ALSM → RegFile (through rf_bus)
     assign rf_bus.alsm_response_type        = w_alsm_response_type;
     assign rf_bus.alsm_link_status          = w_alsm_link_status;
@@ -520,7 +520,7 @@ module UC_TOP #(
     assign o_sb_state_msg_rx            = w_sb_state_msg_rx;
     assign o_mb_tx_enable               = w_mb_tx_enable;
     assign o_mb_rx_enable               = w_mb_rx_enable;
-
+*/
 //==============================================================
 // DUT Instantiations
 //==============================================================
@@ -592,7 +592,7 @@ module UC_TOP #(
     //----------------------------------------------------------
     // 2. Mainband
     //----------------------------------------------------------
-    UC_MB_Mainband_wrap u_mainband (
+    UC_MB_Mainband_wrap # (
         .DATA_PATH              ( DATA_PATH             ),
         .DLLP                   ( DLLP                  )
     ) u_mb (

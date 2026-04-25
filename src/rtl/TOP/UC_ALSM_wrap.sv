@@ -15,9 +15,9 @@ module UC_ALSM_wrap (
     input  logic        i_rst_n,
     input  logic        i_init,
 
-    rdi_if.alsm         rdi,
-    fdi_if.alsm         fdi,
-    regfile_if.alsm     rf,
+    UC_rdi_if.alsm         rdi,
+    UC_fdi_if.alsm         fdi,
+    UC_regfile_if.alsm     rf,
 
     // SB Interface (not in standard interfaces)
     input  sb_state_msg_encoding    i_sb_state_rx,
