@@ -5,8 +5,8 @@ package UC_sb_pkg;
 // =========================================================================
 // --- FSM states ---
     typedef enum logic [1:0] {
-        S_IDLE    = 2'b00,   // FIFO_READY  equivalent: waiting for first valid chunk
-        S_COLLECT = 2'b01,   // FIFO_COLLECT equivalent: accumulating remaining chunks
+        S_IDLE_SB    = 2'b00,   // FIFO_READY  equivalent: waiting for first valid chunk
+        S_COLLECT_SB = 2'b01,   // FIFO_COLLECT equivalent: accumulating remaining chunks
         S_PUSH    = 2'b10    // write assembled packet to FDI FIFO
     } fdi_state_e;
 
