@@ -433,7 +433,7 @@ UC_parameterexchange U_PARAM_EXCH (
 //                    5. msg_controller_tx
 // ===========================================================================
 
-msg_controller_tx U_MSG_CTRL_TX (
+UC_sb_controller_tx U_MSG_CTRL_TX (
     .i_clk                      (i_clk),
     .i_rstn                     (i_rst_n),
     .i_init_n                   (i_init_n),

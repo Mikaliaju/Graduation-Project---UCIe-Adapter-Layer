@@ -25,6 +25,8 @@
 ../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
 ../../src/rtl/sideband/TX/UC_sb_tx_top.sv
 
+../../src/rtl/sideband/UC_sb_top.sv
+
 ../../src/rtl/sideband/common/UC_parameterexchange.sv
 ../../src/rtl/sideband/common/UC_sb_credit_loop.sv
 ../../src/rtl/sideband/common/UC_sb_tag_manager.sv
@@ -33,6 +35,8 @@
 ../../src/rtl/mainband/TX/UC_MB_Packer.sv
 ../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
+../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
+../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
 
 
 ../../src/rtl/TOP/UC_ALSM_wrap.sv

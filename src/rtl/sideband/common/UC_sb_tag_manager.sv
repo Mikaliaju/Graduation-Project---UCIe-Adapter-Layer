@@ -17,7 +17,7 @@ module UC_sb_tag_manager (
     input logic [4:0]  i_tag_store,      //The tag value to be stored 
     input logic        i_check,         //Triggers validation for a received tag to start check it
     input logic [4:0]  i_current_tag,  //Tag received from completion controller to be checked
-    input logic        i_init,           // init signal for software
+    input logic        i_init_n,      // init signal for software
 
     //--------------------------------Outputs--------------------------------------//
     output logic        o_correct,           //Set to 1 if the tag is valid and accepted.
@@ -82,7 +82,7 @@ module UC_sb_tag_manager (
                 orig_tag_map[i] <= 5'd0;
             end
         end
-        else if (!i_init) begin
+        else if (!i_init_n) begin
             used_tags      <= '0;
             remap_valid    <= '0;
             o_correct        <= 1'b0;

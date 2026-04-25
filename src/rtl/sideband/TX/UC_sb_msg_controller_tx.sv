@@ -14,7 +14,7 @@
 // =================================================================================================
 `define END_POINT
 import UC_sb_pkg::*; 
-module UC_sb_controller_tx(
+module UC_sb_msg_controller_tx(
     input   logic               i_clk,
     input   logic               i_rstn,
     input   logic               i_init_n,

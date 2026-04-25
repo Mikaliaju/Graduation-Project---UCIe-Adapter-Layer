@@ -238,7 +238,7 @@ UC_sb_FDI_Packer #(
 ) U_PACKER (
     .i_clk          (i_clk),
     .i_rst_n        (i_rst_n),
-    .i_init         (i_init_n),
+    .i_init_n       (i_init_n),
     .i_lp_cfg       (i_fdi_lp_cfg),
     .i_lp_cfg_valid (i_fdi_lp_cfg_vld),
     .i_full         (s_fdi_fifo_full_flag),
@@ -299,16 +299,16 @@ UC_sb_FDI_Controller #(
     .i_Full             (s_rdi_fifo_full_flag),
 
     // RX FIFO back-pressure
-    .i_rx_fifo_full     (s_rx_fifo_full_flag),
+    // .i_rx_fifo_full     (s_rx_fifo_full_flag),
 
     // Tag Manager response
-    .i_tag_correct      (s_tag_mgr_correct_flag),
-    .i_tag_new          (s_tag_mgr_new_tag),
-    .i_tag_uncorrect    (s_tag_mgr_not_found_flag),
+    // .i_tag_correct      (s_tag_mgr_correct_flag),
+    // .i_tag_new          (s_tag_mgr_new_tag),
+    // .i_tag_uncorrect    (s_tag_mgr_not_found_flag),
 
     // Tag Manager request
-    .o_tag_valid        (s_fdi_ctrl_tag_valid),
-    .o_phy_tag          (s_fdi_ctrl_phy_tag),
+    // .o_tag_valid        (s_fdi_ctrl_tag_valid),
+    // .o_phy_tag          (s_fdi_ctrl_phy_tag),
 
     // Access Arbiter
     .i_Local_done       (s_arbiter_local_done),
@@ -337,7 +337,7 @@ UC_sb_FDI_Controller #(
     .o_Fdi_credit_release(s_fdi_ctrl_credit_release),
 
     // LSM
-    .o_lsm_parity_error (s_fdi_ctrl_parity_error)
+    // .o_lsm_parity_error (s_fdi_ctrl_parity_error)
 );
 
 assign o_tx_fdi_crd_release  = s_fdi_ctrl_credit_release;
