@@ -334,7 +334,7 @@ UC_sb_FDI_Controller #(
     .o_req_opcode       (s_fdi_ctrl_request_opcode),
 
     // Credit release
-    .o_Fdi_credit_release(s_fdi_ctrl_credit_release),
+    .o_Fdi_credit_release(s_fdi_ctrl_credit_release)
 
     // LSM
     // .o_lsm_parity_error (s_fdi_ctrl_parity_error)

@@ -197,15 +197,15 @@ module UC_TOP #(
     // IRQ Outputs
     //==========================================================
     output logic                o_uncorrectable_error_IRQ,
-    output logic                o_correctable_error_IRQ,
+    output logic                o_correctable_error_IRQ
 
     //==========================================================
     // MB LSM Interface (from ALSM to MB)
     // Exposed at top for debug/visibility (optional)
     //==========================================================
     // These are internally connected but exposed for observability
-    output logic                o_mb_tx_enable,
-    output logic                o_mb_rx_enable
+    // output logic                o_mb_tx_enable,
+    // output logic                o_mb_rx_enable
 );
 
 //==============================================================

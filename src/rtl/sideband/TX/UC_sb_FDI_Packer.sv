@@ -231,7 +231,7 @@ module UC_sb_FDI_Packer #(
 
         // ----- HW reset (async) -----
         if (!i_rst_n) begin
-            r_state          <= S_IDLE;
+            r_state          <= S_IDLE_SB;
             r_dec_lat        <= '0;
             r_sb_packet      <= '0;
             r_bit_cnt        <= '0;
@@ -244,7 +244,7 @@ module UC_sb_FDI_Packer #(
 
         // ----- SW reset (sync) -----
         else if (!i_init_n) begin
-            r_state          <= S_IDLE;
+            r_state          <= S_IDLE_SB;
             r_dec_lat        <= '0;
             r_sb_packet      <= '0;
             r_bit_cnt        <= '0;

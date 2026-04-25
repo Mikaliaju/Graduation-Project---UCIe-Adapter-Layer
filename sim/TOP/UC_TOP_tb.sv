@@ -218,7 +218,7 @@ module UC_TOP_tb;
     .o_fdi_pl_trainerror(o_fdi_pl_trainerror),
     .o_sb_err_msg_rx(o_sb_err_msg_rx),
     .o_sb_remote_timeout(o_sb_remote_timeout),
-    .o_sb_local_timeout(o_sb_local_timeout),
+    // .o_sb_local_timeout(o_sb_local_timeout),
     .o_sb_state_msg_rx(o_sb_state_msg_rx),
     .o_sb_rdi_overflow(o_sb_rdi_overflow),
     .o_sb_fdi_overflow(o_sb_fdi_overflow),
@@ -240,9 +240,9 @@ module UC_TOP_tb;
     .o_sw_mailbox_data_low(o_sw_mailbox_data_low),
     .o_sw_mailbox_data_high(o_sw_mailbox_data_high),
     .o_uncorrectable_error_IRQ(o_uncorrectable_error_IRQ),
-    .o_correctable_error_IRQ(o_correctable_error_IRQ),
-    .o_mb_tx_enable(o_mb_tx_enable),
-    .o_mb_rx_enable(o_mb_rx_enable)
+    .o_correctable_error_IRQ(o_correctable_error_IRQ)
+    // .o_mb_tx_enable(o_mb_tx_enable),
+    // .o_mb_rx_enable(o_mb_rx_enable)
   );
 
   initial begin
