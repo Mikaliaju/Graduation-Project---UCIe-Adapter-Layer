@@ -1,3 +1,6 @@
+//author : fatma fawzy
+//module description : transmitting rules
+//date : 25/4/2026
 import common_pkg::*;
 
 module transmitting_order (
