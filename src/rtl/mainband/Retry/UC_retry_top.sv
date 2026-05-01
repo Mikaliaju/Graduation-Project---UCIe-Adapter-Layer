@@ -8,8 +8,7 @@
 //                 4. replay_schedule
 //                 5. buffer
 //                 6. transmitting_rules (transmittingorder)
-
-
+//                 7. snh_condition_checker
 
 import common_pkg::*;
 
@@ -18,255 +17,215 @@ module retry_top (
     // Global
     // -------------------------------------------------------------------------
     input logic clk,
-    input logic rstn,
-    input logic init,  // software reset / FDI active
-
+    input logic rst_n,
+    input logic init,  // software reset
     // -------------------------------------------------------------------------
-    // RX inputs — from mainband receiver
+    // System Ports
     // -------------------------------------------------------------------------
-    input logic                rx_crc_error,
-    input logic          [7:0] rx_seq_num,
-    input replaycommandt       rx_replay_command,
-    input flittypet            rx_flit_type,
-    input logic                rx_nop_payload_flit,
-
+    input logic fdi_active,
+    input logic tx_en,
+    input logic rx_en,
     // -------------------------------------------------------------------------
-    // TX inputs — from transmitter (signals internal to transmittingorder
-    //             that must be exposed as output ports of that module)
+    // RX ports from mainband receiver
     // -------------------------------------------------------------------------
-    input logic [  DATAWIDTH-1:0] tx_idata,
-    input logic [STREAMWIDTH-1:0] tx_istream,
-    input logic [            7:0] tx_nexttxflitseqnum,
-    input logic                   tx_replay_inprogress,
-    input logic [            8:0] tx_replay_timeout_count,
-    input logic [            1:0] tx_consec_explicit_seqnum,
-
+    input logic                 rx_crc_error,
+    input logic          [7:0]  rx_seq_num,
+    input replay_command_t      rx_replay_command,
+    input flit_type_t           rx_flit_type,
+    // -------------------------------------------------------------------------
+    // TX buffer ports 
+    // -------------------------------------------------------------------------
+    input logic [DATAWIDTH-1:0] tx_i_data,
+    input logic [STREAMWIDTH-1:0] tx_i_stream,
+    output logic [DATAWIDTH-1:0] tx_o_data,
+    output logic [STREAMWIDTH-1:0] tx_o_stream,
     // -------------------------------------------------------------------------
     // Outputs to transmitter
     // -------------------------------------------------------------------------
-    output replaycommandt                   tx_replay_command_out,
-    output logic                            pl_trdy_control,
-    output logic                            tx_nop_payload_flit,
-    output logic          [            7:0] tx_seq_num,
-    output logic          [  DATAWIDTH-1:0] tx_odata,
-    output logic          [STREAMWIDTH-1:0] tx_ostream,
-    output logic                            tx_replay_finished,
-
+    output logic                              pl_trdy_control,
+    output replay_command_t                   tx_replay_command,
+    output flit_type_t                        tx_flit_type,
+    output logic          [            7:0]   tx_seq_num,
     // -------------------------------------------------------------------------
     // Outputs to error/status handling
     // -------------------------------------------------------------------------
     output logic discard_flit,
     output logic discard_payload,
     output logic log_uie,
-    output logic log_ce,
+    output logic log_cie,
     output logic rdi_retrain
 );
 
   // =========================================================================
-  // Internal wires — named exactly as the driving module's output port
+  // Internal wires
   // =========================================================================
+  logic [7:0] o_implicit_rx_flit_seq_num;
+  logic log_cie_a, log_cie_b, log_cie_c;
+  logic log_uie_a, log_uie_b;
 
-  // implicit_rx_rules outputs
-  logic               [7:0] oimplicitrxflitseqnum;
-
-  // ack_nak_discard_rules outputs
-  logic                     discard_ologuie;
-  logic                     discard_odiscardflit;
-  logic                     discard_odiscardpayload;
-  logic                     discard_onakscheduled;
-  logic                     discard_onakscheduletype;
-  logic               [7:0] discard_otxacknakflitseqnum;
-  logic               [7:0] discard_onextexpectrxflitseqnum;
-
-  // ack_nak_processing outputs
-  logic               [2:0] proc_oflitreplaynum;
-  logic               [7:0] proc_oackdflitseqnum;
-  logic               [7:0] proc_otxreplayflitseqnum;
-  logic               [7:0] proc_onakignoreflitseqnum;
-  logic                     proc_ostartreplay;
-  logic                     proc_ologuie;
-
-  // replay_schedule outputs
-  logic               [7:0] rs_otxreplayflitseqnum;
-  logic               [7:0] rs_onakignoreflitseqnum;
-  logic                     rs_oconsecutivereset;
-  logic                     rs_ologcie;
-  logic                     rs_oreplayscheduled;
-  replayscheduletypet       rs_oreplayscheduledtype;
-  logic                     rs_ostartbufferreplaymode;
+  logic nak_scheduled;
+  logic nak_scheduled_type;
+  logic start_replay;
+  logic replay_in_progress;
+  logic consecutive_reset;
+  logic replay_scheduled;
+  logic replay_scheduled_type;
+  logic start_buffer_replay_mode;
+  logic snh_done;
+  logic snh_timeout;
+  
+  //  counters signals 
+  logic [7:0] tx_acknak_flit_seq_num; 
+  logic [7:0] next_expect_rx_flit_seq_num; 
+  logic [7:0] ackd_flit_seq_num; 
+  logic 
 
   // =========================================================================
   // 1. implicit_rx_rules
-  //    → oimplicitrxflitseqnum feeds ack_nak_discard_rules
   // =========================================================================
-  implicitrxrules u_implicit_rx_rules (
-      .clk                  (clk),
-      .rstn                 (rstn),
-      .init                 (init),
-      .iseqnum              (rx_seq_num),
-      .icrcerror            (rx_crc_error),
-      .ireplaycommand       (rx_replay_command),
-      .inoppayloadflit      (rx_nop_payload_flit),
-      .oimplicitrxflitseqnum(oimplicitrxflitseqnum)
+  implicit_rx_rules u_implicit_rx_rules (
+      .clk                   (clk),
+      .rst_n                 (rst_n),
+      .init                  (init),
+      .i_rx_seq_num          (rx_seq_num),
+      .i_rx_crc_error        (rx_crc_error),
+      .i_rx_replay_command   (rx_replay_command),
+      .i_flit_type           (rx_flit_type),
+      .o_implicit_rx_flit_seq_num(o_implicit_rx_flit_seq_num)
   );
 
   // =========================================================================
   // 2. ack_nak_discard_rules
-  //    ← oimplicitrxflitseqnum from block 1
-  //    ← inextexpectrxflitseqnum / itxacknakflitseqnum fed back (self-owned)
-  //    → discard_onakscheduled / discard_otxacknakflitseqnum → transmitter
-  //    → discard_odiscardflit / discard_odiscardpayload → top outputs
   // =========================================================================
-  acknakdiscardrules u_ack_nak_discard_rules (
+  ack_nak_discard_rules u_ack_nak_discard_rules (
       .clk                    (clk),
-      .rstn                   (rstn),
+      .rst_n                  (rst_n),
       .init                   (init),
-      .icrcerror              (rx_crc_error),
-      .iphase                 (phase),
-      .iflittype              (rx_flit_type),
-      .ireplaycommand         (rx_replay_command),
-      .iseqnum                (rx_seq_num),
-      .iimplicitrxflitseqnum  (oimplicitrxflitseqnum),
-      .inextexpectrxflitseqnum(discard_onextexpectrxflitseqnum),
-      .itxacknakflitseqnum    (discard_otxacknakflitseqnum),
-      .ologuie                (discard_ologuie),
-      .odiscardflit           (discard_odiscardflit),
-      .odiscardpayload        (discard_odiscardpayload),
-      .onakscheduled          (discard_onakscheduled),
-      .onakscheduletype       (discard_onakscheduletype),
-      .otxacknakflitseqnum    (discard_otxacknakflitseqnum),
-      .onextexpectrxflitseqnum(discard_onextexpectrxflitseqnum)
+      .i_rx_crc_error         (rx_crc_error),
+      .i_rx_flit_type         (rx_flit_type),
+      .i_rx_replay_command    (rx_replay_command),
+      .i_rx_seq_num           (rx_seq_num),
+      .i_snh_done             (snh_done),
+      .i_snh_timeout          (snh_timeout),
+      .i_implicit_rx_flit_seq_num (o_implicit_rx_flit_seq_num),
+      .i_next_expect_rx_flit_seq_num (),
+      .i_tx_acknak_flit_seq_num (),
+      .o_log_uie              (log_uie_a),
+      .o_discard_flit         (discard_flit),
+      .o_discard_payload        (discard_payload),
+      .o_nak_scheduled          (nak_scheduled),
+      .o_nak_schedule_type       (nak_scheduled_type),
+      .o_tx_acknak_flit_seq_num     (),
+      .o_next_expect_rx_flit_seq_num()
   );
 
   // =========================================================================
   // 3. ack_nak_processing
-  //    ← discard_otxacknakflitseqnum from block 2
-  //    ← tx_nexttxflitseqnum from transmitter
-  //    ← iackdflitseqnum / itxreplayflitseqnum / inakignoreflitseqnum (self-owned)
-  //    → proc_ostartreplay pulse → replay_schedule
-  //    → proc_oackdflitseqnum   → replay_schedule + buffer (purge floor)
-  //    → proc_onakignoreflitseqnum → replay_schedule
   // =========================================================================
-  acknakprocessing u_ack_nak_processing (
-      .clk                 (clk),
-      .rstn                (rstn),
-      .init                (init),
-      .ireplaycommand      (rx_replay_command),
-      .iseqnum             (rx_seq_num),
-      .icrcerror           (rx_crc_error),
-      .itxacknakflitseqnum (discard_otxacknakflitseqnum),
-      .inexttxflitseqnum   (tx_nexttxflitseqnum),
-      .iackdflitseqnum     (proc_oackdflitseqnum),
-      .itxreplayflitseqnum (proc_otxreplayflitseqnum),
-      .inakignoreflitseqnum(proc_onakignoreflitseqnum),
-      .oflitreplaynum      (proc_oflitreplaynum),
-      .oackdflitseqnum     (proc_oackdflitseqnum),
-      .otxreplayflitseqnum (proc_otxreplayflitseqnum),
-      .onakignoreflitseqnum(proc_onakignoreflitseqnum),
-      .ostartreplay        (proc_ostartreplay),
-      .ologuie             (proc_ologuie)
+  ack_nak_processing u_ack_nak_processing (
+      .clk                    (clk),
+      .rst_n                  (rst_n),
+      .init                   (init),
+      .i_rx_replay_command      (rx_replay_command),
+      .i_rx_seq_num             (rx_seq_num),
+      .i_rx_crc_error           (rx_crc_error),
+      .i_tx_acknak_flit_seq_num (),
+      .i_next_tx_flit_seq_num   (),
+      .i_ackd_flit_seq_num      (),
+      .i_tx_replay_flit_seq_num (),
+      .o_flit_replay_num        (),
+      .o_ackd_flit_seq_num      (),
+      .o_tx_replay_flit_seq_num (),
+      .o_nak_ignore_flit_seq_num(),
+      .o_start_replay           (start_replay),
+      .o_log_uie                (log_uie_b)
   );
 
   // =========================================================================
   // 4. replay_schedule
-  //    ← proc_ostartreplay          — NAK-triggered replay pulse from block 3
-  //    ← proc_oackdflitseqnum       — ACKDFLITSEQNUM (Rule 0 ptr + Rule 1 N)
-  //    ← proc_onakignoreflitseqnum  — NAK ignore window from block 3
-  //    ← tx_nexttxflitseqnum        — from transmitter
-  //    ← tx_replay_inprogress       — REPLAYINPROGRESS from transmitter
-  //    ← tx_replay_timeout_count    — REPLAYTIMEOUTFLITCOUNT from transmitter
-  //    → rs_oreplayscheduled         → transmitter
-  //    → rs_otxreplayflitseqnum      → buffer (replay start address)
-  //    → rs_ostartbufferreplaymode   → buffer (begin replay read-out)
-  //    → rs_oconsecutivereset        → transmitter (clears consecutive counters)
-  //    → rs_ologcie                  → log_ce
   // =========================================================================
-  replayschedule u_replay_schedule (
+  replay_schedule u_replay_schedule (
       .clk                    (clk),
-      .rstn                   (rstn),
+      .rst_n                  (rst_n),
       .init                   (init),
-      .ireplayinprogress      (tx_replay_inprogress),
-      .istartreplay           (proc_ostartreplay),
-      .ireceivedvalidseqnum   (proc_oackdflitseqnum),
-      .iackdflitseqnum        (proc_oackdflitseqnum),
-      .inexttxflitseqnum      (tx_nexttxflitseqnum),
-      .inakignoreflitseqnum   (proc_onakignoreflitseqnum),
-      .ireplaytimeoutflitcount(tx_replay_timeout_count),
-      .otxreplayflitseqnum    (rs_otxreplayflitseqnum),
-      .onakignoreflitseqnum   (rs_onakignoreflitseqnum),
-      .oconsecutivereset      (rs_oconsecutivereset),
-      .ologcie                (rs_ologcie),
-      .oreplayscheduled       (rs_oreplayscheduled),
-      .oreplayscheduledtype   (rs_oreplayscheduledtype),
-      .ostartbufferreplaymode (rs_ostartbufferreplaymode)
+      .i_replay_in_progress   (replay_in_progress),
+      .i_start_replay         (start_replay),
+      .i_received_valid_seq_num(),
+      .i_ackd_flit_seq_num    (),
+      .i_next_tx_flit_seq_num (),
+      .i_nak_ignore_flit_seq_num (),
+      .i_replay_timeout_flit_count(),
+      .o_tx_replay_flit_seq_num (),
+      .o_nak_ignore_flit_seq_num (),
+      .o_consecutive_reset    (consecutive_reset),
+      .o_log_cie              (log_cie_a),
+      .o_replay_scheduled     (replay_scheduled),
+      .o_replay_scheduled_type(replay_scheduled_type),
+      .o_start_buffer_replay_mode(start_buffer_replay_mode)
   );
 
   // =========================================================================
   // 5. buffer
-  //    ← tx_idata / tx_istream       — new flit chunks from transmitter
-  //    ← tx_nexttxflitseqnum         — write address (which flit slot to write)
-  //    ← proc_oackdflitseqnum        — ACKDFLITSEQNUM (purge floor)
-  //    ← rs_otxreplayflitseqnum      — replay start address from block 4
-  //    ← rs_ostartbufferreplaymode   — begin replay pulse from block 4
-  //    → tx_odata / tx_ostream       — replayed flit data to transmitter
-  //    → tx_replay_finished          — all replay flits sent
   // =========================================================================
   buffer u_buffer (
       .clk                   (clk),
-      .rstn                  (rstn),
+      .rstn                  (rst_n),
       .init                  (init),
-      .itxreplayflitseqnum   (rs_otxreplayflitseqnum),
-      .iackdflitseqnum       (proc_oackdflitseqnum),
-      .istartbufferreplaymode(rs_ostartbufferreplaymode),
-      .inexttxflitseqnum     (tx_nexttxflitseqnum),
-      .idata                 (tx_idata),
-      .istream               (tx_istream),
-      .odata                 (tx_odata),
-      .ostream               (tx_ostream),
-      .oreplayedfinished     (tx_replay_finished)
+      .i_tx_replay_flit_seq_num(),
+      .i_ackd_flit_seq_num       (),
+      .i_start_buffer_replay_mode(start_buffer_replay_mode),
+      .i_next_tx_flit_seq_num     (),
+      .i_data                 (tx_i_data),
+      .i_stream               (tx_i_stream),
+      .o_data                 (tx_o_data),
+      .o_stream               (tx_o_stream),
+      .o_replay_finished      ()
   );
 
   // =========================================================================
   // 6. transmittingorder
-  //    ← rs_oreplayscheduled         — REPLAYSCHEDULED from block 4
-  //    ← tx_consec_explicit_seqnum   — CONSECUTIVETXEXPLICITSEQNUMFLITS
-  //    ← discard_onakscheduled       — NAKSCHEDULED from block 2
-  //    ← discard_onakscheduletype    — NAKSCHEDULEDTYPE from block 2
-  //    ← discard_otxacknakflitseqnum — TXACKNAKFLITSEQNUM from block 2
-  //    → tx_replay_command_out / tx_seq_num / pl_trdy_control / tx_nop_payload_flit
-  //
-  //    NOTE: the following signals are currently internal to transmittingorder
-  //    and must be added as output ports before full integration:
-  //      - NEXTTXFLITSEQNUM       → tx_nexttxflitseqnum (top input today)
-  //      - REPLAYINPROGRESS       → tx_replay_inprogress
-  //      - REPLAYTIMEOUTFLITCOUNT → tx_replay_timeout_count
-  //      - CONSECUTIVETXEXPLICITSEQNUMFLITS → tx_consec_explicit_seqnum
-  //      - ordiretrainrequest     → rdi_retrain
   // =========================================================================
   transmittingorder u_transmitting_rules (
       .clk                        (clk),
-      .rstn                       (rstn),
-      .phase                      (phase),
+      .rstn                       (rst_n),
       .init                       (init),
-      .ireplayscheduled           (rs_oreplayscheduled),
-      .consecutivetxexplicitseqnum(tx_consec_explicit_seqnum),
-      .inakscheduled              (discard_onakscheduled),
-      .inakscheduletype           (nakscheduletypet'(discard_onakscheduletype)),
-      .itxacknakflitseqnum        (discard_otxacknakflitseqnum),
-      .oreplaycommand             (tx_replay_command_out),
-      .opltrdycontrol             (pl_trdy_control),
-      .onoppayloadflit            (tx_nop_payload_flit),
-      .oflitseqnum                (tx_seq_num)
+      .i_replay_scheduled           (replay_scheduled),
+      .i_replay_scheduled_type      (replay_scheduled_type),
+      .i_consecutive_tx_explicit_seq_num(),
+      .i_nak_scheduled              (nak_scheduled),
+      .i_nak_schedule_type           (nak_scheduled_type),
+      .i_consecutive_reset              (consecutive_reset),
+      .i_tx_acknak_flit_seq_num        (),
+      .i_snh_done                     (snh_done),
+      .i_snh_timeout                  (snh_timeout),
+      .o_tx_replay_command             (tx_replay_command),
+      .o_pl_trdy_control               (pl_trdy_control),
+      .o_tx_flit_type             (tx_flit_type),
+      .o_tx_seq_num                 (tx_seq_num),
+      .o_rdi_retrain               (rdi_retrain),
+      .o_replay_in_progress        (replay_in_progress),
+      .o_log_cie                  (log_cie_c)
+  );
+
+  // =========================================================================
+  // 7. snh_condition_checker
+  // =========================================================================
+  snh_condition_checker u_snh_condition_checker (
+      .clk                     (clk),
+      .rstn                    (rst_n),
+      .init                    (init),
+      .o_snh_done             (snh_done),
+      .o_snh_timeout            (snh_timeout),
+      .i_flit_sent              (i_flit_sent),
+      .i_replay_command         (replay_command),
+      .i_flit_seq_num           (flit_seq_num),
+      .i_tx_acknak_flit_seq_num ()
   );
 
   // =========================================================================
   // Top-level output assignments
   // =========================================================================
-  assign discard_flit    = discard_odiscardflit;
-  assign discard_payload = discard_odiscardpayload;
-  assign log_uie         = discard_ologuie | proc_ologuie;
-  assign log_ce          = rs_ologcie;
-  // rdi_retrain to be connected once ordiretrainrequest added to transmittingorder
-  assign rdi_retrain     = 1'b0;
+assign log_cie = log_cie_a | log_cie_b | log_cie_c;
+assign log_uie = log_uie_a | log_uie_b;`
 
 endmodule
