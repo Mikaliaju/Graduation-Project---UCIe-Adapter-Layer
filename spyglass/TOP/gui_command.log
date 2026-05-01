@@ -1,0 +1,17 @@
+set_option enableSV yes
+read_file -type verilog [exec cat sources.list]
+set_option top UC_TOP
+
+set_option mthresh 40000
+current_goal Design_Read -top UC_TOP
+
+
+current_goal lint/lint_rtl -top UC_TOP
+run_goal
+
+
+
+
+gui_select_message -rule STX_VE_485 -msg {Include file ( ../common/UC_all_defs.svh ) could not be found or opened in read mode from current working directory ( /home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP ) or other include directory paths( if any )}
+gui_exit
+gui_exit

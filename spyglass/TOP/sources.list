@@ -2,11 +2,11 @@
 ../../src/rtl/common/UC_sb_pkg.sv
 ../../src/rtl/common/UC_MB_Mainband_pkg.sv
 ../../src/rtl/common/UC_regfile_package.sv
-../../src/rtl/common/all_defs.svh
+../../src/rtl/common/UC_all_defs.svh
 
-../../src/rtl/UC_ALSM.sv
+../../src/rtl/LSM/UC_ALSM.sv
 
-../../src/rtl/UC_regfile.sv
+../../src/rtl/RegisterFile/UC_regfile.sv
 
 ../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv
 ../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv
