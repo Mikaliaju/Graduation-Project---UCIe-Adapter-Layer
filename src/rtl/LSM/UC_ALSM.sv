@@ -136,7 +136,6 @@ module UC_ALSM (
 	input logic        i_mb_retry_clean_boundary_done, //! mb has reached a clean boundary and is ready to dump it's data
 	input logic        i_mb_flush_done, 							 //! mb has finished flushing
 	input logic        i_mb_retrain_trigger, 					 //! mb retrain request to ALSM
-	input logic        i_mb_rx_path_empty,  				 	 //! mb rx path is empty
   input logic        i_mb_drain_done,
 	// mb outputs
 	output logic       o_mb_flush, 						    //! ALSM request to flush the mb

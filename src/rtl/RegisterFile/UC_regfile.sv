@@ -80,7 +80,7 @@ module UC_regfile
   input  logic [63:0] i_sb_cxl_fincap,                // Logging: finalized CXL cap written to regfile
   input  logic        i_sb_cxl_fincap_valid,          // Write enable for cxl fincap status register
 
-  input  logic [4:0]  i_sb_flit_fromat_status,        // Writes final negotiated flit format into Link Status + Header Log2 locations
+  input  logic [4:0]  i_sb_flit_format_status,        // Writes final negotiated flit format into Link Status + Header Log2 locations
   input  logic        i_sb_flitfmt_valid,             // Write enable for flit format status register
 
   input  logic [63:0] i_sb_write_data,                // Write data of the request
@@ -122,17 +122,17 @@ module UC_regfile
   output  logic       o_sb_format6_enabled,           // Enable format 6
 
   // Input to SW
-  input  logic [31:0] i_sw_mailbox_data_low,          // Completion data low written back to mailbox
-  input  logic [31:0] i_sw_mailbox_data_high,         // Completion data high written back to mailbox
-  input  logic [1:0]  i_sw_mailbox_status,            // Mailbox status encoding (success/UR/CA)
-  input  logic        i_sw_mailbox_trigger_en,        // Used to clear trigger after completion/timeout
+  // input  logic [31:0] i_sw_mailbox_data_low,          // Completion data low written back to mailbox
+  // input  logic [31:0] i_sw_mailbox_data_high,         // Completion data high written back to mailbox
+  // input  logic [1:0]  i_sw_mailbox_status,            // Mailbox status encoding (success/UR/CA)
+  // input  logic        i_sw_mailbox_trigger_en,        // Used to clear trigger after completion/timeout
 
-  // Output to SW
-  output logic        o_sw_mailbox_trigger,           // Mailbox trigger bit
-  output logic [31:0] o_sw_mailbox_index_low,         // Contains opcode/BE/address lower bits
-  output logic [4:0]  o_sw_mailbox_index_high,        // Upper bits of address
-  output logic [31:0] o_sw_mailbox_data_low,          // Payload lower 32b
-  output logic [31:0] o_sw_mailbox_data_high,         // Payload upper 32b
+  // // Output to SW
+  // output logic        o_sw_mailbox_trigger,           // Mailbox trigger bit
+  // output logic [31:0] o_sw_mailbox_index_low,         // Contains opcode/BE/address lower bits
+  // output logic [4:0]  o_sw_mailbox_index_high,        // Upper bits of address
+  // output logic [31:0] o_sw_mailbox_data_low,          // Payload lower 32b
+  // output logic [31:0] o_sw_mailbox_data_high,         // Payload upper 32b
 
   output logic        o_uncorrectable_error_IRQ,
   output logic        o_correctable_error_IRQ
@@ -192,11 +192,11 @@ assign o_sb_format4_enabled = 'b0;
 assign o_sb_format6_enabled = 'b0;
 assign o_sb_status          = 'b0;
 
-assign o_sw_mailbox_trigger    = w_mailbox_control_bit;
-assign o_sw_mailbox_index_low  = dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
-assign o_sw_mailbox_index_high = dvsec[MAILBOX_INDEX_HIGH_WORD_OFFSET];
-assign o_sw_mailbox_data_low   = dvsec[MAILBOX_DATA_LOW_WORD_OFFSET];
-assign o_sw_mailbox_data_high  = dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET];
+// assign o_sw_mailbox_trigger    = w_mailbox_control_bit;
+// assign o_sw_mailbox_index_low  = dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
+// assign o_sw_mailbox_index_high = dvsec[MAILBOX_INDEX_HIGH_WORD_OFFSET];
+// assign o_sw_mailbox_data_low   = dvsec[MAILBOX_DATA_LOW_WORD_OFFSET];
+// assign o_sw_mailbox_data_high  = dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET];
 
 always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
   if (~i_rst_n) begin
@@ -236,14 +236,14 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sb_mailbox_status;
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b0;
     end
-    else if (~w_mailbox_control_bit && i_sw_mailbox_trigger_en) begin
-      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sw_mailbox_data_high;
-      dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sw_mailbox_data_low;
-      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sw_mailbox_status;
-      dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b1;
-    end
+    // else if (~w_mailbox_control_bit && i_sw_mailbox_trigger_en) begin
+    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sw_mailbox_data_high;
+    //   dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sw_mailbox_data_low;
+    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sw_mailbox_status;
+    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b1;
+    // end
     if (i_sb_flitfmt_valid) begin
-      dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_fromat_status;
+      dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_format_status;
     end
     if (i_sb_write_en && i_sb_config_req) begin
       logic [11:0] wl;
@@ -402,7 +402,7 @@ always_comb begin : HEADER_LOG2_BLOCK
     w_header_log2_comb[13] = r_header_log2[13];
   end
   if (i_sb_flitfmt_valid) begin
-    w_header_log2_comb[17:14] = i_sb_flit_fromat_status;
+    w_header_log2_comb[17:14] = i_sb_flit_format_status;
   end
   else begin
     w_header_log2_comb[17:14] = r_header_log2[17:14];

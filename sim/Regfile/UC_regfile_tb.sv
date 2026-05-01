@@ -1,5 +1,5 @@
 import UC_ALSM_package::*;
-import UC_SB_package::*;
+import UC_sb_pkg::*;
 
 // typedef enum logic [1:0] {
 //     NONE_ERR, 
@@ -53,7 +53,7 @@ module UC_regfile_tb;
   logic i_sb_adapter_fincap_valid;
   logic [63:0] i_sb_cxl_fincap;
   logic i_sb_cxl_fincap_valid;
-  logic [4:0] i_sb_flit_fromat_status;
+  logic [4:0] i_sb_flit_format_status;
   logic i_sb_flitfmt_valid;
   logic [63:0] i_sb_write_data;
   logic i_sb_write_en;
@@ -141,7 +141,7 @@ module UC_regfile_tb;
     .i_sb_adapter_fincap_valid(i_sb_adapter_fincap_valid),
     .i_sb_cxl_fincap(i_sb_cxl_fincap),
     .i_sb_cxl_fincap_valid(i_sb_cxl_fincap_valid),
-    .i_sb_flit_fromat_status(i_sb_flit_fromat_status),
+    .i_sb_flit_format_status(i_sb_flit_format_status),
     .i_sb_flitfmt_valid(i_sb_flitfmt_valid),
     .i_sb_write_data(i_sb_write_data),
     .i_sb_write_en(i_sb_write_en),
@@ -173,15 +173,15 @@ module UC_regfile_tb;
     .o_sb_out_error_msg_encoding(o_sb_out_error_msg_encoding),
     .o_sb_format4_enabled(o_sb_format4_enabled),
     .o_sb_format6_enabled(o_sb_format6_enabled),
-    .i_sw_mailbox_data_low(i_sw_mailbox_data_low),
-    .i_sw_mailbox_data_high(i_sw_mailbox_data_high),
-    .i_sw_mailbox_status(i_sw_mailbox_status),
-    .i_sw_mailbox_trigger_en(i_sw_mailbox_trigger_en),
-    .o_sw_mailbox_trigger(o_sw_mailbox_trigger),
-    .o_sw_mailbox_index_low(o_sw_mailbox_index_low),
-    .o_sw_mailbox_index_high(o_sw_mailbox_index_high),
-    .o_sw_mailbox_data_low(o_sw_mailbox_data_low),
-    .o_sw_mailbox_data_high(o_sw_mailbox_data_high),
+    // .i_sw_mailbox_data_low(i_sw_mailbox_data_low),
+    // .i_sw_mailbox_data_high(i_sw_mailbox_data_high),
+    // .i_sw_mailbox_status(i_sw_mailbox_status),
+    // .i_sw_mailbox_trigger_en(i_sw_mailbox_trigger_en),
+    // .o_sw_mailbox_trigger(o_sw_mailbox_trigger),
+    // .o_sw_mailbox_index_low(o_sw_mailbox_index_low),
+    // .o_sw_mailbox_index_high(o_sw_mailbox_index_high),
+    // .o_sw_mailbox_data_low(o_sw_mailbox_data_low),
+    // .o_sw_mailbox_data_high(o_sw_mailbox_data_high),
     .o_uncorrectable_error_IRQ(o_uncorrectable_error_IRQ),
     .o_correctable_error_IRQ(o_correctable_error_IRQ)
   );
@@ -200,31 +200,31 @@ initial begin
   mem_read_test();
   config_read_test();
   mem_write_test();
-  mailbox_test();
+  // mailbox_test();
   $stop;
   $finish;
 end
 
-task mailbox_test();
-  assert(~o_sw_mailbox_trigger);
-  i_sw_mailbox_data_high  = 'hFF;
-  i_sw_mailbox_data_low   = 'hAA;
-  i_sw_mailbox_trigger_en = 'b1;
-  @(negedge i_clk);
-  assert(o_sw_mailbox_trigger);
-  i_sw_mailbox_data_high  = 'hBB;
-  i_sw_mailbox_data_low   = 'hCC;
-  i_sw_mailbox_trigger_en = 'b0;
-  @(negedge i_clk);
-  assert(o_sb_mailbox_trigger);
-  assert(o_sb_mailbox_data_high == 'hFF);
-  assert(o_sb_mailbox_data_low  == 'hAA);
-  i_sb_mailbox_trigger_en = 'b1;
-  @(negedge i_clk);
-  i_sb_mailbox_trigger_en = 'b0;
-  @(negedge i_clk);
-  assert(o_sb_mailbox_trigger);
-endtask
+// task mailbox_test();
+//   assert(~o_sw_mailbox_trigger);
+//   i_sw_mailbox_data_high  = 'hFF;
+//   i_sw_mailbox_data_low   = 'hAA;
+//   i_sw_mailbox_trigger_en = 'b1;
+//   @(negedge i_clk);
+//   assert(o_sw_mailbox_trigger);
+//   i_sw_mailbox_data_high  = 'hBB;
+//   i_sw_mailbox_data_low   = 'hCC;
+//   i_sw_mailbox_trigger_en = 'b0;
+//   @(negedge i_clk);
+//   assert(o_sb_mailbox_trigger);
+//   assert(o_sb_mailbox_data_high == 'hFF);
+//   assert(o_sb_mailbox_data_low  == 'hAA);
+//   i_sb_mailbox_trigger_en = 'b1;
+//   @(negedge i_clk);
+//   i_sb_mailbox_trigger_en = 'b0;
+//   @(negedge i_clk);
+//   assert(o_sb_mailbox_trigger);
+// endtask
 
 task mem_read_test();
   i_sb_BE         = 'b10101010;
@@ -393,7 +393,7 @@ task reset_values();
   i_sb_adapter_fincap_valid = '0;
   i_sb_cxl_fincap = '0;
   i_sb_cxl_fincap_valid = '0;
-  i_sb_flit_fromat_status = '0;
+  i_sb_flit_format_status = '0;
   i_sb_flitfmt_valid = '0;
   i_sb_write_data = '0;
   i_sb_write_en = '0;
@@ -411,10 +411,10 @@ task reset_values();
   i_sb_invalid_opcode_id = '0;
   i_sb_param_exch_done = '0;
   i_sb_in_error_msg_encoding = NONE_ERR;
-  i_sw_mailbox_data_low = '0;
-  i_sw_mailbox_data_high = '0;
-  i_sw_mailbox_status = '0;
-  i_sw_mailbox_trigger_en = '0;
+  // i_sw_mailbox_data_low = '0;
+  // i_sw_mailbox_data_high = '0;
+  // i_sw_mailbox_status = '0;
+  // i_sw_mailbox_trigger_en = '0;
   @(negedge i_clk);
   i_rst_n = '1;
   i_init = '1;
