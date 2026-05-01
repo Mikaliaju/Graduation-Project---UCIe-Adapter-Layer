@@ -42,10 +42,10 @@ module retry_top (
     // -------------------------------------------------------------------------
     // Outputs to transmitter
     // -------------------------------------------------------------------------
-    output logic                            pl_trdy_control,
+    output logic                              pl_trdy_control,
     output replay_command_t                   tx_replay_command,
-    output logic                            tx_nop_payload_flit,
-    output logic          [            7:0] tx_seq_num,
+    output flit_type_t                        tx_flit_type,
+    output logic          [            7:0]   tx_seq_num,
     // -------------------------------------------------------------------------
     // Outputs to error/status handling
     // -------------------------------------------------------------------------
