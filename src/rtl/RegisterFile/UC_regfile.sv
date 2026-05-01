@@ -66,7 +66,6 @@ module UC_regfile
   input  logic [31:0] i_sb_mailbox_data_low,          // Completion data low written back to mailbox
   input  logic [31:0] i_sb_mailbox_data_high,         // Completion data high written back to mailbox
   input  logic [1:0]  i_sb_mailbox_status,            // Mailbox status encoding (success/UR/CA)
-  input  logic        i_sb_mailbox_data_vld,          // Indicates mailbox data is valid (success completion)
   input  logic        i_sb_mailbox_trigger_en,        // Used to clear trigger after completion/timeout
 
   input  logic [63:0] i_sb_Header_log1,               // Log header for error cases (UR/CA)
@@ -230,7 +229,7 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
     dvsec[LINK_STATUS_WORD_OFFSET][16]    <= i_ce_adapter_transition_retrain | i_rdi_pl_phyinrecenter;
     dvsec[LINK_STATUS_WORD_OFFSET][17]    <= i_link_status ^ dvsec[LINK_STATUS_WORD_OFFSET][15];
 
-    if (w_mailbox_control_bit && i_sb_mailbox_data_vld && i_sb_mailbox_trigger_en) begin
+    if (w_mailbox_control_bit && i_sb_mailbox_trigger_en) begin
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sb_mailbox_data_high;
       dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sb_mailbox_data_low;
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sb_mailbox_status;
@@ -352,8 +351,8 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : OUTPUT_BLOCK
       o_fdi_pl_nferror <= w_fdi_pl_nferror_comb;
     end
     o_fdi_pl_trainerror       <= w_fdi_pl_trainerror_comb;
-    o_uncorrectable_error_IRQ <= |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] | mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]};
-    o_correctable_error_IRQ   <= |{mem_block[CORRECTABLE_ERROR_STATUS_WORD_OFFSET]   | mem_block[CORRECTABLE_ERROR_MASK_WORD_OFFSET]};
+    o_uncorrectable_error_IRQ <= |{mem_block[UNCORRECTABLE_ERROR_STATUS_WORD_OFFSET] & mem_block[UNCORRECTABLE_ERROR_MASK_WORD_OFFSET]};
+    o_correctable_error_IRQ   <= |{mem_block[CORRECTABLE_ERROR_STATUS_WORD_OFFSET]   & mem_block[CORRECTABLE_ERROR_MASK_WORD_OFFSET]};
     o_sb_read_data            <= w_sb_read_data_comb;
   end
 end

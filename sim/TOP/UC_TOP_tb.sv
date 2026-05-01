@@ -62,7 +62,6 @@ module UC_TOP_tb;
   logic [7:0] i_fdi_lp_stream;
   logic o_fdi_pl_trdy;
   logic [DATA_PATH-1:0] o_fdi_pl_data;
-  logic o_fdi_pl_valid_mb;
   logic [7:0] o_fdi_pl_stream;
   logic [DLLP-1:0] o_fdi_pl_dllp;
   logic o_fdi_pl_dllp_valid;
@@ -88,6 +87,9 @@ module UC_TOP_tb;
   logic o_fdi_pl_wake_ack;
   logic o_uncorrectable_error_IRQ;
   logic o_correctable_error_IRQ;
+  logic o_fdi_pl_cerror;
+  logic o_fdi_pl_nferror;
+  logic o_fdi_pl_trainerror;
 
   UC_TOP  UC_TOP_inst (
     .i_clk(i_clk),
@@ -142,7 +144,6 @@ module UC_TOP_tb;
     .i_fdi_lp_stream(i_fdi_lp_stream),
     .o_fdi_pl_trdy(o_fdi_pl_trdy),
     .o_fdi_pl_data(o_fdi_pl_data),
-    .o_fdi_pl_valid_mb(o_fdi_pl_valid_mb),
     .o_fdi_pl_stream(o_fdi_pl_stream),
     .o_fdi_pl_dllp(o_fdi_pl_dllp),
     .o_fdi_pl_dllp_valid(o_fdi_pl_dllp_valid),
@@ -166,6 +167,9 @@ module UC_TOP_tb;
     .o_fdi_pl_rx_active_req(o_fdi_pl_rx_active_req),
     .o_fdi_pl_clk_req(o_fdi_pl_clk_req),
     .o_fdi_pl_wake_ack(o_fdi_pl_wake_ack),
+    .o_fdi_pl_cerror(o_fdi_pl_cerror),
+    .o_fdi_pl_nferror(o_fdi_pl_nferror),
+    .o_fdi_pl_trainerror(o_fdi_pl_trainerror),
     .o_uncorrectable_error_IRQ(o_uncorrectable_error_IRQ),
     .o_correctable_error_IRQ(o_correctable_error_IRQ)
   );
@@ -179,4 +183,58 @@ initial begin
   end
 end
 
+initial begin
+  reset_values();
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  $stop();
+  $finish();
+end
+
+task reset_values();
+  i_rst_n = '0;
+  i_init = '0;
+  i_rdi_pl_cfg = '0;
+  i_rdi_pl_cfg_vld = '0;
+  i_rdi_pl_cfg_crd = '0;
+  i_rdi_pl_trdy = '0;
+  i_rdi_pl_data = '0;
+  i_rdi_pl_valid = '0;
+  i_rdi_pl_inband_pres = '0;
+  i_rdi_pl_phyinrecenter = '0;
+  i_rdi_pl_speedmode = '0;
+  i_rdi_pl_lnk_cfg = '0;
+  i_rdi_pl_state_sts = LL_Reset;
+  i_rdi_pl_clk_req = '0;
+  i_rdi_pl_wake_ack = '0;
+  i_rdi_pl_stall_req = '0;
+  i_rdi_pl_error = '0;
+  i_rdi_pl_trdy_alsm = '0;
+  i_rdi_pl_trainerror = '0;
+  i_rdi_pl_error_rf = '0;
+  i_rdi_pl_cerror = '0;
+  i_rdi_pl_nferror = '0;
+  i_fdi_lp_cfg = '0;
+  i_fdi_lp_cfg_vld = '0;
+  i_fdi_lp_cfg_crd = '0;
+  i_fdi_lp_irdy = '0;
+  i_fdi_lp_valid = '0;
+  i_fdi_lp_data = '0;
+  i_fdi_lp_dllp = '0;
+  i_fdi_lp_dllp_valid = '0;
+  i_fdi_lp_dllp_ofc = '0;
+  i_fdi_lp_stream = '0;
+  i_fdi_lp_state_req = Req_NOP;
+  i_fdi_lp_linkerror = '0;
+  i_fdi_lp_rx_active_sts = '0;
+  i_fdi_lp_stall_ack = '0;
+  i_fdi_lp_clk_ack = '0;
+  i_fdi_lp_wake_req = '0;
+
+  @(negedge i_clk);
+  @(negedge i_clk);
+  i_rst_n = 'b1;
+  i_init  = 'b1;
+endtask
 endmodule

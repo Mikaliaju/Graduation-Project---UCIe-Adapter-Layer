@@ -8,9 +8,4 @@
 `define P_TX_FIFO_WIDTH        128
 `define P_TX_DATA_W            64
 `define P_CL_MAX_CREDITS       32
-
-//----------------------------------------------------------
-// Mainband Parameters
-//----------------------------------------------------------
-// `define DATA_PATH              512
-// `define DLLP                   32
+`define ENDPOINT               1
