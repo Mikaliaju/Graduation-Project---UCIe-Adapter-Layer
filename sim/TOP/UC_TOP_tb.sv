@@ -98,13 +98,7 @@ module UC_TOP_tb;
     .i_rdi_pl_cfg(i_rdi_pl_cfg),
     .i_rdi_pl_cfg_vld(i_rdi_pl_cfg_vld),
     .i_rdi_pl_cfg_crd(i_rdi_pl_cfg_crd),
-    .o_rdi_lp_cfg(o_rdi_lp_cfg),
-    .o_rdi_lp_cfg_vld(o_rdi_lp_cfg_vld),
-    .o_rdi_lp_cfg_crd(o_rdi_lp_cfg_crd),
     .i_rdi_pl_trdy(i_rdi_pl_trdy),
-    .o_rdi_lp_data(o_rdi_lp_data),
-    .o_rdi_lp_valid(o_rdi_lp_valid),
-    .o_rdi_lp_irdy(o_rdi_lp_irdy),
     .i_rdi_pl_data(i_rdi_pl_data),
     .i_rdi_pl_valid(i_rdi_pl_valid),
     .i_rdi_pl_inband_pres(i_rdi_pl_inband_pres),
@@ -117,24 +111,23 @@ module UC_TOP_tb;
     .i_rdi_pl_stall_req(i_rdi_pl_stall_req),
     .i_rdi_pl_error(i_rdi_pl_error),
     .i_rdi_pl_trdy_alsm(i_rdi_pl_trdy_alsm),
+    .i_rdi_pl_trainerror(i_rdi_pl_trainerror),
+    .i_rdi_pl_cerror(i_rdi_pl_cerror),
+    .i_rdi_pl_nferror(i_rdi_pl_nferror),
+    .o_rdi_lp_cfg(o_rdi_lp_cfg),
+    .o_rdi_lp_cfg_vld(o_rdi_lp_cfg_vld),
+    .o_rdi_lp_cfg_crd(o_rdi_lp_cfg_crd),
+    .o_rdi_lp_data(o_rdi_lp_data),
+    .o_rdi_lp_valid(o_rdi_lp_valid),
+    .o_rdi_lp_irdy(o_rdi_lp_irdy),
     .o_rdi_lp_clk_ack(o_rdi_lp_clk_ack),
     .o_rdi_lp_wake_req(o_rdi_lp_wake_req),
     .o_rdi_lp_linkerror(o_rdi_lp_linkerror),
     .o_rdi_lp_state_req(o_rdi_lp_state_req),
     .o_rdi_lp_stall_ack(o_rdi_lp_stall_ack),
-    .i_rdi_pl_trainerror(i_rdi_pl_trainerror),
-    .i_rdi_pl_error_rf(i_rdi_pl_error_rf),
-    .i_rdi_pl_cerror(i_rdi_pl_cerror),
-    .i_rdi_pl_nferror(i_rdi_pl_nferror),
     .i_fdi_lp_cfg(i_fdi_lp_cfg),
     .i_fdi_lp_cfg_vld(i_fdi_lp_cfg_vld),
     .i_fdi_lp_cfg_crd(i_fdi_lp_cfg_crd),
-    .o_fdi_pl_cfg(o_fdi_pl_cfg),
-    .o_fdi_pl_cfg_vld(o_fdi_pl_cfg_vld),
-    .o_fdi_pl_cfg_crd(o_fdi_pl_cfg_crd),
-    .o_fdi_pl_protocol(o_fdi_pl_protocol),
-    .o_fdi_pl_flit_fmt(o_fdi_pl_flit_fmt),
-    .o_fdi_pl_valid(o_fdi_pl_valid),
     .i_fdi_lp_irdy(i_fdi_lp_irdy),
     .i_fdi_lp_valid(i_fdi_lp_valid),
     .i_fdi_lp_data(i_fdi_lp_data),
@@ -142,6 +135,18 @@ module UC_TOP_tb;
     .i_fdi_lp_dllp_valid(i_fdi_lp_dllp_valid),
     .i_fdi_lp_dllp_ofc(i_fdi_lp_dllp_ofc),
     .i_fdi_lp_stream(i_fdi_lp_stream),
+    .i_fdi_lp_state_req(i_fdi_lp_state_req),
+    .i_fdi_lp_linkerror(i_fdi_lp_linkerror),
+    .i_fdi_lp_rx_active_sts(i_fdi_lp_rx_active_sts),
+    .i_fdi_lp_stall_ack(i_fdi_lp_stall_ack),
+    .i_fdi_lp_clk_ack(i_fdi_lp_clk_ack),
+    .i_fdi_lp_wake_req(i_fdi_lp_wake_req),
+    .o_fdi_pl_cfg(o_fdi_pl_cfg),
+    .o_fdi_pl_cfg_vld(o_fdi_pl_cfg_vld),
+    .o_fdi_pl_cfg_crd(o_fdi_pl_cfg_crd),
+    .o_fdi_pl_protocol(o_fdi_pl_protocol),
+    .o_fdi_pl_flit_fmt(o_fdi_pl_flit_fmt),
+    .o_fdi_pl_valid(o_fdi_pl_valid),
     .o_fdi_pl_trdy(o_fdi_pl_trdy),
     .o_fdi_pl_data(o_fdi_pl_data),
     .o_fdi_pl_stream(o_fdi_pl_stream),
@@ -149,12 +154,6 @@ module UC_TOP_tb;
     .o_fdi_pl_dllp_valid(o_fdi_pl_dllp_valid),
     .o_fdi_pl_dllp_ofc(o_fdi_pl_dllp_ofc),
     .o_fdi_flit_cancel(o_fdi_flit_cancel),
-    .i_fdi_lp_state_req(i_fdi_lp_state_req),
-    .i_fdi_lp_linkerror(i_fdi_lp_linkerror),
-    .i_fdi_lp_rx_active_sts(i_fdi_lp_rx_active_sts),
-    .i_fdi_lp_stall_ack(i_fdi_lp_stall_ack),
-    .i_fdi_lp_clk_ack(i_fdi_lp_clk_ack),
-    .i_fdi_lp_wake_req(i_fdi_lp_wake_req),
     .o_fdi_pl_stallreq(o_fdi_pl_stallreq),
     .o_fdi_pl_phyinrecenter(o_fdi_pl_phyinrecenter),
     .o_fdi_pl_phyinl1(o_fdi_pl_phyinl1),
@@ -183,6 +182,22 @@ initial begin
   end
 end
 
+always_ff @(posedge i_clk or negedge i_rst_n) begin
+  if (~i_rst_n || ~i_init) begin
+    i_rdi_pl_wake_ack              <= 'b0;
+    i_fdi_lp_clk_ack               <= 'b0;
+    i_fdi_lp_rx_active_sts         <= 'b0;
+  end
+  else begin
+    i_rdi_pl_wake_ack              <= o_rdi_lp_wake_req;
+    i_fdi_lp_clk_ack               <= o_fdi_pl_clk_req;
+    i_fdi_lp_rx_active_sts         <= o_fdi_pl_rx_active_req;
+  end
+end
+
+assign i_fdi_lp_wake_req = 'b1;
+assign i_rdi_pl_clk_req = 'b1;
+
 initial begin
   reset_values();
   @(negedge i_clk);
@@ -206,7 +221,6 @@ task reset_values();
   i_rdi_pl_speedmode = '0;
   i_rdi_pl_lnk_cfg = '0;
   i_rdi_pl_state_sts = LL_Reset;
-  i_rdi_pl_clk_req = '0;
   i_rdi_pl_wake_ack = '0;
   i_rdi_pl_stall_req = '0;
   i_rdi_pl_error = '0;
@@ -230,7 +244,6 @@ task reset_values();
   i_fdi_lp_rx_active_sts = '0;
   i_fdi_lp_stall_ack = '0;
   i_fdi_lp_clk_ack = '0;
-  i_fdi_lp_wake_req = '0;
 
   @(negedge i_clk);
   @(negedge i_clk);

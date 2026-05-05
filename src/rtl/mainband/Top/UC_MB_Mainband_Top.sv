@@ -27,10 +27,12 @@ module UC_MB_Mainband (
   // -------------------------
   // LSM & REG Ports (retry_top)
   // -------------------------
+  /*
   input  logic                      i_fdi_active,         // connect to LSM
   output logic                      o_log_uie,
   output logic                      o_log_cie,
   output logic                      oo_rdi_retrain,
+  */
 
   // -------------------------
   // FDI TX Interface (from Protocol Layer to Packer)
@@ -241,6 +243,7 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 // Retry Instantiation
 // =============================================================================
 
+/*
 retry_top U3_retry_top (
 
   // Global
@@ -280,5 +283,6 @@ retry_top U3_retry_top (
   // LSM 
   .rdi_retrain         (o_rdi_retrain)
 );
+*/
 endmodule
 

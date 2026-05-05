@@ -1,4 +1,5 @@
 import UC_ALSM_package::*;
+import UC_sb_pkg::*;
 
 // typedef enum logic [2:0] {
 // 	Active_LSM_response_type    = 'b001,
@@ -234,7 +235,6 @@ module UC_ALSM_tb;
     .i_mb_retry_clean_boundary_done    (i_mb_retry_clean_boundary_done_UP),
     .i_mb_flush_done                   (i_mb_flush_done_UP),
     .i_mb_retrain_trigger              (i_mb_retrain_trigger_UP),
-    .i_mb_rx_path_empty                (i_mb_rx_path_empty_UP),
     .i_mb_drain_done                   (i_mb_drain_done_DP),
     .o_mb_flush                        (o_mb_flush_UP),
     .o_mb_retry_clean_boundary         (o_mb_retry_clean_boundary_UP),
@@ -297,7 +297,6 @@ module UC_ALSM_tb;
     .i_mb_retry_clean_boundary_done    (i_mb_retry_clean_boundary_done_DP),
     .i_mb_flush_done                   (i_mb_flush_done_DP),
     .i_mb_retrain_trigger              (i_mb_retrain_trigger_DP),
-    .i_mb_rx_path_empty                (i_mb_rx_path_empty_DP),
     .i_mb_drain_done                   (i_mb_drain_done_DP),
     .o_mb_flush                        (o_mb_flush_DP),
     .o_mb_retry_clean_boundary         (o_mb_retry_clean_boundary_DP),

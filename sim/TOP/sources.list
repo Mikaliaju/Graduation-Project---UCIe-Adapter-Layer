@@ -2,9 +2,7 @@
 ../../src/rtl/common/UC_sb_pkg.sv
 ../../src/rtl/common/UC_MB_Mainband_pkg.sv
 ../../src/rtl/common/UC_regfile_package.sv
-../../src/rtl/common/UC_fdi_if.sv
-../../src/rtl/common/UC_rdi_if.sv
-../../src/rtl/common/UC_regfile_if.sv
+../../src/rtl/common/UC_all_defs.svh
 
 ../../src/rtl/LSM/UC_ALSM.sv
 ../../src/rtl/RegisterFile/UC_regfile.sv
@@ -37,12 +35,6 @@
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
 ../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
-
-
-../../src/rtl/TOP/UC_ALSM_wrap.sv
-../../src/rtl/TOP/UC_MB_Mainband_wrap.sv
-../../src/rtl/TOP/UC_regfile_wrap.sv
-../../src/rtl/TOP/UC_sb_top_wrap.sv
 
 ../../src/rtl/TOP/UC_TOP.sv
 UC_TOP_tb.sv

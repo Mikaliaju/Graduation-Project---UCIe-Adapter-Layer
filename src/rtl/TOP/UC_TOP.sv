@@ -24,7 +24,7 @@ module UC_TOP #(
     //==========================================================
     // RDI Interface — Sideband (to/from PHY)
     //==========================================================
-    input  logic [`P_NC-1:0]     i_rdi_pl_cfg,
+    input  logic [`P_NC-1:0]    i_rdi_pl_cfg,
     input  logic                i_rdi_pl_cfg_vld,
     input  logic                i_rdi_pl_cfg_crd,
 
@@ -35,13 +35,13 @@ module UC_TOP #(
     //==========================================================
     // RDI Interface — Mainband (to/from PHY)
     //==========================================================
-    input  logic                i_rdi_pl_trdy,              // PHY ready to accept flit
+    input  logic                 i_rdi_pl_trdy,              // PHY ready to accept flit
     output logic [DATA_PATH-1:0] o_rdi_lp_data,            // TX flit to PHY
-    output logic                o_rdi_lp_valid,             // TX flit valid
-    output logic                o_rdi_lp_irdy,              // Packer ready
+    output logic                 o_rdi_lp_valid,             // TX flit valid
+    output logic                 o_rdi_lp_irdy,              // Packer ready
 
     input  logic [DATA_PATH-1:0] i_rdi_pl_data,            // RX flit from PHY
-    input  logic                i_rdi_pl_valid,             // RX flit valid
+    input  logic                 i_rdi_pl_valid,             // RX flit valid
 
     //==========================================================
     // RDI Interface — ALSM (to/from PHY)
@@ -67,7 +67,6 @@ module UC_TOP #(
     // RDI Interface — RegFile (from PHY, logging only)
     //==========================================================
     input  logic                i_rdi_pl_trainerror,
-    input  logic                i_rdi_pl_error_rf,
     input  logic                i_rdi_pl_cerror,
     input  logic                i_rdi_pl_nferror,
 
@@ -75,10 +74,10 @@ module UC_TOP #(
     // FDI Interface — Sideband (to/from Protocol Layer)
     //==========================================================
     input  logic [`P_NC-1:0]     i_fdi_lp_cfg,
-    input  logic                i_fdi_lp_cfg_vld,
-    input  logic                i_fdi_lp_cfg_crd,
+    input  logic                 i_fdi_lp_cfg_vld,
+    input  logic                 i_fdi_lp_cfg_crd,
 
-    output logic [`P_NC-1:0]     o_fdi_pl_cfg,
+    output logic [`P_NC-1:0]    o_fdi_pl_cfg,
     output logic                o_fdi_pl_cfg_vld,
     output logic                o_fdi_pl_cfg_crd,
     output logic [3:0]          o_fdi_pl_protocol,
@@ -88,13 +87,13 @@ module UC_TOP #(
     //==========================================================
     // FDI Interface — Mainband TX (from Protocol Layer)
     //==========================================================
-    input  logic                i_fdi_lp_irdy,
-    input  logic                i_fdi_lp_valid,
+    input  logic                 i_fdi_lp_irdy,
+    input  logic                 i_fdi_lp_valid,
     input  logic [DATA_PATH-1:0] i_fdi_lp_data,
-    input  logic [DLLP-1:0]     i_fdi_lp_dllp,
-    input  logic                i_fdi_lp_dllp_valid,
-    input  logic                i_fdi_lp_dllp_ofc,
-    input  logic [7:0]          i_fdi_lp_stream,
+    input  logic [DLLP-1:0]      i_fdi_lp_dllp,
+    input  logic                 i_fdi_lp_dllp_valid,
+    input  logic                 i_fdi_lp_dllp_ofc,
+    input  logic [7:0]           i_fdi_lp_stream,
 
     output logic                o_fdi_pl_trdy,
 
