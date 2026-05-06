@@ -16,7 +16,6 @@
 //    when needed, and decrements the physical buffer credit upon successful
 //    packet transmission completion.
 // =================================================================================================
-import UC_sb_pkg::*;
 module tx_rdi_controller #(
     parameter NC = 32 
  ) ( 
@@ -55,6 +54,10 @@ module tx_rdi_controller #(
     localparam TX_TOTAL_PHASES     = 128 / NC;    // Number of Phases for a 128-bit transfer
     localparam TX_HALF_PHASES      = 64  / NC;    // Number of Phases for a 64-bit transfer  
     
+     typedef enum logic {
+      TX_STATE_IDLE,
+      TX_STATE_SEND
+     } rdi_ctrl_state;
       rdi_ctrl_state r_current_state , r_next_state ;
  //=================================================== SIGNALS ====================================================
  logic [$clog2(TX_TOTAL_PHASES)-1:0]      r_phase_cnt;            // Counter that count phases

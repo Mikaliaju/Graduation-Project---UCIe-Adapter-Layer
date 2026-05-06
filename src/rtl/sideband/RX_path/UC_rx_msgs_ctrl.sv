@@ -9,7 +9,7 @@
 //               collected, parity checked, then forwarded to their dedicated
 //               handling block.
 // ================================================================================================================================
-import UC_sb_pkg::*;
+import UC_sb_rx_pkg::*;
 module UC_rx_msgs_ctrl #(parameter NC = 32) (
 
     input  logic               i_clk,
@@ -190,11 +190,11 @@ module UC_rx_msgs_ctrl #(parameter NC = 32) (
         o_rdi_crd_release     = 1'b0;
         o_msg_parity_err      = 1'b0;
         o_msg_invld_id_err    = 1'b0;
-        o_sb_state_msg_rx     =  SB_None;
+        o_sb_state_msg_rx     = NONE;
 
         `ifndef END_POINT
         o_e2e_crds_return_vld = 1'b0;
-        o_sb_err_msg_rx       =  NONE_ERR;
+        o_sb_err_msg_rx       = NONE_ERR;
         `endif
         case (r_state)
             MSGC_IDLE: begin
@@ -221,23 +221,23 @@ module UC_rx_msgs_ctrl #(parameter NC = 32) (
                 else if (w_is_msg_no_data) begin
                     if ((w_msg_code == 8'h03) && (w_msg_info == 16'h0)) begin
                         case (w_msg_subcode)
-                            8'h01: o_sb_state_msg_rx = SB_Req_Active;
-                            8'h04: o_sb_state_msg_rx =  SB_Req_L1;
-                            8'h08: o_sb_state_msg_rx =  SB_Req_L2;
-                            8'h09: o_sb_state_msg_rx = SB_Req_LinkReset;
-                            8'h0C: o_sb_state_msg_rx = SB_Req_Disable;
-                            default: o_sb_state_msg_rx =  SB_None;
+                            8'h01: o_sb_state_msg_rx = ACTIVE_REQ;
+                            8'h04: o_sb_state_msg_rx = L1_REQ;
+                            8'h08: o_sb_state_msg_rx = L2_REQ;
+                            8'h09: o_sb_state_msg_rx = LINKRESET_REQ;
+                            8'h0C: o_sb_state_msg_rx = DISABLED_REQ;
+                            default: o_sb_state_msg_rx = NONE;
                         endcase
                     end
                     else if ((w_msg_code == 8'h04) && (w_msg_info == 16'h0)) begin
                         case (w_msg_subcode)
-                            8'h01: o_sb_state_msg_rx =  SB_Rsp_Active;
-                            8'h02: o_sb_state_msg_rx = SB_Rsp_PMNAK;
-                            8'h04: o_sb_state_msg_rx = SB_Rsp_L1;
-                            8'h08: o_sb_state_msg_rx = SB_Rsp_L2;
-                            8'h09: o_sb_state_msg_rx = SB_Rsp_LinkReset;
-                            8'h0C: o_sb_state_msg_rx = SB_Rsp_Disable;
-                            default: o_sb_state_msg_rx =  SB_None;
+                            8'h01: o_sb_state_msg_rx = ACTIVE_RESP;
+                            8'h02: o_sb_state_msg_rx = PMNAK_RESP;
+                            8'h04: o_sb_state_msg_rx = L1_RESP;
+                            8'h08: o_sb_state_msg_rx = L2_RESP;
+                            8'h09: o_sb_state_msg_rx = LINKRESET_RESP;
+                            8'h0C: o_sb_state_msg_rx = DISABLED_RESP;
+                            default: o_sb_state_msg_rx = NONE;
                         endcase
                     end
 
@@ -256,7 +256,7 @@ module UC_rx_msgs_ctrl #(parameter NC = 32) (
                             8'h00: o_sb_err_msg_rx = Correctable_Err;
                             8'h01: o_sb_err_msg_rx = NON_FATAL_Err;
                             8'h02: o_sb_err_msg_rx = FATAL_Err;
-                            default: o_sb_err_msg_rx =  NONE_ERR;
+                            default: o_sb_err_msg_rx = NONE_ERR;
                         endcase
                     end
                     `endif

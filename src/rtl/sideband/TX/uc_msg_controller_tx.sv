@@ -1,6 +1,6 @@
 // =================================================================================================
-//  FILENAME    : UC_sb_msg_controller_tx.sv
-//  MODULE      : UC_sb_msg_controller_tx
+//  FILENAME    : uc_msg_controller_tx.sv
+//  MODULE      : uc_msg_controller_tx
 //  PROJECT     : UCIe 3.0 Adapter Layer
 //  AUTHOR      : Ashraf sherif , Shahd Mohamed
 // =================================================================================================
@@ -11,10 +11,31 @@
 //    interface toward the remote link partner.
 //    The module also passes Parameter Exchange capability messages (with data) to the RDI TX
 //    Controller whenever they are received.
-// =================================================================================================
-`define END_POINT
-import UC_sb_pkg::*; 
-module UC_sb_msg_controller_tx(
+// ================================================================================================
+
+import UC_sb_rx_pkg::*;
+/*
+typedef enum logic [3:0] {
+    NONE,
+    ACTIVE_REQ, 
+    L1_REQ, 
+    L2_REQ, 
+    LINKRESET_REQ, 
+    DISABLED_REQ, 
+    ACTIVE_RESP,
+    PMNAK_RESP, 
+    L1_RESP, 
+    L2_RESP, 
+    LINKRESET_RESP, 
+    DISABLED_RESP
+} sb_state_msg_encoding;
+typedef enum logic [1:0] {
+    NONE_ERR, 
+    Correctable_Err , 
+    NON_FATAL_Err, 
+    FATAL_Err
+} sb_error_msg_encoding; */
+module uc_msg_controller_tx(
     input   logic               i_clk,
     input   logic               i_rstn,
     input   logic               i_init_n,
@@ -73,54 +94,71 @@ end
 /* =============================================================================================== */
 // Output logic 
 assign o_msg_timer_enable = i_msg_is_req;
-always_comb begin : Output_Logic
-    o_tx_msg      = 'b0;
-    o_tx_msg_valid  = 'b0;
-    o_tx_msg_length = 'b0;  
+                    always_comb begin : Output_Logic
+
+    // Default
+    o_tx_msg        = '0;
+    o_tx_msg_valid  = 1'b0;
+    o_tx_msg_length = 1'b0;
+
     if (r_lsm_msgs_pr == SB_BEFORE_PARAM_EXCH) begin
-        if( i_tx_msg_with_data_valid && !i_msgs_fifo_full) begin
+
+        if (i_tx_msg_with_data_valid && !i_msgs_fifo_full) begin
             o_tx_msg         = i_tx_msg_with_data;
             o_tx_msg_valid   = 1'b1;
             o_tx_msg_length  = 1'b1;
         end
+
         `ifdef END_POINT
         else if (i_PE_done && !i_msgs_fifo_full) begin
-            o_tx_msg = {64'h0, 64'h05000100_20000012};
-            o_tx_msg_valid  = 1'b1;
-            o_tx_msg_length = 1'b0;
+            o_tx_msg         = {64'h0, 64'h05000100_20000012};
+            o_tx_msg_valid   = 1'b1;
+            o_tx_msg_length  = 1'b0;
         end
         `endif
+
     end
     else begin
-        if (i_lsm_msg!= SB_None && !i_msgs_fifo_full) begin
-            o_tx_msg_valid  = 1'b1;
-            o_tx_msg_length = 1'b0;
-            case(i_lsm_msg) 
-                SB_Req_Active     : o_tx_msg = {64'h1,64'h05000001_2000C012};
-                SB_Req_L1         : o_tx_msg = {64'h1,64'h05000004_2000C012};
-                SB_Req_L2         : o_tx_msg = {64'h1,64'h05000008_2000C012};
-                SB_Req_LinkReset  : o_tx_msg = {64'h1,64'h45000009_2000C012};
-                SB_Req_Disable    : o_tx_msg = {64'h1,64'h4500000C_2000C012};
 
-                SB_Rsp_Active     : o_tx_msg = {64'h0,64'h45000001_20010012};
-                SB_Rsp_PMNAK      : o_tx_msg = {64'h0,64'h45000002_20010012};    
-                SB_Rsp_L1         : o_tx_msg = {64'h0,64'h45000004_20010012};
-                SB_Rsp_L2         : o_tx_msg = {64'h0,64'h45000008_20010012};    
-                SB_Rsp_LinkReset  : o_tx_msg = {64'h0,64'h05000009_20010012};
-                SB_Rsp_Disable    : o_tx_msg = {64'h0,64'h0500000C_20010012};
-            endcase
-        end
-       `ifdef END_POINT    
-        if (i_err_msg!= NONE_ERR && !i_msgs_fifo_full) begin
+        // ✅ PRIORITY: Error > LSM (مهم في البروتوكول)
+
+        `ifdef END_POINT
+        if (i_err_msg != NONE_ERR && !i_msgs_fifo_full) begin
             o_tx_msg_valid  = 1'b1;
             o_tx_msg_length = 1'b0;
-            case(i_err_msg)                  
-                Correctable_Err        : o_tx_msg = {64'h0,64'h45000000_20024012};
-                NON_FATAL_Err          : o_tx_msg = {64'h0,64'h05000001_20024012};
-                FATAL_Err              : o_tx_msg = {64'h0,64'h05000002_20024012};              
+
+            case(i_err_msg)
+                Correctable_Err : o_tx_msg = {64'h0,64'h45000000_20024012};
+                NON_FATAL_Err   : o_tx_msg = {64'h0,64'h05000001_20024012};
+                FATAL_Err       : o_tx_msg = {64'h0,64'h05000002_20024012};
+                default         : o_tx_msg = '0;
             endcase
         end
-      `endif       
-    end                    
+        else
+        `endif
+        if (i_lsm_msg != NONE && !i_msgs_fifo_full) begin
+
+            o_tx_msg_valid  = 1'b1;
+            o_tx_msg_length = 1'b0;
+
+            case(i_lsm_msg)
+                ACTIVE_REQ     : o_tx_msg = {64'h1,64'h05000001_2000C012};
+                L1_REQ         : o_tx_msg = {64'h1,64'h05000004_2000C012};
+                L2_REQ         : o_tx_msg = {64'h1,64'h05000008_2000C012};
+                LINKRESET_REQ  : o_tx_msg = {64'h1,64'h45000009_2000C012};
+                DISABLED_REQ   : o_tx_msg = {64'h1,64'h4500000C_2000C012};
+
+                ACTIVE_RESP    : o_tx_msg = {64'h0,64'h45000001_20010012};
+                PMNAK_RESP     : o_tx_msg = {64'h0,64'h45000002_20010012};    
+                L1_RESP        : o_tx_msg = {64'h0,64'h45000004_20010012};
+                L2_RESP        : o_tx_msg = {64'h0,64'h45000008_20010012};    
+                LINKRESET_RESP : o_tx_msg = {64'h0,64'h05000009_20010012};
+                DISABLED_RESP  : o_tx_msg = {64'h0,64'h0500000C_20010012};
+
+                default        : o_tx_msg = '0;
+            endcase
+        end
+
+    end
 end
 endmodule

@@ -13,7 +13,6 @@
 //    and updates the mailbox status accordingly. A timeout counter is maintained and compared
 //    against a programmable threshold; if exceeded, a timeout indication is asserted to the Error handler block.
 // =================================================================================================
-import UC_sb_pkg::*;
 module uc_mailbox_controller(
   input  logic             i_clk,
   input  logic             i_rstn,
@@ -53,9 +52,16 @@ module uc_mailbox_controller(
 //============================================ PARAM & ENUMS ==============================================
 localparam int TIMEOUT_CYCLES = 100 ;
 
+typedef enum logic [1:0] {
+  WAIT_FOR_E2E_CRD,   // Wait until E2E credit is available before allowing remote access only for first time
+  WAIT_FOR_TRIGG,     // Wait for mailbox trigger bit
+  WAIT_FOR_SEND,      // Drive request to RDI until RDI asserts i_req_sent
+  WAIT_FOR_COMP       // Wait for completion or timeout
+} MAILBOX_FSM ;
 MAILBOX_FSM r_pr,s_nxt;
 //================================================ SIGNALS ====================================================
 // These are the constructed fields for the outgoing request packet
+ logic         s_mailbox_trigger_en;
  logic [2:0]   s_src_id,s_dst_id;   // IDs (fixed values)
  logic [4:0]   s_tag;               // transaction tag
  logic [4:0]   s_opcode;            // opcode field 
@@ -205,14 +211,14 @@ assign o_mailbox_data_low  = i_comp_packet[95:64];   // UPDATE MAILBOX (data low
 always_comb begin
      // defaults: default outputs when not in WAIT_FOR_COMP or no events
     o_mailbox_data_vld    = 1'b0;
-    o_mailbox_trigger_en  = 1'b0;
+    s_mailbox_trigger_en  = 1'b0;
     o_mailbox_status      = 2'b00;
     o_Header_log1_valid   = 1'b0;
     // Only update mailbox/log while waiting for completion
     if ( r_pr == WAIT_FOR_COMP) begin
       if (i_comp_packet_vld) begin
         // completion received -> clear trigger
-        o_mailbox_trigger_en = 1'b1;
+        s_mailbox_trigger_en = 1'b1;
         if (i_comp_packet[34:32] == 3'b000) begin
           // success completion
           o_mailbox_data_vld = 1'b1;      // mailbox data valid
@@ -227,7 +233,8 @@ always_comb begin
       end
       else if (s_timeout_hit) begin
         // timeout happened -> clear trigger
-        o_mailbox_trigger_en = 1'b1;
+        s_mailbox_trigger_en = 1'b1;
+
         // If this timeout is the last allowed attempt (threshold-1 because counter starts from 0)
         // then log "CA" else return "UR" 
         if (r_timeout_counter== i_remote_threshold - 1) 
@@ -237,4 +244,11 @@ always_comb begin
       end
     end
 end
+ always_ff @(posedge i_clk or negedge i_rstn) begin : proc_
+     if(~i_rstn) begin
+          o_mailbox_trigger_en<= 0;
+     end else begin
+          o_mailbox_trigger_en<=s_mailbox_trigger_en ;
+     end
+ end
 endmodule

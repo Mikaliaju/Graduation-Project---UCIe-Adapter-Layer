@@ -4,13 +4,13 @@
 //  PROJECT     : UCIe 3.0 Adapter Layer
 //  AUTHOR      : Ashraf Sherif, Shahd Mohamed
 // ================================================================================================================================
-//  Description : Top-level wrapper for the SB Receiver Unit.
+//  Description : Top-level wrapper for the SB Receiver Unit.                                                      
 //                Instantiates the RX Decoder, Completions FIFO, Messages FIFO,
 //                Completions Controller, and Messages Controller.
 //                Requests are forwarded directly from the Decoder to the remote die
 //                (EP only) — no Request FIFO.
-// ================================================================================================================================
-import UC_sb_pkg::*; 
+// ================================================================================================================================ 
+   import UC_sb_rx_pkg::*; 
     module UC_sb_rx_top #(
     parameter int NC                  = 32,  // Number of config bits per phase/chunk
     parameter int NUM_OF_COMP_PKTS    = 4,   // Max completion packets the completions FIFO can store

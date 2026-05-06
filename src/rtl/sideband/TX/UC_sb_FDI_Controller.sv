@@ -1,331 +1,298 @@
-/*
-Authour: Shahd Mohamed, Ashraf sherif
 
-Module_name: UC_sb_FDI_Controller
-
-Description: The FDI Controller Block is responsible for managing the routing and
-execution of local register access requests, determining whether each
-request targets the PHY or the Adapter and if the request targets the Adapter layer then the
-FDI Controller responsible to make it's complition
-*/
-import UC_sb_pkg::*;
 module UC_sb_FDI_Controller #(
- parameter int P_DATA_W = 64 // 32 or 64
-)
-(
- //--------------------------- inputs ----------------------------//
- input logic                i_clk,          //clock
- input logic                i_rst_n,        //reset
- input logic [127:0]        i_Data_out,     // SB local request packet
- input logic                i_empty,        // empty flag from FDI FIFO
- input logic                i_Full,         // full flag from RDI FIFO
- input logic [4:0]          i_comp_opcode,  // completion opcode
- input logic                i_read_req,     // 1 mean the request is read request , 0 mean it's a write request
- input logic                i_config,       // 1 mean the request is configuration request , 0 mean it's a memory request
- input logic [2:0]          i_Local_status, // 000b Successful Completion, 001b Unsupported Request, 100b Completer Abort, 111b Stall
- input logic [P_DATA_W-1:0] i_Local_R_data, // data for the read request
- input logic                i_Local_done,   // from access Arbiter
- input logic                i_is_32b,       // indicate if data=32b or 64b
- input logic                i_init,
+    parameter int FIFO_WEDITH = 128  
+)(
+    input  logic                        i_clk,
+    input  logic                        i_rst_n,
+    input  logic                        i_init_n,
 
- //--------------------------outputs--------------------------//
- output logic [127:0]        o_Data_in,            // SB local request packet that it's dst is the physical layer
- output logic                o_Wr_en,              // write enable for RDI FIFO
- output logic                o_Rd_en,              // read enable for FDI FIFO
- output logic [P_DATA_W-1:0] o_Local_wr_data,      // data of the write request for the access arbiter
- output logic                o_Local_wr_en,        // write or read request send to access arbiter
- output logic                o_Local_config_req,   // configuration or memory request
- output logic                o_Local_32_B,         // 32 or 64 data request
- output logic [7:0]          o_Local_BE,           // Byte enable of the local request
- output logic [23:0]         o_Local_address,      // address of the local request
- output logic                o_Local_valid,        // 1 mean there is local request want to access a register , 0 if not
- output logic                o_Fdi_credit_release, // Enables Protocol to send a new local request
- output logic [127:0]        o_Comp_packet,        // response to local Protocol request (where dst of request is adapter)
- output logic                o_Valid,              // the valid signal for comp_packet
- output logic [4:0]          o_req_opcode          // opcode of the local request
+    input  logic [FIFO_WEDITH - 1 : 0]  i_fdi_fifo_out,
+    input  logic                        i_fdi_fifo_empty,
+    input  logic                        i_rdi_fifo_full,
+
+    input  logic [4:0]                  i_comp_opcode,
+    input  logic                        i_read_req,
+    input  logic                        i_config_req,
+    input  logic                        i_is_32b,
+    input  logic                        i_rx_fifo_full,
+
+    input  logic [2:0]                  i_Local_status,
+    input  logic [63:0]                 i_Local_read_data,
+    input  logic                        i_Local_arbiter_done,
+
+    input  logic                        i_tag_correct,
+    input  logic [4:0]                  i_tag_new,
+   // input  logic                        i_tag_uncorrect,
+
+    output logic [FIFO_WEDITH:0]     o_to_rdi_req,
+    output logic                        o_to_rdi_req_vlaid,
+    output logic                        o_fdi_fifo_r_en,
+
+    output logic [63:0]                 o_Local_wr_data,
+    output logic                        o_Local_wr_en,
+    output logic                        o_Local_config_req,
+    output logic                        o_Local_32_B,
+    output logic [7:0]                  o_Local_BE,
+    output logic [23:0]                 o_Local_address,
+    output logic                        o_Local_valid,
+
+    output logic                        o_Fdi_credit_release,
+
+    output logic [FIFO_WEDITH - 1:0] o_rx_Comp_packet,
+    output logic                        o_rx_Comp_packet_valid,
+
+    output logic [4:0]                  o_req_opcode,
+
+    output logic                        o_tag_valid,
+    output logic [4:0]                  o_phy_tag,
+
+    output logic                        o_lsm_parity_error
 );
-//---------------------------------------------IOS finish------------------------------------//
 
-// FSM state encoding
-state_t r_state;
+// =======================================================================================
+//                              Internal Signals
+// =======================================================================================
 
-// ============================================================================
-// Captured request packet + derived fields
-// ============================================================================
-logic [127:0] r_req;   // latched request packet
+logic [FIFO_WEDITH-1:0] r_fdi_fifo_out;
 
-// Split into 32-bit phases
-logic [31:0] p0, p1, p2, p3;
-assign p0 = r_req[31:0];
-assign p1 = r_req[63:32];
-assign p2 = r_req[95:64];
-assign p3 = r_req[127:96];
+logic                   s_control_parity;
+logic                   s_data_parity;
+logic                   s_control_parity_error;
+logic                   s_data_parity_error;
+logic                   s_parity_error;
 
-// Field extraction
-logic [4:0]  opcode;
-logic [7:0]  be;
-logic        dp, cp;
-logic [2:0]  dstid;
-logic [23:0] addr;
-logic [63:0] data64;
+logic                   s_ep_bit;
+logic                   s_is_adapter;
+logic                   s_is_phy;
 
-assign opcode  = p0[4:0];
-assign be      = p0[21:14];
+logic                   s_fifo_r_en_from_idle;
+logic                   s_fifo_r_en_from_rx;
+logic                   s_fifo_r_en_from_rdi;
 
-assign addr    = p1[23:0];
-assign dstid   = p1[26:24];
-assign cp      = p1[30];     // r_req[62]
-assign dp      = p1[31];     // r_req[63]
+logic                   s_reg_ur_ca;
+logic                   s_adapter_ur;
 
-assign data64  = {p3, p2};   // r_req[127:64]
+logic [4:0]             s_comp_opcode;
+logic [2:0]             s_comp_status;
+logic                   s_completion_control_parity;
+logic                   s_completion_data_parity;
+logic [61:0]            s_comp_header;
+logic [63:0]            s_comp_data;
 
-// Opcode forwarded to FDI Packer (continuous)
-assign o_req_opcode = opcode;
+logic [63:0]            s_fdi_to_rdi_req_header;
+logic                   s_old_tag_parity;
+logic                   s_new_tag_parity;
+logic                   s_new_parity;
 
-// ============================================================================
-// Parity verification
-// ============================================================================
-// DP = XOR over data word (p2 ++ p3)
-// CP = XOR over all header bits except the cp bit itself
-//      header bits: p1[29:0] ++ p0[31:0]   (exclude p1[31]=dp, p1[30]=cp)
-logic exp_dp, exp_cp;
-logic cp_ok, dp_ok;
+// =======================================================================================
+//                              State Encoding
+// =======================================================================================
 
-assign exp_dp = ^data64;
-assign exp_cp = ^{p1[29:0], p0};   // exclude dp[31] and cp[30] from p1
+typedef enum logic [2:0] {
+    FDI_CTRL_IDLE         = 3'b000,
+    FDI_CTRL_CHK_PARITY   = 3'b001,
+    FDI_CTRL_LOCAL_ACCESS = 3'b010,
+    FDI_CTRL_SEND_COMP    = 3'b011,
+    FDI_CTRL_SEND_PHY     = 3'b100
+} fdi_ctrl_state_t;
 
-assign dp_ok  = (dp == exp_dp);
-assign cp_ok  = (cp == exp_cp);
+fdi_ctrl_state_t r_current_state, s_next_state;
 
-// ============================================================================
-// Completion packet register
-// ============================================================================
-logic [127:0] r_comp;
+// =======================================================================================
+//                              State Register
+// =======================================================================================
 
-// ============================================================================
-// Latch: captured packer-side signals when we pop the packet.
-// These must be stable for the full Adapter access sequence.
-// ============================================================================
-logic       r_read_req;
-logic       r_config;
-logic       r_is_32b;
-logic [4:0] r_comp_opcode;
+always_ff @(posedge i_clk, negedge i_rst_n) begin : state_reg_proc
+    if (~i_rst_n)
+        r_current_state <= FDI_CTRL_IDLE;
+    else if (~i_init_n)
+        r_current_state <= FDI_CTRL_IDLE;
+    else
+        r_current_state <= s_next_state;
+end
 
-// ============================================================================
-// Helper function: build completion packet
-// ============================================================================
-function automatic logic [127:0] build_completion_pkt(
-    input logic [127:0]        req_pkt,
-    input logic [4:0]          comp_opcode,
-    input logic [2:0]          local_status,
-    input logic                read_req,
-    input logic                is_32b,
-    input logic [P_DATA_W-1:0] local_r_data
-);
-    logic [127:0] pkt;
-    begin
-        pkt = req_pkt;
+// =======================================================================================
+//                              Next State Logic
+// =======================================================================================
 
-        // Replace opcode with completion opcode
-        pkt[4:0] = comp_opcode;
+always_comb begin : next_state_proc
+    s_next_state = r_current_state;
 
-        // Completion status goes into bits [34:32]
-        pkt[34:32] = local_status;
+    case (r_current_state)
 
-        // Payload
-        if (read_req) begin
-            if (is_32b) begin
-                pkt[95:64]  = local_r_data[31:0];
-                pkt[127:96] = 32'h0;
-            end
-            else begin
-                pkt[95:64]  = local_r_data[31:0];
-                pkt[127:96] = local_r_data[63:32];
-            end
-        end
-        else begin
-            pkt[127:64] = 64'h0;
+        FDI_CTRL_IDLE : begin
+            if (!i_fdi_fifo_empty)
+                s_next_state = FDI_CTRL_CHK_PARITY;
         end
 
-        // Recompute parity
-        pkt[63] = ^pkt[127:64];
-        pkt[62] = ^{pkt[61:32], pkt[31:0]};
-
-        build_completion_pkt = pkt;
-    end
-endfunction
-
-// ============================================================================
-// Output logic (combinational)
-// ============================================================================
-always_comb begin
-    // Safe defaults
-    o_Data_in            = r_req;
-    o_Wr_en              = 1'b0;
-    o_Rd_en              = 1'b0;
-    o_Local_wr_data      = '0;
-    o_Local_wr_en        = 1'b0;
-    o_Local_config_req   = 1'b0;
-    o_Local_32_B         = 1'b0;
-    o_Local_BE           = '0;
-    o_Local_address      = '0;
-    o_Local_valid        = 1'b0;
-    o_Fdi_credit_release = i_empty;   // credit released whenever FDI FIFO is empty
-    o_Comp_packet        = r_comp;
-    o_Valid              = 1'b0;
-
-    case (r_state)
-        // ── Pop: assert read-enable if FIFO has data
-        TXCTRL_POP: begin
-            if (!i_empty)
-                o_Rd_en = 1'b1;
-        end
-
-        // ── PHY forward: write to RDI FIFO; stall if full
-        TXCTRL_SEND_PHY: begin
-            if (!i_Full) begin
-                o_Data_in = r_req;
-                o_Wr_en   = 1'b1;
-            end
-        end
-
-        // ── Adapter request: hold signals stable across both issue states
-        TXCTRL_ISSUE_LOCAL,
-        TXCTRL_WAIT_LOCAL: begin
-            o_Local_address    = addr;
-            o_Local_BE         = be;
-            o_Local_config_req = r_config;
-            o_Local_wr_en      = ~r_read_req;   // 1 = write, 0 = read
-            o_Local_32_B       = r_is_32b;
-
-            // Write data: zero-extend to P_DATA_W; use lower 32 bits for 32-bit ops
-            if (r_is_32b)
-                o_Local_wr_data = {{(P_DATA_W-32){1'b0}}, data64[31:0]};
+        FDI_CTRL_CHK_PARITY : begin
+            if (s_parity_error)
+                s_next_state = FDI_CTRL_IDLE;
+            else if (s_ep_bit)
+                s_next_state = FDI_CTRL_SEND_COMP;
+            else if (s_is_adapter)
+                s_next_state = FDI_CTRL_LOCAL_ACCESS;
+            else if (s_is_phy)
+                s_next_state = FDI_CTRL_SEND_PHY;
             else
-                o_Local_wr_data = data64[P_DATA_W-1:0];
-
-            o_Local_valid = 1'b1;
+                s_next_state = FDI_CTRL_SEND_COMP;   // reserved dstid → UR
         end
 
-        // ── Push completion: one-cycle valid pulse
-          TXCTRL_PUSH_COMP   : begin
-            o_Comp_packet = r_comp;
-            o_Valid       = 1'b1;
+        FDI_CTRL_LOCAL_ACCESS : begin
+            if (i_Local_arbiter_done)
+                s_next_state = FDI_CTRL_SEND_COMP;
+            else
+                s_next_state = FDI_CTRL_LOCAL_ACCESS;
         end
 
-        default: ;
+        FDI_CTRL_SEND_COMP : begin
+            if (i_rx_fifo_full)
+                s_next_state = FDI_CTRL_SEND_COMP;
+            else begin
+                if (!i_fdi_fifo_empty)
+                    s_next_state = FDI_CTRL_CHK_PARITY;
+                else
+                    s_next_state = FDI_CTRL_IDLE;
+            end
+        end
+
+        FDI_CTRL_SEND_PHY : begin
+            if (i_rdi_fifo_full)
+                s_next_state = FDI_CTRL_SEND_PHY;
+            else begin
+                if (!i_fdi_fifo_empty)
+                    s_next_state = FDI_CTRL_CHK_PARITY;
+                else
+                    s_next_state = FDI_CTRL_IDLE;
+            end
+        end
+
+        default: s_next_state = FDI_CTRL_IDLE;
+
     endcase
 end
 
-// ============================================================================
-// FSM + data-path sequential logic
-// ============================================================================
-always_ff @(posedge i_clk or negedge i_rst_n) begin
-    if (!i_rst_n) begin
-        r_state       <= TXCTRL_IDLE;
-        r_req         <= '0;
-        r_comp        <= '0;
-        r_read_req    <= 1'b0;
-        r_config      <= 1'b0;
-        r_is_32b      <= 1'b0;
-        r_comp_opcode <= '0;
-    end
-    else if (!i_init) begin
-        // Sideband not yet initialised: hold idle, clear state
-        r_state       <= TXCTRL_IDLE;
-        r_req         <= '0;
-        r_comp        <= '0;
-        r_read_req    <= 1'b0;
-        r_config      <= 1'b0;
-        r_is_32b      <= 1'b0;
-        r_comp_opcode <= '0;
-    end
-    else begin
-        case (r_state)
+// =======================================================================================
+//                              Capture FDI FIFO Output
+// =======================================================================================
 
-            // Wait for a packet to appear in FDI FIFO
-            TXCTRL_IDLE: begin
-                if (!i_empty)
-                    r_state <= TXCTRL_POP;
-            end
-
-            // Assert Rd_en; if FIFO still has data advance, else retry
-            TXCTRL_POP: begin
-                if (!i_empty)
-                    r_state <= TXCTRL_POP_WAIT;
-                else
-                    r_state <= TXCTRL_IDLE;
-            end
-
-            // Capture packet + sidecar signals on next clock edge
-            TXCTRL_POP_WAIT: begin
-                r_req         <= i_Data_out;
-                r_read_req    <= i_read_req;
-                r_config      <= i_config;
-                r_is_32b      <= i_is_32b;
-                r_comp_opcode <= i_comp_opcode;
-                r_state       <= TXCTRL_PARSE;
-            end
-
-            // Check parity; route
-            TXCTRL_PARSE: begin
-                if (!cp_ok || !dp_ok) begin
-                    // Drop silently – parity error
-                    r_state <= TXCTRL_IDLE;
-                end
-                else if (dstid == 3'b010) begin
-                    // PHY (RDI) path
-                    r_state <= TXCTRL_SEND_PHY;
-                end
-                else if (dstid == 3'b001) begin
-                    // Adapter (local register) path
-                    r_state <= TXCTRL_ISSUE_LOCAL;
-                end
-                else begin
-                    // Unknown destination – drop
-                    r_state <= TXCTRL_IDLE;
-                end
-            end
-
-            // Forward to RDI FIFO; stay here while full
-            TXCTRL_SEND_PHY: begin
-                if (!i_Full)
-                    r_state <= TXCTRL_IDLE;
-            end
-
-            // First cycle of Adapter request; advance immediately
-            TXCTRL_ISSUE_LOCAL: begin
-                r_state <= TXCTRL_WAIT_LOCAL;
-            end
-
-            // Hold request; wait for Arbiter done
-            TXCTRL_WAIT_LOCAL: begin
-                if (i_Local_done)
-                    r_state <= TXCTRL_BUILD_COMP   ;
-            end
-
-            // Build completion packet (registered stage)
-            TXCTRL_BUILD_COMP   : begin
-                r_comp  <= build_completion_pkt(
-                              r_req,
-                              r_comp_opcode,
-                              i_Local_status,
-                              r_read_req,
-                              r_is_32b,
-                              i_Local_R_data
-                           );
-                r_state <=   TXCTRL_PUSH_COMP   ;
-            end
-
-            // Output completion for one cycle
-              TXCTRL_PUSH_COMP   : begin
-                r_state <= TXCTRL_IDLE;
-            end
-
-            default: r_state <= TXCTRL_IDLE;
-
-        endcase
-    end
+always_ff @(posedge i_clk, negedge i_rst_n) begin : reg_fdi_fifo_out
+    if (~i_rst_n)
+        r_fdi_fifo_out <= '0;
+    else if (~i_init_n)
+        r_fdi_fifo_out <= '0;
+    else if (o_fdi_fifo_r_en)
+        r_fdi_fifo_out <= i_fdi_fifo_out;
 end
+
+assign s_fifo_r_en_from_idle = (r_current_state == FDI_CTRL_IDLE)      && (!i_fdi_fifo_empty);
+assign s_fifo_r_en_from_rx   = (r_current_state == FDI_CTRL_SEND_COMP) && (!i_fdi_fifo_empty);
+assign s_fifo_r_en_from_rdi  = (r_current_state == FDI_CTRL_SEND_PHY)  && (!i_fdi_fifo_empty);
+
+assign o_fdi_fifo_r_en = s_fifo_r_en_from_idle |
+                         s_fifo_r_en_from_rx   |
+                         s_fifo_r_en_from_rdi;
+
+// =======================================================================================
+//                              Parity Check
+// =======================================================================================
+
+assign s_control_parity       = ^r_fdi_fifo_out[61:0];
+assign s_data_parity          = ^r_fdi_fifo_out[127:64];
+
+assign s_control_parity_error = (s_control_parity != r_fdi_fifo_out[62]);
+assign s_data_parity_error    = (s_data_parity    != r_fdi_fifo_out[63]);
+
+assign s_parity_error         = (r_current_state == FDI_CTRL_CHK_PARITY)
+                                && (s_control_parity_error || s_data_parity_error);
+
+assign o_lsm_parity_error     = s_parity_error;
+
+// =======================================================================================
+//                              Destination Decode
+// =======================================================================================
+
+assign s_ep_bit      =  r_fdi_fifo_out[5];
+assign s_is_adapter  = (r_fdi_fifo_out[58:56] == 3'b001);
+assign s_is_phy      = (r_fdi_fifo_out[58:56] == 3'b010);
+
+// =======================================================================================
+//                              Completion Construction
+// =======================================================================================
+
+assign s_reg_ur_ca   = (i_Local_status != 3'b000);
+assign s_adapter_ur  =  s_ep_bit || (!s_is_adapter && !s_is_phy);
+
+assign s_comp_status = (s_adapter_ur || s_reg_ur_ca) ? 3'b001        : i_Local_status;
+assign s_comp_opcode = (s_adapter_ur || s_reg_ur_ca) ? 5'b11001      : i_comp_opcode;
+
+assign s_comp_header = {1'b0,
+                        r_fdi_fifo_out[60:35],
+                        s_comp_status,
+                        r_fdi_fifo_out[31:5],
+                        s_comp_opcode};
+
+assign s_completion_control_parity = ^s_comp_header;
+
+assign s_comp_data = (s_adapter_ur || s_reg_ur_ca) ? r_fdi_fifo_out[63:0]
+                                                    : i_Local_read_data;
+
+assign s_completion_data_parity = ^s_comp_data;
+
+assign o_rx_Comp_packet       = {s_comp_data,
+                                  s_completion_data_parity,
+                                  s_completion_control_parity,
+                                  s_comp_header};
+
+assign o_rx_Comp_packet_valid = (r_current_state == FDI_CTRL_SEND_COMP) && !i_rx_fifo_full;
+
+// =======================================================================================
+//                              Local (Register File) Interface
+// =======================================================================================
+
+assign o_Local_wr_data    = r_fdi_fifo_out[127:64];
+assign o_Local_address    = r_fdi_fifo_out[55:32];
+assign o_Local_BE         = i_is_32b ? {4'b0000, r_fdi_fifo_out[17:14]}
+                                     : r_fdi_fifo_out[21:14];
+assign o_Local_wr_en      = !i_read_req;
+assign o_Local_config_req = i_config_req;
+assign o_Local_32_B       = i_is_32b;
+assign o_Local_valid      = (r_current_state == FDI_CTRL_LOCAL_ACCESS);
+
+// =======================================================================================
+//                              Tag Manager Interface + PHY Forwarding
+// =======================================================================================
+
+assign o_tag_valid = ((r_current_state == FDI_CTRL_CHK_PARITY) &&
+                       s_is_phy &&
+                      !(s_parity_error && i_rdi_fifo_full))
+                   ||((r_current_state == FDI_CTRL_SEND_PHY) &&
+                       !i_tag_correct &&
+                       !i_rdi_fifo_full);
+
+assign o_phy_tag = r_fdi_fifo_out[26:22];
+
+assign s_old_tag_parity = ^r_fdi_fifo_out[26:22];
+assign s_new_tag_parity = ^i_tag_new;
+assign s_new_parity     =  s_old_tag_parity ^ s_new_tag_parity;
+
+assign s_fdi_to_rdi_req_header = i_tag_correct
+    ? r_fdi_fifo_out[63:0]
+    : {r_fdi_fifo_out[63],
+       s_new_parity,
+       r_fdi_fifo_out[61:27],
+       i_tag_new,
+       r_fdi_fifo_out[21:0]};
+
+assign o_to_rdi_req       = {i_read_req,r_fdi_fifo_out[127:64], s_fdi_to_rdi_req_header};
+
+assign o_to_rdi_req_vlaid = (r_current_state == FDI_CTRL_SEND_PHY) ;
+
+// =======================================================================================
+//                              Credit Release + Opcode
+// =======================================================================================
+
+assign o_Fdi_credit_release = o_fdi_fifo_r_en;
+assign o_req_opcode         = r_fdi_fifo_out[4:0];
 
 endmodule

@@ -11,8 +11,7 @@
 //   the module checks protocol and format conditions and selects the appropriate Flit Format.
 //   Finally, it reports the negotiation result by indicating whether the parameter exchange is
 //   successful, invalid, or timed out, and forwards the selected protocol and flit format to the Protocol Layer.
-// ================================================================================================================================
-`undef END_POINT
+// ===========================================================================================================================
 module UC_parameterexchange (
     input  logic               i_clk,                             // Clock of operation  
     input  logic               i_rstn,                            // HW reset : active low

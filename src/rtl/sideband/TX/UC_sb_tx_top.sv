@@ -4,22 +4,12 @@
  Project     : UCIe 3.0 Adapter Layer - Sideband Unit
 ===========================================================================
  Module      : UC_sb_tx_top
- Description : Sideband Transmit Top-Level module.
-               Instantiates and connects all Tx sub-blocks:
-                 - UC_sb_FDI_Packer          (FDI chunk collector + opcode decoder)
-                 - UC_sync_fifo              (FDI FIFO, RDI FIFO, RX FIFO, MSG FIFO)
-                 - UC_sb_FDI_Controller      (FDI Tx Controller)
-                 - UC_sb_tag_manager         (Tag Controller)
-                 - tx_rdi_controller         (RDI Tx Controller)
-                 - uc_access_arbiter         (Register Access Arbiter)
-                 - uc_mailbox_controller     (Mailbox)              [RP only]
-                 - UC_sb_remote_die_request_controller              [EP only]
-                 - UC_remote_decoder         (Remote Opcode Decoder) [EP only]
+ Description : Sideband Transmit Top-Level module
 
  Authors     : Shahd Mohamed, Ashraf Sherif
 ===========================================================================
 */
-import UC_sb_pkg::*;
+
 module UC_sb_tx_top #(
     parameter int  P_NC             = 32,
     parameter int  P_FDI_FIFO_DEPTH = 32,
@@ -143,17 +133,26 @@ logic                        s_fdi_fifo_write_enable;
 logic                        s_fdi_fifo_read_enable;
 logic [P_FIFO_WIDTH-1:0]     s_fdi_fifo_read_data;
 
-// --- Packer decoded sidecar signals (fed into FDI Controller) ---
-// These are the Packer's combinational decode outputs that remain stable
-// as long as the assembled packet is presented to the FIFO.
-// They are registered by the FDI Controller in S_POP_WAIT.
+// --- FDI Packer / Decoder signals ---
+logic [4:0]                  s_fdi_opcode;
+logic                        s_fdi_request_type;
+logic                        s_fdi_opcode_error;
+
+// --- Decoded side signals for FDI Controller ---
 logic [4:0]                  s_packer_comp_opcode;
 logic                        s_packer_read_req;
 logic                        s_packer_is_config;
 logic                        s_packer_is_32bit;
 
+logic                        s_decoder_write_operation;
+logic                        s_decoder_operation_32bit;
+logic                        s_decoder_request_type_unused;
+logic                        s_decoder_config_req;
+logic [4:0]                  s_decoder_comp_opcode;
+logic                        s_decoder_opcode_error_unused;
+
 // --- FDI Controller outputs ---
-logic [127:0]                s_fdi_ctrl_rdi_packet;
+logic [P_FIFO_WIDTH:0]       s_fdi_ctrl_rdi_packet;
 logic                        s_fdi_ctrl_rdi_write_en;
 logic [P_DATA_W-1:0]         s_fdi_ctrl_local_write_data;
 logic                        s_fdi_ctrl_local_write_enable;
@@ -178,9 +177,9 @@ logic                        s_tag_mgr_not_found_flag;
 // --- RDI FIFO ---
 logic                        s_rdi_fifo_full_flag;
 logic                        s_rdi_fifo_empty_flag;
-logic [P_FIFO_WIDTH-1:0]     s_rdi_fifo_read_data;
+logic [P_FIFO_WIDTH:0]       s_rdi_fifo_read_data;
 logic                        s_rdi_fifo_read_enable;
-logic                        s_rdi_fifo_write_enable;
+//logic                        s_rdi_fifo_write_enable;
 
 // --- RX FIFO ---
 logic                        s_rx_fifo_full_flag;
@@ -231,30 +230,66 @@ logic [P_FIFO_WIDTH:0]       s_msg_fifo_read_data;
 
 // ===========================================================================
 //                    1. UC_sb_FDI_Packer
+//                    FDI chunk collector / FIFO controller
 // ===========================================================================
 
 UC_sb_FDI_Packer #(
-    .P_IN_W(P_NC)
-) U_PACKER (
-    .i_clk          (i_clk),
-    .i_rst_n        (i_rst_n),
-    .i_init_n       (i_init_n),
-    .i_lp_cfg       (i_fdi_lp_cfg),
-    .i_lp_cfg_valid (i_fdi_lp_cfg_vld),
-    .i_full         (s_fdi_fifo_full_flag),
-    .i_opcode       (i_fdi_lp_cfg[4:0]),
-    .o_data_in      (s_fdi_fifo_write_data),
-    .o_wr_en        (s_fdi_fifo_write_enable),
-    .o_is_config    (s_packer_is_config),
-    .o_read_req     (s_packer_read_req),
-    .o_operation_32bit(s_packer_is_32bit),
-    .o_comp_opcode  (s_packer_comp_opcode),
-    .o_fifo_overflow(o_tx_fdi_overflow),
-    .o_opcode_error (o_fdi_packer_error)
+    .P_NC          (P_NC),
+    .P_FIFO_WEDITH (P_FIFO_WIDTH)
+) U_FDI_PACKER (
+    .i_clk                  (i_clk),
+    .i_rst_n                (i_rst_n),
+    .i_init_n               (i_init_n),
+
+    // From FDI
+    .i_lp_cfg               (i_fdi_lp_cfg),
+    .i_lp_cfg_vld           (i_fdi_lp_cfg_vld),
+
+    // From FDI FIFO
+    .i_fdi_fifo_full        (s_fdi_fifo_full_flag),
+
+    // From opcode decoder
+    .i_request_type         (s_fdi_request_type),
+    .i_opcode_error         (s_fdi_opcode_error),
+
+    // To opcode decoder
+    .o_opcode               (s_fdi_opcode),
+
+    // To LSM / error handling
+    .o_fdi_overflow         (o_tx_fdi_overflow),
+    .o_fdi_fifo_cntrl_error (o_fdi_packer_error),
+
+    // To FDI FIFO
+    .o_fdi_fifo_data_in     (s_fdi_fifo_write_data),
+    .o_fdi_fifo_wr_en       (s_fdi_fifo_write_enable)
+);
+
+
+// ===========================================================================
+//                    1.1 UC_fdi_decoder for FDI Packer
+//                   
+// ===========================================================================
+
+logic        s_fdi_decoder_write_unused;
+logic        s_fdi_decoder_32bit_unused;
+logic        s_fdi_decoder_config_unused;
+logic [4:0]  s_fdi_decoder_comp_unused;
+logic        s_mailbox_dec_is_adapter_unused;
+logic [4:0]  s_mailbox_dec_comp_opcode_unused;
+logic        s_mailbox_dec_write_unused;
+logic        s_mailbox_dec_config_unused;
+UC_fdi_decoder U_FDI_DECODER_PACKER (
+    .i_opcode           (s_fdi_opcode),
+    .o_write_operation  (s_fdi_decoder_write_unused),
+    .o_operation_32bit  (s_fdi_decoder_32bit_unused),
+    .o_request_type     (s_fdi_request_type),
+    .o_confg_req        (s_fdi_decoder_config_unused),
+    .o_comp_opcode      (s_fdi_decoder_comp_unused),
+    .o_opcode_error     (s_fdi_opcode_error)
 );
 
 // ===========================================================================
-//                    2. FDI FIFO  (UC_sync_fifo)
+//                    2. FDI FIFO
 // ===========================================================================
 
 UC_sync_fifo #(
@@ -272,76 +307,99 @@ UC_sync_fifo #(
     .fifo_empty       (s_fdi_fifo_empty_flag)
 );
 
+
 // ===========================================================================
 //                    3. UC_sb_FDI_Controller
 // ===========================================================================
 
 UC_sb_FDI_Controller #(
-    .P_DATA_W(P_DATA_W)
+    .FIFO_WEDITH(P_FIFO_WIDTH)
 ) U_FDI_CONTROLLER (
-    .i_clk              (i_clk),
-    .i_rst_n            (i_rst_n),
-    .i_init             (i_init_n),
+    .i_clk                  (i_clk),
+    .i_rst_n                (i_rst_n),
+    .i_init_n               (i_init_n),
 
     // FDI FIFO
-    .i_Data_out         (s_fdi_fifo_read_data),
-    .i_empty            (s_fdi_fifo_empty_flag),
-    .o_Rd_en            (s_fdi_fifo_read_enable),
-
-    // Decoded sidecar signals from Packer
-    // These are latched by the controller in S_POP_WAIT alongside i_Data_out
-    .i_comp_opcode      (s_packer_comp_opcode),
-    .i_read_req         (s_packer_read_req),
-    .i_config           (s_packer_is_config),
-    .i_is_32b           (s_packer_is_32bit),
+    .i_fdi_fifo_out         (s_fdi_fifo_read_data),
+    .i_fdi_fifo_empty       (s_fdi_fifo_empty_flag),
+    .o_fdi_fifo_r_en        (s_fdi_fifo_read_enable),
 
     // RDI FIFO back-pressure
-    .i_Full             (s_rdi_fifo_full_flag),
+    .i_rdi_fifo_full        (s_rdi_fifo_full_flag),
+
+    // Decoded sidecar signals from decoder
+    .i_comp_opcode          (s_packer_comp_opcode),
+    .i_read_req             (s_packer_read_req),
+    .i_config_req           (s_packer_is_config),
+    .i_is_32b               (s_packer_is_32bit),
 
     // RX FIFO back-pressure
-    // .i_rx_fifo_full     (s_rx_fifo_full_flag),
-
-    // Tag Manager response
-    // .i_tag_correct      (s_tag_mgr_correct_flag),
-    // .i_tag_new          (s_tag_mgr_new_tag),
-    // .i_tag_uncorrect    (s_tag_mgr_not_found_flag),
-
-    // Tag Manager request
-    // .o_tag_valid        (s_fdi_ctrl_tag_valid),
-    // .o_phy_tag          (s_fdi_ctrl_phy_tag),
+    .i_rx_fifo_full         (s_rx_fifo_full_flag),
 
     // Access Arbiter
-    .i_Local_done       (s_arbiter_local_done),
-    .i_Local_status     (s_arbiter_local_status),
-    .i_Local_R_data     (s_arbiter_local_read_data),
-    .o_Local_wr_data    (s_fdi_ctrl_local_write_data),
-    .o_Local_wr_en      (s_fdi_ctrl_local_write_enable),
-    .o_Local_config_req (s_fdi_ctrl_local_config_request),
-    .o_Local_32_B       (s_fdi_ctrl_local_32bit_access),
-    .o_Local_BE         (s_fdi_ctrl_local_byte_enable),
-    .o_Local_address    (s_fdi_ctrl_local_address),
-    .o_Local_valid      (s_fdi_ctrl_local_valid),
+    .i_Local_status         (s_arbiter_local_status),
+    .i_Local_read_data      (s_arbiter_local_read_data),
+    .i_Local_arbiter_done   (s_arbiter_local_done),
+
+    .o_Local_wr_data        (s_fdi_ctrl_local_write_data),
+    .o_Local_wr_en          (s_fdi_ctrl_local_write_enable),
+    .o_Local_config_req     (s_fdi_ctrl_local_config_request),
+    .o_Local_32_B           (s_fdi_ctrl_local_32bit_access),
+    .o_Local_BE             (s_fdi_ctrl_local_byte_enable),
+    .o_Local_address        (s_fdi_ctrl_local_address),
+    .o_Local_valid          (s_fdi_ctrl_local_valid),
+
+    // Tag Manager response
+    .i_tag_correct          (s_tag_mgr_correct_flag),
+    .i_tag_new              (s_tag_mgr_new_tag),
+    //.i_tag_uncorrect        (s_tag_mgr_not_found_flag),
+
+    // Tag Manager request
+    .o_tag_valid            (s_fdi_ctrl_tag_valid),
+    .o_phy_tag              (s_fdi_ctrl_phy_tag),
 
     // RDI FIFO write
-    .o_Data_in          (s_fdi_ctrl_rdi_packet),
-    .o_Wr_en            (s_fdi_ctrl_rdi_write_en),
+    .o_to_rdi_req           (s_fdi_ctrl_rdi_packet),
+    .o_to_rdi_req_vlaid     (s_fdi_ctrl_rdi_write_en),
 
-    // Completion → RX FIFO
-    .o_Comp_packet      (s_fdi_ctrl_rx_comp_packet),
-    .o_Valid            (s_fdi_ctrl_rx_comp_valid),
+    // Completion to RX FIFO
+    .o_rx_Comp_packet       (s_fdi_ctrl_rx_comp_packet),
+    .o_rx_Comp_packet_valid (s_fdi_ctrl_rx_comp_valid),
 
     // Opcode of current captured request
-    .o_req_opcode       (s_fdi_ctrl_request_opcode),
+    .o_req_opcode           (s_fdi_ctrl_request_opcode),
 
     // Credit release
-    .o_Fdi_credit_release(s_fdi_ctrl_credit_release)
+    .o_Fdi_credit_release   (s_fdi_ctrl_credit_release),
 
     // LSM
-    // .o_lsm_parity_error (s_fdi_ctrl_parity_error)
+    .o_lsm_parity_error     (s_fdi_ctrl_parity_error)
 );
 
 assign o_tx_fdi_crd_release  = s_fdi_ctrl_credit_release;
 assign o_tx_lsm_parity_error = s_fdi_ctrl_parity_error;
+
+
+// ===========================================================================
+//                    3.1 UC_fdi_decoder for FDI Controller
+//                    Decode the current opcode from FDI Controller
+// ===========================================================================
+
+UC_fdi_decoder U_FDI_DECODER_CONTROLLER (
+    .i_opcode             (s_fdi_ctrl_request_opcode),
+    .o_write_operation    (s_decoder_write_operation),
+    .o_operation_32bit    (s_decoder_operation_32bit),
+    .o_request_type       (s_decoder_request_type_unused),
+    .o_confg_req          (s_decoder_config_req),
+    .o_comp_opcode        (s_decoder_comp_opcode),
+    .o_opcode_error       (s_decoder_opcode_error_unused)
+);
+
+assign s_packer_comp_opcode = s_decoder_comp_opcode;
+assign s_packer_read_req    = ~s_decoder_write_operation;
+assign s_packer_is_config   = s_decoder_config_req;
+assign s_packer_is_32bit    = s_decoder_operation_32bit;
+
 
 // ===========================================================================
 //                    4. UC_sb_tag_manager
@@ -367,13 +425,14 @@ UC_sb_tag_manager U_TAG_MANAGER (
 
 assign o_rx_tx_tag_notfound = s_tag_mgr_not_found_flag;
 
+
 // ===========================================================================
-//                    5. RDI FIFO  (UC_sync_fifo)
+//                    5. RDI FIFO
 // ===========================================================================
 
 UC_sync_fifo #(
     .FIFO_DEPTH(32),
-    .DATA_WIDTH(P_FIFO_WIDTH)
+    .DATA_WIDTH(P_FIFO_WIDTH+1)
 ) U_RDI_FIFO (
     .clk              (i_clk),
     .rst_n            (i_rst_n),
@@ -386,8 +445,9 @@ UC_sync_fifo #(
     .fifo_empty       (s_rdi_fifo_empty_flag)
 );
 
+
 // ===========================================================================
-//                    6. RX FIFO  (UC_sync_fifo)  [Completions → Rx]
+//                    6. RX FIFO  [Completions to Rx]
 // ===========================================================================
 
 UC_sync_fifo #(
@@ -407,8 +467,9 @@ UC_sync_fifo #(
 
 assign o_tx_rx_comp_pkt_vld = ~s_rx_fifo_empty_flag;
 
+
 // ===========================================================================
-//                    7. MSG FIFO  (UC_sync_fifo)
+//                    7. MSG FIFO
 // ===========================================================================
 
 UC_sync_fifo #(
@@ -426,8 +487,9 @@ UC_sync_fifo #(
     .fifo_empty       (s_msg_fifo_empty_flag)
 );
 
+
 // ===========================================================================
-//                    8. tx_rdi_controller  (RDI Tx Controller)
+//                    8. tx_rdi_controller
 // ===========================================================================
 
 `ifdef END_POINT
@@ -438,42 +500,44 @@ assign s_remote_is_comp_endpoint = s_remote_ctrl_is_completion;
 tx_rdi_controller #(
     .NC(P_NC)
 ) U_RDI_TX_CNTRL (
-    .i_clk          (i_clk),
-    .i_rstn         (i_rst_n),
-    .i_init_n       (i_init_n),
+    .i_clk              (i_clk),
+    .i_rstn             (i_rst_n),
+    .i_init_n           (i_init_n),
 
-    .i_fdi_pkt      (s_rdi_fifo_read_data[127:0]),
-    .i_fdi_length   (s_rdi_fifo_read_data[128]),
-    .i_fdi_valid    (~s_rdi_fifo_empty_flag),
-    .o_fdi_sent     (s_rdi_fifo_read_enable),
+    .i_fdi_pkt          (s_rdi_fifo_read_data[127:0]),
+    .i_fdi_length       (~s_rdi_fifo_read_data[128]),
+    .i_fdi_valid        (~s_rdi_fifo_empty_flag),
+    .o_fdi_sent         (s_rdi_fifo_read_enable),
 
-    .i_msg_pkt      (s_msg_fifo_read_data[P_FIFO_WIDTH-1:0]),
-    .i_msg_length   (s_msg_fifo_read_data[P_FIFO_WIDTH]),
-    .i_msg_valid    (~s_msg_fifo_empty_flag),
-    .o_msg_sent     (s_msg_fifo_read_enable),
-    .o_msg_is_req   (o_tx_msg_handling_done),
+    .i_msg_pkt          (s_msg_fifo_read_data[P_FIFO_WIDTH-1:0]),
+    .i_msg_length       (s_msg_fifo_read_data[P_FIFO_WIDTH]),
+    .i_msg_valid        (~s_msg_fifo_empty_flag),
+    .o_msg_sent         (s_msg_fifo_read_enable),
+    .o_msg_is_req       (o_tx_msg_handling_done),
 
-    .i_remote_pkt   (s_remote_ctrl_packet),
-    .i_remote_length(s_remote_ctrl_packet_length),
-    .i_remote_valid (s_remote_ctrl_packet_valid),
-    .o_remote_sent  (s_remote_ctrl_sent_ack),
+    .i_remote_pkt       (s_remote_ctrl_packet),
+    .i_remote_length    (s_remote_ctrl_packet_length),
+    .i_remote_valid     (s_remote_ctrl_packet_valid),
+    .o_remote_sent      (s_remote_ctrl_sent_ack),
 
     `ifdef END_POINT
-    .i_remote_comp  (s_remote_is_comp_endpoint),
+    .i_remote_comp      (s_remote_is_comp_endpoint),
     `endif
 
-    .o_lp_cfg       (o_rdi_lp_cfg),
-    .o_lp_cfg_vld   (o_rdi_lp_cfg_vld),
+    .o_lp_cfg           (o_rdi_lp_cfg),
+    .o_lp_cfg_vld       (o_rdi_lp_cfg_vld),
 
-    .i_stall_tx     (i_tx_stall_signal),
-    .o_decrease_counter(o_tx_dec_phy_buffer)
+    .i_stall_tx         (i_tx_stall_signal),
+    .o_decrease_counter (o_tx_dec_phy_buffer)
 );
+
 
 // ===========================================================================
 //                    9. Remote Controller
 // ===========================================================================
 
 `ifndef END_POINT
+
 // -------------------------------------------------------------------------
 // ROOT PORT: uc_mailbox_controller
 // -------------------------------------------------------------------------
@@ -520,9 +584,15 @@ uc_mailbox_controller U_MAILBOX_CTRL (
 );
 
 UC_remote_decoder U_MAILBOX_DECODER (
-    .i_decoder_opcode (s_mailbox_opcode),
-    .o_operation_32bit(s_mailbox_32bit_access),
-    .o_comp_type      (s_mailbox_request_length)
+    .i_decoder_addr     (24'd0),
+    .i_decoder_opcode   (s_mailbox_opcode),
+
+    .o_is_adapter       (s_mailbox_dec_is_adapter_unused),
+    .o_comp_opcode      (s_mailbox_dec_comp_opcode_unused),
+    .o_write_operation  (s_mailbox_dec_write_unused),
+    .o_operation_32bit  (s_mailbox_32bit_access),
+    .o_confg_req        (s_mailbox_dec_config_unused),
+    .o_comp_type        (s_mailbox_request_length)
 );
 
 assign s_remote_ctrl_arbiter_valid    = 1'b0;
@@ -535,6 +605,7 @@ assign s_remote_ctrl_reg_32bit_access = 1'b0;
 assign s_remote_ctrl_is_completion    = 1'b0;
 
 `else
+
 // -------------------------------------------------------------------------
 // END POINT: UC_sb_remote_die_request_controller + UC_remote_decoder
 // -------------------------------------------------------------------------
@@ -596,6 +667,7 @@ UC_remote_decoder U_REMOTE_DECODER (
 
 `endif
 
+
 // ===========================================================================
 //                    10. uc_access_arbiter
 // ===========================================================================
@@ -635,8 +707,10 @@ uc_access_arbiter U_ARBITER (
     .i_remote_BE        (8'b0),
     .i_remote_cofig_req (1'b0),
     .i_remote_32_B      (1'b0),
+    .o_remote_done      (s_arbiter_remote_done),
+    .o_remote_status    (s_arbiter_remote_status),
+    .o_remote_R_data    (s_arbiter_remote_read_data),
     `endif
-
     .i_R_data           (i_reg_read_data),
     .i_Status           (i_reg_status),
     .o_wr_data          (o_reg_write_data),

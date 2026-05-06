@@ -10,19 +10,19 @@ RX Path: Checks the received completion tag against the stored records. If the t
 the original tag is restored; otherwise, an invalid or unknown tag is flagged as an error.
 */
 module UC_sb_tag_manager (
-    //------------------------------Inputs--------------------------//
+    //-------------------------------- Inputs --------------------------//
     input logic        i_clk,
     input logic        i_rst_n,
     input logic        i_valid,           //Indicates that the incoming tag is ready to be validated and stored 
     input logic [4:0]  i_tag_store,      //The tag value to be stored 
     input logic        i_check,         //Triggers validation for a received tag to start check it
     input logic [4:0]  i_current_tag,  //Tag received from completion controller to be checked
-    input logic        i_init_n,      // init signal for software
+    input logic        i_init_n,           // init signal for software
 
-    //--------------------------------Outputs--------------------------------------//
-    output logic        o_correct,           //Set to 1 if the tag is valid and accepted.
-    output logic [4:0]  o_new_tag,          //Outputs a new tag if the original one was invalid or reused
-    output logic        o_uncorrect_tag,   //Set to 1 if the tag is not recognized or has an error 
+    //-------------------------------- Outputs --------------------------------------//
+    output logic        o_correct,           // Set to 1 if the tag is valid and accepted.
+    output logic [4:0]  o_new_tag,           // Outputs a new tag if the original one was invalid or reused
+    output logic        o_uncorrect_tag,     // Set to 1 if the tag is not recognized or has an error 
     output logic [4:0]  o_old_tag         //Outputs the original tag if the received one was previously remapped 
  
 );

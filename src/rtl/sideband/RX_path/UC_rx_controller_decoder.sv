@@ -10,7 +10,7 @@
 //               - Completions               → Completions FIFO (phase by phase)
 //               - Messages                  → Messages FIFO (phase by phase)
 // ================================================================================================================================
-import UC_sb_pkg::* ;
+import UC_sb_rx_pkg::* ;
 module UC_rx_controller_decoder #(parameter NC = 32) (
 
     input  logic                  i_clk,               // Clock of operation "lclk"
