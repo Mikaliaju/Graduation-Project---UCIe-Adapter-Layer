@@ -1,8 +1,7 @@
 // ============================================================
 // File: UC_top.sv
 // Description: Top-level module connecting all UCIe subsystems
-//              Instantiates SB, MB, ALSM, and RegFile through
-//              their interface wrappers
+//              Instantiates SB, MB, ALSM, and RegFile
 // ============================================================
 
 import UC_ALSM_package::*;

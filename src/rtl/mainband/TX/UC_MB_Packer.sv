@@ -96,8 +96,8 @@ logic [1:0]               r_collect_cnt;           // Count num of chunk receive
 logic [3:0]               r_nop_chunk;             // NOP tracking ? one bit per chunk (1 = NOP, 0 = real data)  
 
 // Pipeline register for RDI (1-cycle delay)
-logic [DATA_PATH-1:0]     r_pipe_data;             // Make data delay for 1 cycle
-logic                     r_pipe_valid;
+//logic [DATA_PATH-1:0]     r_pipe_data;             // Make data delay for 1 cycle
+//logic                     r_pipe_valid;
 
 // Chunk 3 buffer (held until S_INSERT)
 logic [DATA_PATH-1:0]     r_chunk3_buf;
@@ -136,8 +136,8 @@ logic [DATA_PATH-1:0]     w_chunk3_masked;         // chunk3 after adding header
 
 logic [1:0]               w_nxt_collect_cnt;
 logic [3:0]               w_nxt_nop_chunk;
-logic [DATA_PATH-1:0]     w_nxt_pipe_data;
-logic                     w_nxt_pipe_valid;
+//logic [DATA_PATH-1:0]     w_nxt_pipe_data;
+//logic                     w_nxt_pipe_valid;
 logic [DATA_PATH-1:0]     w_nxt_chunk3_buf;
 logic [PROTOCOL_ID-1:0]   w_nxt_pid;
 logic                     w_nxt_sid;
@@ -164,6 +164,17 @@ logic                     w_nxt_drain_done;
 packer_state_e r_state;                            // packer state
 packer_state_e w_nxt_state;                        // next state
 
+
+      function insert_case ;
+        w_nxt_lp_data_rdi[351:0]       = r_chunk3_buf[351:0];
+        w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+        w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+        w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
+        w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
+        w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
+        w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
+        w_nxt_lp_valid_rdi             = 1'b1;
+      endfunction
 
 // =============================================================================
 // CRC Generator Instantiation
@@ -202,7 +213,7 @@ always_comb begin
 end
 
 // =============================================================================
-// Retry Buffer Outputs (Combinational)
+// Retry Buffer Outputs (Combinational) only used retry buffer when use retry
 // =============================================================================
 always_comb begin
   if (!i_retry_use) begin
@@ -227,8 +238,8 @@ always_comb begin
   w_nxt_state                = r_state;
   w_nxt_collect_cnt          = r_collect_cnt;
   w_nxt_nop_chunk            = r_nop_chunk;
-  w_nxt_pipe_data            = r_pipe_data;
-  w_nxt_pipe_valid           = r_pipe_valid;
+ //w_nxt_pipe_data            = r_pipe_data;
+ // w_nxt_pipe_valid           = r_pipe_valid;
   w_nxt_chunk3_buf           = r_chunk3_buf;
   w_nxt_pid                  = r_pid;
   w_nxt_sid                  = r_sid;
@@ -264,7 +275,7 @@ always_comb begin
     S_IDLE: begin
       w_nxt_collect_cnt           = 2'd0;
       w_nxt_nop_chunk             = 4'b0000;
-      w_nxt_pipe_valid            = 1'b0;
+//      w_nxt_pipe_valid            = 1'b0;
       w_nxt_lp_irdy_rdi           = 1'b0;
       w_nxt_pl_trdy_fdi           = 1'b0;
       w_nxt_dllp_valid            = 1'b0;
@@ -276,8 +287,9 @@ always_comb begin
         if (i_flush) begin
           w_nxt_state      = S_FLUSH;
         end
-        else if (i_drain)
+        else if (i_drain) begin
           w_nxt_state = S_DRAIN;
+        end
         else begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
@@ -298,7 +310,7 @@ always_comb begin
       if (!i_packer_en && !i_pl_trdy) begin
         w_nxt_pl_trdy_fdi = 1'b0;
         w_nxt_lp_irdy_rdi = 1'b0;
-        w_nxt_pipe_valid  = 1'b0;
+  //      w_nxt_pipe_valid  = 1'b0;
         w_nxt_state       = S_IDLE;
       end
 
@@ -307,11 +319,12 @@ always_comb begin
 
         // 1) Receive from retry buffer
         w_nxt_nop_chunk[r_collect_cnt] = 1'b0;
-        w_nxt_pipe_data                = i_retry_data;
-        w_nxt_pipe_valid               = 1'b1;
+        w_nxt_lp_data_rdi  = i_retry_data;
+        w_nxt_lp_valid_rdi = 1'b1;
 
-        if (r_collect_cnt == 2'd3)
+        if (r_collect_cnt == 2'd3) begin
           w_nxt_chunk3_buf = i_retry_data;
+        end
 
         // DLLP always from FDI even in retry/drain/flush
         if (i_lp_dllp_valid) begin
@@ -342,18 +355,11 @@ always_comb begin
           w_nxt_crc_payload_valid = 1'b1;
         end
 
-        // 3) Send previous chunk to RDI (not chunk3)
-        if (r_pipe_valid && r_collect_cnt != 2'd3) begin
-          w_nxt_lp_data_rdi  = r_pipe_data;
-          w_nxt_lp_valid_rdi = 1'b1;
-        end
-
-        w_nxt_pipe_data  = i_retry_data;
-        w_nxt_pipe_valid = 1'b1;
+//          w_nxt_lp_data_rdi  = i_retey_data;
+ //         w_nxt_lp_valid_rdi = 1'b1;
 
         if (r_collect_cnt == 2'd3) begin
           w_nxt_collect_cnt = 2'd0;
-          w_nxt_pipe_valid  = 1'b0;
           w_nxt_state       = S_INSERT;
         end
         else begin
@@ -406,19 +412,17 @@ always_comb begin
           w_nxt_crc_payload_valid = 1'b1;
         end
 
-        // 3) Send previous chunk to RDI (not chunk3)
-        if (r_pipe_valid && r_collect_cnt != 2'd3) begin
-          w_nxt_lp_data_rdi  = r_pipe_data;
+        w_nxt_lp_data_rdi  = i_lp_valid_fdi ? i_lp_data_fdi : '0;
+        w_nxt_lp_valid_rdi = 1'b1;
+
+       if (r_collect_cnt == 2'd3) begin
+          w_nxt_lp_data_rdi  = i_lp_valid_fdi ? i_lp_data_fdi : '0;
           w_nxt_lp_valid_rdi = 1'b1;
-        end
-
-        w_nxt_pipe_data  = i_lp_valid_fdi ? i_lp_data_fdi : '0;
-        w_nxt_pipe_valid = 1'b1;
-
+       end
+       
         if (r_collect_cnt == 2'd3) begin
           w_nxt_collect_cnt = 2'd0;
           w_nxt_pl_trdy_fdi = 1'b0;
-          w_nxt_pipe_valid  = 1'b0;
           w_nxt_state       = S_INSERT;
         end
         else begin
@@ -433,6 +437,7 @@ always_comb begin
     //   Send final chunk3 to RDI
     // =========================================================================
     S_INSERT: begin
+   //   w_nxt_pipe_valid  = 1'b0;
       if (w_crc_valid) begin
         w_nxt_lp_data_rdi[351:0]       = r_chunk3_buf[351:0];
         w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
@@ -536,8 +541,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     r_state                 <= S_IDLE;
     r_collect_cnt           <= 2'd0;
     r_nop_chunk             <= 4'b0000;
-    r_pipe_data             <= '0;
-    r_pipe_valid            <= 1'b0;
+  //  r_pipe_data             <= '0;
+  //  r_pipe_valid            <= 1'b0;
     r_chunk3_buf            <= '0;
     r_pid                   <= '0;
     r_sid                   <= 1'b0;
@@ -563,8 +568,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     r_state                 <= S_IDLE;
     r_collect_cnt           <= 2'd0;
     r_nop_chunk             <= 4'b0000;
-    r_pipe_data             <= '0;
-    r_pipe_valid            <= 1'b0;
+   // r_pipe_data             <= '0;
+   // r_pipe_valid            <= 1'b0;
     r_chunk3_buf            <= '0;
     r_pid                   <= '0;
     r_sid                   <= 1'b0;
@@ -591,8 +596,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     r_state                 <= w_nxt_state;
     r_collect_cnt           <= w_nxt_collect_cnt;
     r_nop_chunk             <= w_nxt_nop_chunk;
-    r_pipe_data             <= w_nxt_pipe_data;
-    r_pipe_valid            <= w_nxt_pipe_valid;
+    //r_pipe_data             <= w_nxt_pipe_data;
+    //r_pipe_valid            <= w_nxt_pipe_valid;
     r_chunk3_buf            <= w_nxt_chunk3_buf;
     r_pid                   <= w_nxt_pid;
     r_sid                   <= w_nxt_sid;
@@ -617,4 +622,5 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
 end
 
 endmodule
+
 

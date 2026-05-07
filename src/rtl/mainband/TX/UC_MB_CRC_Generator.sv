@@ -34,6 +34,14 @@ logic [CRC_SIZE-1:0] r_crc_next;     // Used in Combinational CRC calculation Lo
 chunk_state r_state;               // Count 4chunk of 256B.
 // ===========================================================================================================
 
+// =============================================================================
+// Output Assignments (Combinational ? same cycle as chunk3 received)
+// =============================================================================
+assign o_crc_valid = (r_state == S_CHUNK3) && i_crc_payload_valid;
+assign o_crc0_gen  = (r_state == S_CHUNK3) && i_crc_payload_valid ? r_crc_reg0 : '0;
+assign o_crc1_gen  = (r_state == S_CHUNK3) && i_crc_payload_valid ? r_crc_next : '0;
+// ==============================================================================
+
 // =========================================================
 // Combinational CRC calculation Logic
 // =========================================================
@@ -61,13 +69,10 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
   if (!i_rst_n) begin
     r_crc_reg0   <= CRC_INIT;
     r_crc_reg1   <= CRC_INIT;
-    o_crc0_gen   <= 0;
-    o_crc1_gen   <= 0;
-    o_crc_valid  <= 0;
     r_state      <= S_CHUNK0;
   end
   else begin
-    o_crc_valid <= 0;
+//    o_crc_valid <= 0;
     if (i_crc_payload_valid) begin
       case (r_state)
         // First 64B ? CRC0 window
@@ -87,10 +92,10 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
          end
          // Fourth 64B ? CRC1 window ends
          S_CHUNK3: begin
-           r_crc_reg1  <= r_crc_next;
-           o_crc0_gen  <= r_crc_reg0;
-           o_crc1_gen  <= r_crc_next;
-           o_crc_valid <= 1'b1;
+ //          r_crc_reg1  <= r_crc_next;
+ //          o_crc0_gen  <= r_crc_reg0;
+ //          o_crc1_gen  <= r_crc_next;
+ //          o_crc_valid <= 1'b1;
            // reset for next flit
            r_state     <= S_CHUNK0;
          end
