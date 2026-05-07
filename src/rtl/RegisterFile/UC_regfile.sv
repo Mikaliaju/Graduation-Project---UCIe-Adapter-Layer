@@ -1,5 +1,5 @@
 import UC_ALSM_package::*;
-import UC_sb_pkg::*;
+import UC_sb_rx_pkg::*;
 import UC_regfile_package::*;
 
 // typedef enum logic [1:0] {

@@ -1,5 +1,5 @@
 import UC_ALSM_package::*;
-import UC_sb_pkg::*;
+import UC_sb_rx_pkg::*;
 
 // typedef enum logic [2:0] {
 // 	Active_LSM_response_type    = 'b001,
@@ -28,19 +28,19 @@ import UC_sb_pkg::*;
 // 	LL_Retrain      = 'b1011,
 // 	LL_Disable      = 'b1100
 // } ll_state;
-// typedef enum { 
-// 	SB_None,
-// 	SB_Req_Active,
-// 	SB_Req_L1,
-// 	SB_Req_L2,
-// 	SB_Req_LinkReset,
-// 	SB_Req_Disable,
-// 	SB_Rsp_Active,
-// 	SB_Rsp_L1,
-// 	SB_Rsp_L2,
-// 	SB_Rsp_LinkReset,
-// 	SB_Rsp_Disable,
-// 	SB_Rsp_PMNAK
+// typedef enum logic [3:0] {
+//     NONE           = 4'd0,
+//     ACTIVE_REQ     = 4'd1,
+//     L1_REQ         = 4'd2,
+//     L2_REQ         = 4'd3,
+//     LINKRESET_REQ  = 4'd4,
+//     DISABLED_REQ   = 4'd5,
+//     ACTIVE_RESP    = 4'd6,
+//     PMNAK_RESP     = 4'd7,
+//     L1_RESP        = 4'd8,
+//     L2_RESP        = 4'd9,
+//     LINKRESET_RESP = 4'd10,
+//     DISABLED_RESP  = 4'd11
 // } sb_state_msg_encoding;
 // typedef enum {
 // 	ALSM_Reset,
@@ -497,7 +497,7 @@ task reset_values();
   i_fdi_lp_state_req_UP          = Req_NOP;
   i_fdi_lp_linkerror_UP          = 'b0;
   i_fdi_lp_stall_ack_UP          = 'b0;
-  // i_sb_state_rx_UP               = SB_None;
+  // i_sb_state_rx_UP               = NONE;
   i_sb_param_exch_done_UP        = 'b0;
   i_mb_flush_done_UP             = 'b0;
   i_mb_retrain_trigger_UP        = 'b0;
@@ -512,7 +512,7 @@ task reset_values();
   i_fdi_lp_state_req_DP          = Req_NOP;
   i_fdi_lp_linkerror_DP          = 'b0;
   i_fdi_lp_stall_ack_DP          = 'b0;
-  // i_sb_state_rx_DP               = SB_None;
+  // i_sb_state_rx_DP               = NONE;
   i_sb_param_exch_done_DP        = 'b0;
   i_mb_flush_done_DP             = 'b0;
   i_mb_retrain_trigger_DP        = 'b0;

@@ -6,7 +6,7 @@
 // ============================================================
 
 import UC_ALSM_package::*;
-import UC_sb_pkg::*;
+import UC_sb_rx_pkg::*;
 import UC_MB_Mainband_pkg::*;
 import UC_regfile_package::*;
 
@@ -432,10 +432,16 @@ UC_sb_top_inst (
   .i_sb_start_param_exch     (w_sb_start_param_exch      ),
   .o_sb_param_exch_done      (w_sb_param_exch_done       ),
 
-  // .i_sb_err_msg_tx           (w_sb_out_error_msg_encoding),
+  `ifndef END_POINT
   .o_sb_err_msg_rx           (w_sb_in_error_msg_encoding ),
   .o_sb_remote_timeout       (w_sb_remote_timeout        ),
-  // .o_sb_local_timeout        (w_sb_local_timeout         ),
+  `else
+  .o_sb_local_timeout        (w_sb_local_timeout         ),
+  `endif
+
+  `ifdef END_POINT
+  .i_sb_err_msg_tx           (w_sb_out_error_msg_encoding),
+  `endif
   .o_sb_rdi_overflow         (w_sb_rdi_overflow          ),
   .o_sb_fdi_overflow         (w_sb_fdi_overflow          ),
   .o_sb_parity_error         (w_sb_parity_error          ),
@@ -455,6 +461,7 @@ UC_sb_top_inst (
   .o_reg_32_B                (w_sb_32_B                  ),
   .o_reg_valid               (o_reg_valid                ), // 
 
+  `ifdef END_POINT
   .i_mailbox_index_low       (w_o_sb_mailbox_index_low   ),
   .i_mailbox_index_high      (w_o_sb_mailbox_index_high  ),
   .i_mailbox_data_low        (w_o_sb_mailbox_data_low    ),
@@ -465,6 +472,7 @@ UC_sb_top_inst (
   .o_mailbox_data_en         (w_i_sb_mailbox_data_en     ),
   .o_mailbox_trigger_en      (w_i_sb_mailbox_trigger_en  ),
   .o_mailbox_status          (w_i_sb_mailbox_status      ),
+  `endif
 
   .o_header_log_1            (w_sb_Header_log1           ),
   .o_header_log_en           (w_sb_Header_log1_valid     ),

@@ -1,5 +1,5 @@
 import UC_ALSM_package::*;
-import UC_sb_pkg::*;
+import UC_sb_rx_pkg::*;
 
 // typedef enum logic [1:0] {
 //     NONE_ERR, 
@@ -41,7 +41,6 @@ module UC_regfile_tb;
   logic [31:0] i_sb_mailbox_data_low;
   logic [31:0] i_sb_mailbox_data_high;
   logic [1:0] i_sb_mailbox_status;
-  logic i_sb_mailbox_data_vld;
   logic i_sb_mailbox_trigger_en;
   logic [63:0] i_sb_Header_log1;
   logic i_sb_Header_log1_valid;
@@ -129,7 +128,6 @@ module UC_regfile_tb;
     .i_sb_mailbox_data_low(i_sb_mailbox_data_low),
     .i_sb_mailbox_data_high(i_sb_mailbox_data_high),
     .i_sb_mailbox_status(i_sb_mailbox_status),
-    .i_sb_mailbox_data_vld(i_sb_mailbox_data_vld),
     .i_sb_mailbox_trigger_en(i_sb_mailbox_trigger_en),
     .i_sb_Header_log1(i_sb_Header_log1),
     .i_sb_Header_log1_valid(i_sb_Header_log1_valid),
@@ -381,7 +379,6 @@ task reset_values();
   i_sb_mailbox_data_low = '0;
   i_sb_mailbox_data_high = '0;
   i_sb_mailbox_status = '0;
-  i_sb_mailbox_data_vld = '0;
   i_sb_mailbox_trigger_en = '0;
   i_sb_Header_log1 = '0;
   i_sb_Header_log1_valid = '0;
