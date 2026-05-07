@@ -164,17 +164,10 @@ logic                     w_nxt_drain_done;
 packer_state_e r_state;                            // packer state
 packer_state_e w_nxt_state;                        // next state
 
+function CRC_COLLECT_CASE();
 
-      function insert_case ;
-        w_nxt_lp_data_rdi[351:0]       = r_chunk3_buf[351:0];
-        w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
-        w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
-        w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
-        w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
-        w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
-        w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
-        w_nxt_lp_valid_rdi             = 1'b1;
-      endfunction
+  
+endfunction
 
 // =============================================================================
 // CRC Generator Instantiation
@@ -203,7 +196,8 @@ end
 // Chunk 3 Masked ? for CRC_Generator input (Combinational)
 // =============================================================================
 always_comb begin
-  w_chunk3_masked[351:0]        = r_chunk3_buf[351:0];
+  w_chunk3_masked[351:0]        = i_lp_data_fdi[351:0];
+  // w_chunk3_masked[351:0]        = r_chunk3_buf[351:0];
   w_chunk3_masked[C3_FH_B0+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
   w_chunk3_masked[C3_FH_B1+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
   w_chunk3_masked[C3_DLP+:32]   = r_dllp_valid   ? r_dllp_buf : 32'h0;
@@ -293,6 +287,8 @@ always_comb begin
         else begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
+          w_nxt_crc_payload       = i_lp_valid_fdi ? i_lp_data_fdi : '0;
+          w_nxt_crc_payload_valid = 1'b1;
           w_nxt_state       = S_COLLECT;
         end
       end
@@ -375,8 +371,10 @@ always_comb begin
           w_nxt_nop_chunk[r_collect_cnt] = 1'b0;
           w_nxt_pid                      = i_lp_stream[1:0];
           w_nxt_sid                      = i_lp_stream[5];
-          if (r_collect_cnt == 2'd3)
+          if (r_collect_cnt == 2'd3) begin
             w_nxt_chunk3_buf = i_lp_data_fdi;
+            $display("Here, w_nxt_chunk3_buf = 0x%0x", w_nxt_chunk3_buf);
+          end
         end
         else begin
           // NOP data
@@ -423,7 +421,17 @@ always_comb begin
         if (r_collect_cnt == 2'd3) begin
           w_nxt_collect_cnt = 2'd0;
           w_nxt_pl_trdy_fdi = 1'b0;
-          w_nxt_state       = S_INSERT;
+          if (w_crc_valid) begin
+            w_nxt_lp_data_rdi[351:0]       = i_lp_data_fdi[351:0];
+            w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+            w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+            w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
+            w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
+            w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
+            w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
+            w_nxt_lp_valid_rdi             = 1'b1;
+            w_nxt_state       = S_INSERT;
+          end
         end
         else begin
           w_nxt_collect_cnt = r_collect_cnt + 1'b1;
@@ -438,17 +446,21 @@ always_comb begin
     // =========================================================================
     S_INSERT: begin
    //   w_nxt_pipe_valid  = 1'b0;
-      if (w_crc_valid) begin
-        w_nxt_lp_data_rdi[351:0]       = r_chunk3_buf[351:0];
-        w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
-        w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
-        w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
-        w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
-        w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
-        w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
-        w_nxt_lp_valid_rdi             = 1'b1;
+      // if (w_crc_valid) begin
+      //   w_nxt_lp_data_rdi[351:0]       = r_chunk3_buf[351:0];
+      //   w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+      //   w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+      //   w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
+      //   w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
+      //   w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
+      //   w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
+      //   w_nxt_lp_valid_rdi             = 1'b1;
+      // end
+        w_nxt_lp_irdy_rdi = 1'b0;
+        w_nxt_nop_chunk   = 4'b0000;
+        w_nxt_dllp_valid  = 1'b0;
+        w_nxt_chunk3_buf  = '0;
         w_nxt_state                    = S_DONE;
-      end
     end
 
     // =========================================================================

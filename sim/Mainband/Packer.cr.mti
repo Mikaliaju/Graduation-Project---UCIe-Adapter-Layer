@@ -1,0 +1,25 @@
+D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Mainband/UC_MB_Packer_tb.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/Mainband/UC_MB_Packer_tb.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling module UC_MB_Packer_tb
+-- Importing package UC_MB_Mainband_pkg
+
+Top level modules:
+	UC_MB_Packer_tb
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/mainband/TX/UC_MB_CRC_Generator.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_MB_CRC_Generator_sv_unit
+-- Importing package UC_MB_Mainband_pkg
+-- Compiling module UC_MB_CRC_Generator
+
+Top level modules:
+	UC_MB_CRC_Generator
+
+} {} {}} D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_MB_Mainband_pkg.sv {1 {vlog -work work -vopt -sv -stats=none D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/common/UC_MB_Mainband_pkg.sv
+QuestaSim-64 vlog 2021.1 Compiler 2021.01 Jan 19 2021
+-- Compiling package UC_MB_Mainband_pkg
+
+Top level modules:
+	--none--
+
+} {} {}}
