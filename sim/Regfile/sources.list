@@ -1,5 +1,5 @@
 ../../src/rtl/common/UC_ALSM_package.sv
-../../src/rtl/common/UC_sb_pkg.sv
+../../src/rtl/common/UC_sb_rx_pkg.sv
 ../../src/rtl/common/UC_regfile_package.sv
 ../../src/rtl/RegisterFile/UC_regfile.sv
 UC_regfile_tb.sv

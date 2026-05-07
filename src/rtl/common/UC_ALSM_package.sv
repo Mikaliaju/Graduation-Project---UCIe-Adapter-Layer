@@ -43,8 +43,8 @@ package UC_ALSM_package;
   // All valid sideband message encodings
   // ------------------------------------------------------------
   // typedef enum {
-  //   SB_None,
-  //   SB_Req_Active,
+  //   None,
+  //   ACTIVE_REQ,
   //   SB_Req_L1,
   //   SB_Req_L2,
   //   SB_Req_LinkReset,
