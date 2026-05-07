@@ -373,7 +373,6 @@ always_comb begin
           w_nxt_sid                      = i_lp_stream[5];
           if (r_collect_cnt == 2'd3) begin
             w_nxt_chunk3_buf = i_lp_data_fdi;
-            $display("Here, w_nxt_chunk3_buf = 0x%0x", w_nxt_chunk3_buf);
           end
         end
         else begin
