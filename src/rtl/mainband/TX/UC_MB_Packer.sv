@@ -286,7 +286,7 @@ always_comb begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
           w_nxt_crc_payload       = i_lp_valid_fdi ? i_lp_data_fdi : '0;
-          w_nxt_crc_payload_valid = 1'b1;
+          w_nxt_crc_payload_valid = i_lp_valid_fdi;
           w_nxt_state       = S_COLLECT;
         end
       end
