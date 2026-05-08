@@ -291,11 +291,11 @@ always_comb begin
     // =====================================================================
     S_CHECK: begin
       // Forward chunk 3 to FDI (last pipeline flush)
-      if (i_pl_valid_rdi) begin
-        w_nxt_pl_data_fdi  = w_chunk3_Raw;
-        w_nxt_pl_valid_fdi = 1'b1;
+   //   if (i_pl_valid_rdi) begin
+  //      w_nxt_pl_data_fdi  = w_chunk3_Raw;
+  //      w_nxt_pl_valid_fdi = 1'b1;
   //      w_nxt_pipe_valid   = 1'b0;
-      end
+  //    end
 
       // CRC comparison (CRC_Gen takes exactly 4 cycles, result ready here)
       if (w_crc_valid) begin
