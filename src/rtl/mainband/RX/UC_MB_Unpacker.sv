@@ -155,7 +155,7 @@ end
 always_comb begin
   o_seq_num    = r_seq_num;
   o_replay_com = r_replay_cmd;
-  o_pl_stream  = {4'b0, r_sid, r_pid};
+  o_pl_stream  = {5'b0, r_sid, r_pid};
   o_pl_dllp    = r_dllp_buf;
 end
 
@@ -253,7 +253,7 @@ always_comb begin
         end
 
         // Cut-through: forward previous chunk to FDI
-        if (r_pipe_valid && r_chunk_cnt != 2'd3) begin
+        if (r_pipe_valid ) begin //&& r_chunk_cnt != 2'd3
           w_nxt_pl_data_fdi  = r_pipe_data;
           w_nxt_pl_valid_fdi = 1'b1;
         end
@@ -284,6 +284,7 @@ always_comb begin
         if ((w_crc0_gen != r_crc0_ch) || (w_crc1_gen != r_crc1_ch)) begin
           w_nxt_crc_err     = 1'b1;
           w_nxt_flit_cancel = 1'b1;
+          $display("CRC0 = %h | CRC1 = %h", w_crc0_gen, w_crc1_gen);
         end
       end
 
@@ -380,3 +381,4 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
 end
 
 endmodule
+
