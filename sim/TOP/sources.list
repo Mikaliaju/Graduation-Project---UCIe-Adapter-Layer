@@ -1,30 +1,44 @@
+../../src/rtl/common/UC_all_defs.svh
 ../../src/rtl/common/UC_ALSM_package.sv
 ../../src/rtl/common/UC_sb_rx_pkg.sv
+../../src/rtl/common/UC_sb_rx_pkg_EP.sv                                                                    
+../../src/rtl/common/UC_sb_rx_pkg_RP.sv                                                                    
 ../../src/rtl/common/UC_MB_Mainband_pkg.sv
 ../../src/rtl/common/UC_regfile_package.sv
-../../src/rtl/common/UC_all_defs.svh
 
 ../../src/rtl/LSM/UC_ALSM.sv
 ../../src/rtl/RegisterFile/UC_regfile.sv
 
-../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv
-../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv
-../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv
-../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv
-../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv
+../../src/rtl/Sideband_duplicated/tx_rdi_cntrl_EP.sv                                                                    
+../../src/rtl/Sideband_duplicated/tx_rdi_controller_RP.sv                                                               
+../../src/rtl/Sideband_duplicated/uc_access_arbiter.sv                                                                  
+../../src/rtl/Sideband_duplicated/UC_fdi_decoder.sv                                                                     
+../../src/rtl/Sideband_duplicated/uc_mailbox_controller.sv                                                              
+../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv                                                            
+../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv                                                            
+../../src/rtl/Sideband_duplicated/UC_parameterexchange_EP.sv                                                            
+../../src/rtl/Sideband_duplicated/UC_parameterexchange_RP.sv                                                            
+../../src/rtl/Sideband_duplicated/UC_remote_decoder.sv                                                                  
+../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv                                                       
+../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv                                                        
+../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv                                                        
+../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv                                                                 
+../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv                                                                 
+../../src/rtl/Sideband_duplicated/UC_rx_sync_fifo.sv                                                                    
+../../src/rtl/Sideband_duplicated/UC_sb_credit_loop.sv                                                                  
+../../src/rtl/Sideband_duplicated/UC_sb_FDI_Controller.sv                                                               
+../../src/rtl/Sideband_duplicated/UC_sb_FDI_Packer.sv                                                                   
+../../src/rtl/Sideband_duplicated/UC_sb_remote_die_request_controller.sv                                                
+../../src/rtl/Sideband_duplicated/UC_sb_tag_manager.sv                                                                  
+../../src/rtl/Sideband_duplicated/UC_sync_fifo.sv    
 
-../../src/rtl/sideband/TX/UC_fdi_decoder.sv
-../../src/rtl/sideband/TX/UC_remote_decoder.sv
-../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv
-../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv
-../../src/rtl/sideband/TX/uc_msg_controller_tx.sv
-../../src/rtl/sideband/TX/UC_sb_remote_die_request_controller.sv
-../../src/rtl/sideband/TX/UC_sync_fifo.sv
-../../src/rtl/sideband/TX/uc_mailbox_controller.sv
-../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
-../../src/rtl/sideband/TX/UC_sb_tx_top.sv
+../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv                                                                    
+../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv                                                                    
+../../src/rtl/Sideband_duplicated/UC_sb_tx_top_EP.sv                                                                    
+../../src/rtl/Sideband_duplicated/UC_sb_tx_top_RP.sv                                                                    
+../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv                                                                       
+../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv                                                                       
 
-../../src/rtl/sideband/UC_sb_top.sv
 
 ../../src/rtl/sideband/common/UC_parameterexchange.sv
 ../../src/rtl/sideband/common/UC_sb_credit_loop.sv
@@ -37,5 +51,8 @@
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
 ../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
 
+../../src/rtl/TOP/UC_TOP_EP.sv
+../../src/rtl/TOP/UC_TOP_RP.sv
 ../../src/rtl/TOP/UC_TOP.sv
 UC_TOP_tb.sv
+

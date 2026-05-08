@@ -16,7 +16,7 @@
 // =================================================================================================
 
 import UC_MB_Mainband_pkg::*;
-import UC_MB_retry_pkg::*;
+// import UC_MB_retry_pkg::*;
 
 module UC_MB_Mainband (
   // -------------------------
@@ -240,6 +240,7 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 // =============================================================================
 
 
+/*
 UC_MB_retry_top U3_UC_MB_retry_top (
 
   // -------------------------------------------------------------------------
@@ -296,6 +297,6 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .log_cie             (o_log_cie),      //needed to connect to LSM/Register File
   .rdi_retrain         (o_rdi_retrain)   //needed to connect to LSM
 );
-
+*/
 endmodule
 
