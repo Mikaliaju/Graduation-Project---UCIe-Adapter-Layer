@@ -5,6 +5,93 @@ import UC_regfile_package::*;
 
 `include "../../src/rtl/common/UC_all_defs.svh"
 
+class Request_Pkt;
+    // Header fields
+    logic [2:0]  srcid;         // Source ID: fixed as 000b
+    logic [4:0]  tag;           // 5-bit Tag field
+    logic [7:0]  byte_en;       // 8-bit Byte Enable field
+    logic [4:0] opcode;   // 5-bit opcode field
+    logic [2:0]  dstid;         // 3-bit Destination ID
+    logic [23:0] addr;          // 24-bit address
+    logic        header_parity;
+    logic        data_parity;
+
+    // Data field
+    logic [63:0] data;
+    bit has_data;
+
+    // Packet phases
+    logic [31:0] phase1, phase2, phase3, phase4;
+    logic [127:0] constructed_pkt;
+
+    // Opcode definitions
+    localparam logic [4:0] MEM_RD32 = 5'b00000;
+    localparam logic [4:0] MEM_WR32 = 5'b00001;
+    localparam logic [4:0] CFG_RD32 = 5'b00100;
+    localparam logic [4:0] CFG_WR32 = 5'b00101;
+    localparam logic [4:0] MEM_RD64 = 5'b01000;
+    localparam logic [4:0] MEM_WR64 = 5'b01001;
+    localparam logic [4:0] CFG_RD64 = 5'b01100;
+    localparam logic [4:0] CFG_WR64 = 5'b01101;
+
+    // constraint c_opcode {
+    //     opcode inside {MEM_RD32, MEM_WR32, CFG_RD32, CFG_WR32,
+    //                    MEM_RD64, MEM_WR64, CFG_RD64, CFG_WR64};
+    // }
+
+    function new(input logic [4:0] tag,
+                 input logic [7:0] byte_en,
+                 input logic [2:0] dstid,
+                 input logic [23:0] addr = 24'd0,
+                 input logic [63:0] data,
+                 input logic [4:0] opcode
+                 );
+        this.srcid   = 3'b000;
+        this.tag     = tag;
+        this.byte_en = byte_en;
+        this.data    = data;
+        this.opcode  = opcode;
+        // if (!this.randomize()) begin
+        //     $display("Randomization failed");
+        //     $finish;
+        // end
+        this.addr  = addr;
+        this.dstid = dstid;
+
+        // Determine if packet has data
+        if ((opcode == MEM_WR32) || (opcode == CFG_WR32) ||
+            (opcode == MEM_WR64) || (opcode == CFG_WR64))
+            has_data = 1;
+        else
+            has_data = 0;
+
+        build_packet();
+    endfunction
+
+    function void build_packet();
+        // Phase 1
+        phase1 = {srcid, 2'b00, tag, byte_en, 9'b0, opcode};
+
+        // Header parity
+        header_parity = ^({phase1, 3'b000, dstid, addr});
+
+        // Data phases
+        if (has_data) begin
+            phase3 = data[31:0];
+            if ((opcode == MEM_WR32) || (opcode == CFG_WR32))
+                phase4 = 32'd0;
+            else
+                phase4 = data[63:32];
+        end else begin
+            phase3 = 32'd0;
+            phase4 = 32'd0;
+        end
+
+        data_parity = ^({phase4, phase3});
+        phase2 = {data_parity, header_parity, 3'b000, dstid, addr};
+        constructed_pkt = {phase4, phase3, phase2, phase1};
+    endfunction
+endclass
 module UC_TOP_tb;
 
   // Parameters
@@ -13,6 +100,7 @@ module UC_TOP_tb;
   logic                  i_clk;
   logic                  i_rst_n;
   logic                  i_init;
+
 
   // ======================== RP Ports ========================
   logic [`P_NC-1:0]      RP_i_rdi_pl_cfg;
@@ -174,6 +262,7 @@ module UC_TOP_tb;
   logic                  EP_o_fdi_pl_nferror;
   logic                  EP_o_fdi_pl_trainerror;
 
+  // ======================== internal signals ========================
   UC_TOP_RP  UC_TOP_RP_inst (
     .i_clk                         (i_clk                         ),
     .i_rst_n                       (i_rst_n                       ),
@@ -187,7 +276,7 @@ module UC_TOP_tb;
     .i_rdi_pl_inband_pres          (RP_i_rdi_pl_inband_pres       ),
     .i_rdi_pl_phyinrecenter        (RP_i_rdi_pl_phyinrecenter     ),
     .i_rdi_pl_speedmode            (RP_i_rdi_pl_speedmode         ),
-    .i_rdi_pl_lnk_cfg             (RP_i_rdi_pl_lnk_cfg           ),
+    .i_rdi_pl_lnk_cfg              (RP_i_rdi_pl_lnk_cfg           ),
     .i_rdi_pl_state_sts            (RP_i_rdi_pl_state_sts         ),
     .i_rdi_pl_clk_req              (RP_i_rdi_pl_clk_req           ),
     .i_rdi_pl_wake_ack             (RP_i_rdi_pl_wake_ack          ),
@@ -244,7 +333,7 @@ module UC_TOP_tb;
     .o_fdi_pl_phyinl2              (RP_o_fdi_pl_phyinl2           ),
     .o_fdi_pl_speedmode            (RP_o_fdi_pl_speedmode         ),
     .o_fdi_pl_max_speedmode        (RP_o_fdi_pl_max_speedmode     ),
-    .o_fdi_pl_lnk_cfg             (RP_o_fdi_pl_lnk_cfg           ),
+    .o_fdi_pl_lnk_cfg              (RP_o_fdi_pl_lnk_cfg           ),
     .o_fdi_pl_state_sts            (RP_o_fdi_pl_state_sts         ),
     .o_fdi_pl_inband_pres          (RP_o_fdi_pl_inband_pres       ),
     .o_fdi_pl_rx_active_req        (RP_o_fdi_pl_rx_active_req     ),
@@ -270,7 +359,7 @@ module UC_TOP_tb;
     .i_rdi_pl_inband_pres          (EP_i_rdi_pl_inband_pres       ),
     .i_rdi_pl_phyinrecenter        (EP_i_rdi_pl_phyinrecenter     ),
     .i_rdi_pl_speedmode            (EP_i_rdi_pl_speedmode         ),
-    .i_rdi_pl_lnk_cfg             (EP_i_rdi_pl_lnk_cfg           ),
+    .i_rdi_pl_lnk_cfg              (EP_i_rdi_pl_lnk_cfg           ),
     .i_rdi_pl_state_sts            (EP_i_rdi_pl_state_sts         ),
     .i_rdi_pl_clk_req              (EP_i_rdi_pl_clk_req           ),
     .i_rdi_pl_wake_ack             (EP_i_rdi_pl_wake_ack          ),
@@ -327,7 +416,7 @@ module UC_TOP_tb;
     .o_fdi_pl_phyinl2              (EP_o_fdi_pl_phyinl2           ),
     .o_fdi_pl_speedmode            (EP_o_fdi_pl_speedmode         ),
     .o_fdi_pl_max_speedmode        (EP_o_fdi_pl_max_speedmode     ),
-    .o_fdi_pl_lnk_cfg             (EP_o_fdi_pl_lnk_cfg           ),
+    .o_fdi_pl_lnk_cfg              (EP_o_fdi_pl_lnk_cfg           ),
     .o_fdi_pl_state_sts            (EP_o_fdi_pl_state_sts         ),
     .o_fdi_pl_inband_pres          (EP_o_fdi_pl_inband_pres       ),
     .o_fdi_pl_rx_active_req        (EP_o_fdi_pl_rx_active_req     ),
@@ -370,34 +459,113 @@ end
 
 assign RP_i_fdi_lp_wake_req        = 'b1;
 assign RP_i_rdi_pl_clk_req         = 'b1;
+
 assign EP_i_fdi_lp_wake_req        = 'b1;
 assign EP_i_rdi_pl_clk_req         = 'b1;
 
-initial begin
+assign EP_i_rdi_pl_cfg     = RP_o_rdi_lp_cfg;
+assign EP_i_rdi_pl_cfg_vld = RP_o_rdi_lp_cfg_vld;
+
+assign RP_i_rdi_pl_cfg     = EP_o_rdi_lp_cfg;
+assign RP_i_rdi_pl_cfg_vld = EP_o_rdi_lp_cfg_vld;
+
+assign RP_i_rdi_pl_data    = EP_o_rdi_lp_data;
+assign EP_i_rdi_pl_data    = RP_o_rdi_lp_data;
+
+assign RP_i_rdi_pl_valid   = EP_o_rdi_lp_valid;
+assign EP_i_rdi_pl_valid   = RP_o_rdi_lp_valid;
+
+Request_Pkt req_pkt;
+
+initial begin : main
   reset_values();
+  go_active();
   @(negedge i_clk);
+  RP_i_rdi_pl_trdy = 'b1;
+  EP_i_rdi_pl_trdy = 'b1;
+
+  RP_i_fdi_lp_irdy        = 1'b1;
+  RP_i_fdi_lp_data        = {64{8'h11}};
+  RP_i_fdi_lp_valid       = 1'b1;
+  RP_i_fdi_lp_dllp        = 32'hAABBCCDD;
+  RP_i_fdi_lp_dllp_valid  = 1'b1;
+  RP_i_fdi_lp_dllp_ofc    = 1'b1;
+  RP_i_fdi_lp_stream      = 8'b1010_0000;
   @(negedge i_clk);
+  RP_i_fdi_lp_data        = {64{8'h22}};
   @(negedge i_clk);
+  RP_i_fdi_lp_data        = {64{8'h33}};
+  @(negedge i_clk);
+  RP_i_fdi_lp_data[351:0]   = {44{8'hAA}};
+  RP_i_fdi_lp_data[511:352] = 160'h0;
+
+  repeat(20) begin
+    @(negedge i_clk);
+  end
   $stop();
   $finish();
 end
+
+always_ff @(posedge i_clk or negedge i_rst_n) begin : registered_interface_signals_block
+  if (~i_rst_n || ~i_init) begin
+    RP_i_rdi_pl_wake_ack              <= 'b0;
+    RP_i_fdi_lp_clk_ack               <= 'b0;
+    RP_i_fdi_lp_rx_active_sts         <= 'b0;
+
+    EP_i_rdi_pl_wake_ack              <= 'b0;
+    EP_i_fdi_lp_clk_ack               <= 'b0;
+    EP_i_fdi_lp_rx_active_sts         <= 'b0;
+  end
+  else begin
+    RP_i_rdi_pl_wake_ack              <= RP_o_rdi_lp_wake_req;
+    RP_i_fdi_lp_clk_ack               <= RP_o_fdi_pl_clk_req;
+    RP_i_fdi_lp_rx_active_sts         <= RP_o_fdi_pl_rx_active_req;
+
+    EP_i_rdi_pl_wake_ack              <= EP_o_rdi_lp_wake_req;
+    EP_i_fdi_lp_clk_ack               <= EP_o_fdi_pl_clk_req;
+    EP_i_fdi_lp_rx_active_sts         <= EP_o_fdi_pl_rx_active_req;
+  end
+end
+
+task go_active();
+  @(negedge i_clk);
+  @(negedge i_clk);
+  @(negedge i_clk);
+  req_pkt = new('0, 8'hFF, 3'b001, 'h54, 64'h0_0100_00aa, 5'b01001);
+  receive_fdi_full_packet_RP(req_pkt.constructed_pkt);
+  receive_fdi_full_packet_EP(req_pkt.constructed_pkt);
+  repeat(20) begin
+    @(negedge i_clk);
+  end
+
+  RP_i_rdi_pl_inband_pres = 'b1;
+  EP_i_rdi_pl_inband_pres = 'b1;
+  RP_i_rdi_pl_state_sts = LL_Active;
+  EP_i_rdi_pl_state_sts = LL_Active;
+  repeat(100) begin
+    @(negedge i_clk);
+  end
+  RP_i_fdi_lp_state_req = Req_Active;
+  repeat(20) begin
+    @(negedge i_clk);
+  end
+  EP_i_fdi_lp_state_req = Req_Active;
+  repeat(20) begin
+    @(negedge i_clk);
+  end
+endtask
 
 task reset_values();
   i_rst_n                          = '0;
   i_init                           = '0;
   // RP reset
-  RP_i_rdi_pl_cfg                  = '0;
-  RP_i_rdi_pl_cfg_vld              = '0;
-  RP_i_rdi_pl_cfg_crd              = '0;
+  RP_i_rdi_pl_cfg_crd              = 'b1;
   RP_i_rdi_pl_trdy                 = '0;
-  RP_i_rdi_pl_data                 = '0;
-  RP_i_rdi_pl_valid                = '0;
   RP_i_rdi_pl_inband_pres          = '0;
   RP_i_rdi_pl_phyinrecenter        = '0;
   RP_i_rdi_pl_speedmode            = '0;
   RP_i_rdi_pl_lnk_cfg             = '0;
   RP_i_rdi_pl_state_sts            = LL_Reset;
-  RP_i_rdi_pl_wake_ack             = '0;
   RP_i_rdi_pl_stall_req            = '0;
   RP_i_rdi_pl_error                = '0;
   RP_i_rdi_pl_trdy_alsm            = '0;
@@ -407,7 +575,7 @@ task reset_values();
   RP_i_rdi_pl_nferror              = '0;
   RP_i_fdi_lp_cfg                  = '0;
   RP_i_fdi_lp_cfg_vld              = '0;
-  RP_i_fdi_lp_cfg_crd              = '0;
+  RP_i_fdi_lp_cfg_crd              = 'b1;
   RP_i_fdi_lp_irdy                 = '0;
   RP_i_fdi_lp_valid                = '0;
   RP_i_fdi_lp_data                 = '0;
@@ -417,22 +585,15 @@ task reset_values();
   RP_i_fdi_lp_stream               = '0;
   RP_i_fdi_lp_state_req            = Req_NOP;
   RP_i_fdi_lp_linkerror            = '0;
-  RP_i_fdi_lp_rx_active_sts        = '0;
   RP_i_fdi_lp_stall_ack            = '0;
-  RP_i_fdi_lp_clk_ack              = '0;
   // EP reset
-  EP_i_rdi_pl_cfg                  = '0;
-  EP_i_rdi_pl_cfg_vld              = '0;
   EP_i_rdi_pl_cfg_crd              = '0;
   EP_i_rdi_pl_trdy                 = '0;
-  EP_i_rdi_pl_data                 = '0;
-  EP_i_rdi_pl_valid                = '0;
   EP_i_rdi_pl_inband_pres          = '0;
   EP_i_rdi_pl_phyinrecenter        = '0;
   EP_i_rdi_pl_speedmode            = '0;
   EP_i_rdi_pl_lnk_cfg             = '0;
   EP_i_rdi_pl_state_sts            = LL_Reset;
-  EP_i_rdi_pl_wake_ack             = '0;
   EP_i_rdi_pl_stall_req            = '0;
   EP_i_rdi_pl_error                = '0;
   EP_i_rdi_pl_trdy_alsm            = '0;
@@ -452,13 +613,31 @@ task reset_values();
   EP_i_fdi_lp_stream               = '0;
   EP_i_fdi_lp_state_req            = Req_NOP;
   EP_i_fdi_lp_linkerror            = '0;
-  EP_i_fdi_lp_rx_active_sts        = '0;
   EP_i_fdi_lp_stall_ack            = '0;
-  EP_i_fdi_lp_clk_ack              = '0;
 
   @(negedge i_clk);
   @(negedge i_clk);
   i_rst_n = 'b1;
   i_init  = 'b1;
+endtask
+
+task receive_fdi_full_packet_EP(logic [127:0] full_packet);
+    for (int chunk = 0; chunk < 128/`P_NC; chunk++) begin
+        @(negedge i_clk);
+        EP_i_fdi_lp_cfg = (full_packet >> (chunk * `P_NC));
+        EP_i_fdi_lp_cfg_vld = 1;
+    end
+    @(negedge i_clk);
+    EP_i_fdi_lp_cfg_vld = 0;
+endtask
+
+task receive_fdi_full_packet_RP(logic [127:0] full_packet);
+    for (int chunk = 0; chunk < 128/`P_NC; chunk++) begin
+        @(negedge i_clk);
+        RP_i_fdi_lp_cfg = (full_packet >> (chunk * `P_NC));
+        RP_i_fdi_lp_cfg_vld = 1;
+    end
+    @(negedge i_clk);
+    RP_i_fdi_lp_cfg_vld = 0;
 endtask
 endmodule

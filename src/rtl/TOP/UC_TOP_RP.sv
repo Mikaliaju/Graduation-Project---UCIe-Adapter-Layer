@@ -208,8 +208,8 @@ UC_MB_Mainband  UC_MB_Mainband_inst (
     .i_rst_n              (i_rst_n                ),
     .i_init               (i_init                 ),
     // FDI
-    .i_lp_irdy_fdi        (i_rdi_lp_irdy          ),
-    .i_lp_valid_fdi       (i_rdi_lp_valid         ),
+    .i_lp_irdy_fdi        (i_fdi_lp_irdy          ),
+    .i_lp_valid_fdi       (i_fdi_lp_valid         ),
     .i_lp_data_fdi        (i_fdi_lp_data          ),
     .i_lp_dllp            (i_fdi_lp_dllp          ),
     .i_lp_dllp_valid      (i_fdi_lp_dllp_valid    ),
@@ -374,7 +374,7 @@ UC_ALSM  UC_ALSM_inst (
     // MB
     .i_mb_retry_clean_boundary_done   (w_mb_flit_boundary_done          ),
     .i_mb_flush_done                  (w_mb_flush_done                  ),
-    .i_mb_retrain_trigger             (w_mb_retrain_trigger             ),
+    .i_mb_retrain_trigger             ('0                               ),
     .i_mb_drain_done                  (w_mb_drain_done                  ),
     .o_mb_flush                       (w_mb_flush                       ),
     .o_mb_retry_clean_boundary        (w_mb_flit_boundary               ),
@@ -467,10 +467,10 @@ UC_sb_top_RP_inst (
   .o_header_log_en           (w_sb_Header_log1_valid     ),
   .i_remote_access_threshold (w_sb_remote_threshold      ),
   .i_adapter_advcap          (w_o_sb_adapter_advcap      ),
-  .i_cxl_advcap              (w_o_sb_cxl_advcap          ),
+  .i_cxl_advcap              (64'b1                      ),
   .i_format4_enabled         (w_sb_format4_enabled       ),
   .i_format6_enabled         (w_sb_format6_enabled       ),
-  .i_retry_needed            (i_retry_needed             ), //
+  .i_retry_needed            (1'b1                       ), //
   .i_retry_negotiated        (i_retry_negotiated         ), //
   .i_flit_fmt_status         (w_sb_flit_fmt_status       ),
   .o_adapter_advcap          (w_i_sb_adapter_advcap      ),
