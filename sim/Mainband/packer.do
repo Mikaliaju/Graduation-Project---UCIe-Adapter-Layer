@@ -1,7 +1,6 @@
 vlib work
 vlog -f sources.list  +cover -covercells
 vsim -voptargs=+acc work.UC_MB_Packer_tb -cover
-
 add wave *
 add wave -position 8  sim:/UC_MB_Packer_tb/DUT/r_state
 add wave -position 9  sim:/UC_MB_Packer_tb/DUT/r_collect_cnt
