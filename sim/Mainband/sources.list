@@ -1,5 +1,0 @@
-../../src/rtl/common/UC_MB_Mainband_pkg.sv
-../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv 
-../../src/rtl/mainband/TX/UC_MB_Packer.sv 
-
-UC_MB_Packer_tb.sv 
