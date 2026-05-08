@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-
 module UC_MB_Packer_tb;
 
     import UC_MB_Mainband_pkg::*;
@@ -9,7 +8,6 @@ module UC_MB_Packer_tb;
     // =========================================================
 
     logic i_clk;
-
     always #5 i_clk = ~i_clk;
 
     // =========================================================
@@ -157,7 +155,7 @@ module UC_MB_Packer_tb;
 
         i_flit_boundary    = 1'b0;
 
-i_drain            = 1'b0;
+        i_drain            = 1'b0;
         i_flush            = 1'b0;
 
         $display("INITIALIZE DONE");

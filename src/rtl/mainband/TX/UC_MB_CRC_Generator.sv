@@ -92,11 +92,6 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
          end
          // Fourth 64B ? CRC1 window ends
          S_CHUNK3: begin
- //          r_crc_reg1  <= r_crc_next;
- //          o_crc0_gen  <= r_crc_reg0;
- //          o_crc1_gen  <= r_crc_next;
- //          o_crc_valid <= 1'b1;
-           // reset for next flit
            r_state     <= S_CHUNK0;
          end
 

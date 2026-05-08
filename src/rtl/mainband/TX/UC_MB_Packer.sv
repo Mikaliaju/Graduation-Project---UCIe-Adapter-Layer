@@ -136,8 +136,6 @@ logic [DATA_PATH-1:0]     w_chunk3_masked;         // chunk3 after adding header
 
 logic [1:0]               w_nxt_collect_cnt;
 logic [3:0]               w_nxt_nop_chunk;
-//logic [DATA_PATH-1:0]     w_nxt_pipe_data;
-//logic                     w_nxt_pipe_valid;
 logic [DATA_PATH-1:0]     w_nxt_chunk3_buf;
 logic [PROTOCOL_ID-1:0]   w_nxt_pid;
 logic                     w_nxt_sid;

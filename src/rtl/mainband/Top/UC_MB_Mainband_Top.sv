@@ -16,6 +16,8 @@
 // =================================================================================================
 
 import UC_MB_Mainband_pkg::*;
+import UC_MB_retry_pkg::*;
+
 module UC_MB_Mainband (
   // -------------------------
   // Clock & Reset
@@ -27,12 +29,12 @@ module UC_MB_Mainband (
   // -------------------------
   // LSM & REG Ports (retry_top)
   // -------------------------
-  /*
+  
   input  logic                      i_fdi_active,         // connect to LSM
-  output logic                      o_log_uie,
-  output logic                      o_log_cie,
-  output logic                      oo_rdi_retrain,
-  */
+  input  data_rate_t                i_data_rate,          // connect to LSM/Register File
+  output logic                      o_log_uie,            // connect to LSM/Register File
+  output logic                      o_log_cie,            // connect to LSM/Register File
+  output logic                      o_rdi_retrain,        // connect to LSM
 
   // -------------------------
   // FDI TX Interface (from Protocol Layer to Packer)
@@ -91,7 +93,6 @@ module UC_MB_Mainband (
   );
 
 
-
   /////////////////// Internal wires ///////////////////
 
 
@@ -137,10 +138,6 @@ module UC_MB_Mainband (
   logic                      w_rdi_retrain;
   logic                      w_discard_payload;
   logic                      w_tx_flit_type;
-  // -------------------------
-  // LSM Retry 
-  // -------------------------
-  logic                      w_fdi_active;
 
 // =============================================================================
 // Packer Instantiation (TX Path)
@@ -200,7 +197,6 @@ UC_MB_Packer           U1_UC_MB_Packer (
 );
 
 
-
 // =============================================================================
 // Unpacker Instantiation (RX Path)
 // =============================================================================
@@ -243,46 +239,63 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 // Retry Instantiation
 // =============================================================================
 
-/*
-retry_top U3_retry_top (
 
+UC_MB_retry_top U3_UC_MB_retry_top (
+
+  // -------------------------------------------------------------------------
   // Global
+  // -------------------------------------------------------------------------
   .clk                 (i_clk),
   .rst_n               (i_rst_n),
   .init                (i_init),
 
-  // System
-  .fdi_active          (w_fdi_active),          
+  // -------------------------------------------------------------------------
+  // System Ports
+  // -------------------------------------------------------------------------
+  .fdi_active          (i_fdi_active),
   .tx_en               (i_packer_en),
   .rx_en               (i_unpacker_en),
+  .data_rate           (i_data_rate), //needed from register file
+  .flit_valid          (), //needed from packer, when starting creating a flit waiting for seq number
+  .transmitter_write   (), //needed from packer, when writing in buffer
+  .flush               (i_flush),
+  .drain               (i_drain),
 
-// RX ports from Unpacker
+  // -------------------------------------------------------------------------
+  // RX ports from mainband receiver
+  // -------------------------------------------------------------------------
   .rx_crc_error        (w_crc_err),
   .rx_seq_num          (w_seq_num_o),
   .rx_replay_command   (w_replay_com),
-  .rx_flit_type        (w_rx_flit_type),     
+  .rx_flit_type        (), //needed a flit type signal whether its NOP OR PAYLOAD from unpacker
 
-  // TX buffer ports (to/from Packer)
-  .tx_i_data           (w_tx_i_data),
+  // -------------------------------------------------------------------------
+  // TX buffer ports
+  // -------------------------------------------------------------------------
+  .tx_i_data           (w_buffer_data),
   .tx_i_stream         ({w_buffer_sid, w_buffer_pid}),
-  .tx_o_data           (w_tx_o_data),
+  .tx_o_data           (w_retry_data),
   .tx_o_stream         ({w_retry_sid, w_retry_pid}),
-  .discard_flit        (w_discard_flit),
-  .discard_payload     (o_discard_payload),
+  //w_buffer_empty ? needed for what ?
+  //i_retry_use    ? needed for what ?
 
-  // Outputs to Packer
+  // -------------------------------------------------------------------------
+  // Outputs to transmitter
+  // -------------------------------------------------------------------------
   .pl_trdy_control     (w_deassert_trdy),
   .tx_replay_command   (w_replay_command),
-  .tx_flit_type        (w_tx_flit_type),
   .tx_seq_num          (w_seq_num),
 
-  // REG file
-  .log_uie             (o_log_uie),
-  .log_cie             (o_log_cie),
-
-  // LSM 
-  .rdi_retrain         (o_rdi_retrain)
+  // -------------------------------------------------------------------------
+  // Outputs to error/status handling
+  // -------------------------------------------------------------------------
+  .discard_flit        (w_discarded_flit),
+  .discard_payload     (), //this logic for uncorrected payload but with correct DLLPs
+  // should it be connected for w_check_pass ?
+  .log_uie             (o_log_uie),      //needed to connect to LSM/Register File
+  .log_cie             (o_log_cie),      //needed to connect to LSM/Register File
+  .rdi_retrain         (o_rdi_retrain)   //needed to connect to LSM
 );
-*/
+
 endmodule
 
