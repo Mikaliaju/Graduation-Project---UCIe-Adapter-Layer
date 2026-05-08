@@ -73,8 +73,8 @@ module UC_MB_Unpacker (
 logic [1:0]                r_chunk_cnt;           // Counts received chunks 0->3
 
 // Pipeline register (1-cycle delay)
-logic [DATA_PATH-1:0]      r_pipe_data;           // Store data to delay it
-logic                      r_pipe_valid;          // Needed cause first cycle pipe_data are garbage
+//logic [DATA_PATH-1:0]      r_pipe_data;           // Store data to delay it
+//logic                      r_pipe_valid;          // Needed cause first cycle pipe_data are garbage
 
 // Extracted chunk 3 fields
 logic [PROTOCOL_ID-1:0]    r_pid;                 // Extract protocol id to send it in lp_stream
@@ -93,6 +93,7 @@ logic                      w_crc_valid;           // Indicates that CRC calculat
 logic [DATA_PATH-1:0]      r_crc_payload;         // Flit data excluding CRC fields 64B per clock.
 logic                      r_crc_payload_valid;   // Indicates valid data for CRC.
 logic [DATA_PATH-1:0]      w_chunk3_masked;       // Chunk 3 masked combinational (CRC fields = 0)
+logic [DATA_PATH-1:0]      w_chunk3_Raw;          // Chunk 3 masked st Raw data
 
 unpacker_state_e r_state;                         // packer states
 unpacker_state_e w_nxt_state;                     // next state
@@ -103,8 +104,8 @@ unpacker_state_e w_nxt_state;                     // next state
 
 // Next-state values for all registers
 logic [1:0]                w_nxt_chunk_cnt;
-logic [DATA_PATH-1:0]      w_nxt_pipe_data;
-logic                      w_nxt_pipe_valid;
+//logic [DATA_PATH-1:0]      w_nxt_pipe_data;
+//logic                      w_nxt_pipe_valid;
 logic [PROTOCOL_ID-1:0]    w_nxt_pid;
 logic                      w_nxt_sid;
 logic                      w_nxt_dllp_ofc;
@@ -140,6 +141,19 @@ UC_MB_CRC_Generator    U1_UC_MB_crc_gen (
 );
 
 // =============================================================================
+// Chunk 3 Raw (Combinational)
+// =============================================================================
+always_comb begin
+  w_chunk3_Raw[351:0]       = i_pl_data_rdi[351:0];
+  w_chunk3_Raw[C3_FH_B0+:8] = 8'h0 ;
+  w_chunk3_Raw[C3_FH_B1+:8] = 8'h0 ;
+  w_chunk3_Raw[C3_DLP+:32]  = 32'h0;
+  w_chunk3_Raw[C3_RSV+:80]  = 80'h0;
+  w_chunk3_Raw[C3_CRC0+:16] = 16'h0;
+  w_chunk3_Raw[C3_CRC1+:16] = 16'h0;
+end
+
+// =============================================================================
 // Chunk 3 Masked (Combinational)
 // =============================================================================
 // Takes current incoming chunk from RDI and zeros CRC fields for CRC_Gen input
@@ -168,8 +182,8 @@ always_comb begin
   // -----------------------------------------------------------------
   w_nxt_state            = r_state;
   w_nxt_chunk_cnt        = r_chunk_cnt;
-  w_nxt_pipe_data        = r_pipe_data;
-  w_nxt_pipe_valid       = r_pipe_valid;
+  //w_nxt_pipe_data        = r_pipe_data;
+ // w_nxt_pipe_valid       = r_pipe_valid;
   w_nxt_pid              = r_pid;
   w_nxt_sid              = r_sid;
   w_nxt_dllp_ofc         = r_dllp_ofc;
@@ -195,7 +209,7 @@ always_comb begin
     // =====================================================================
     S_START: begin
       w_nxt_chunk_cnt  = 2'd0;
-      w_nxt_pipe_valid = 1'b0;
+ //     w_nxt_pipe_valid = 1'b0;
 
       if (i_unpacker_en && !i_stop_stream)
         w_nxt_state = S_RECEIVE;
@@ -210,7 +224,7 @@ always_comb begin
     // =====================================================================
     S_RECEIVE: begin
       if (i_stop_stream || !i_unpacker_en) begin
-        w_nxt_pipe_valid = 1'b0;
+      //  w_nxt_pipe_valid = 1'b0;
         w_nxt_state      = S_START;
       end
       else if (i_pl_valid_rdi) begin
@@ -253,14 +267,18 @@ always_comb begin
         end
 
         // Cut-through: forward previous chunk to FDI
-        if (r_pipe_valid ) begin //&& r_chunk_cnt != 2'd3
-          w_nxt_pl_data_fdi  = r_pipe_data;
+        if (i_pl_valid_rdi && r_chunk_cnt == 2'd3) begin //&& r_chunk_cnt == 2'd3
+          w_nxt_pl_data_fdi  = w_chunk3_Raw;
+          w_nxt_pl_valid_fdi = 1'b1;
+        end
+        else if (i_pl_valid_rdi) begin
+          w_nxt_pl_data_fdi  = i_pl_data_rdi;
           w_nxt_pl_valid_fdi = 1'b1;
         end
 
         // Pipeline: store current chunk for next cycle
-        w_nxt_pipe_data  = i_pl_data_rdi;
-        w_nxt_pipe_valid = 1'b1;
+     //   w_nxt_pipe_data  = i_pl_data_rdi;
+     //   w_nxt_pipe_valid = 1'b1;
       end
     end
 
@@ -273,10 +291,10 @@ always_comb begin
     // =====================================================================
     S_CHECK: begin
       // Forward chunk 3 to FDI (last pipeline flush)
-      if (r_pipe_valid) begin
-        w_nxt_pl_data_fdi  = r_pipe_data;
+      if (i_pl_valid_rdi) begin
+        w_nxt_pl_data_fdi  = w_chunk3_Raw;
         w_nxt_pl_valid_fdi = 1'b1;
-        w_nxt_pipe_valid   = 1'b0;
+  //      w_nxt_pipe_valid   = 1'b0;
       end
 
       // CRC comparison (CRC_Gen takes exactly 4 cycles, result ready here)
@@ -294,7 +312,7 @@ always_comb begin
 
       // Reset for next flit
       w_nxt_chunk_cnt  = 2'd0;
-      w_nxt_pipe_valid = 1'b0;
+      w_nxt_pl_valid_fdi = 1'b0;
 
       if (i_unpacker_en && !i_stop_stream)
         w_nxt_state = S_RECEIVE;
@@ -314,8 +332,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
   if (!i_rst_n) begin
     r_state             <= S_START;
     r_chunk_cnt         <= 2'd0;
-    r_pipe_data         <= '0;
-    r_pipe_valid        <= 1'b0;
+ //   r_pipe_data         <= '0;
+ //   r_pipe_valid        <= 1'b0;
     r_pid               <= 2'b00;
     r_sid               <= 1'b0;
     r_dllp_ofc          <= 1'b0;
@@ -336,8 +354,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
   else if (!i_init) begin
     r_state             <= S_START;
     r_chunk_cnt         <= 2'd0;
-    r_pipe_data         <= '0;
-    r_pipe_valid        <= 1'b0;
+ //   r_pipe_data         <= '0;
+ //   r_pipe_valid        <= 1'b0;
     r_pid               <= 2'b00;
     r_sid               <= 1'b0;
     r_dllp_ofc          <= 1'b0;
@@ -359,8 +377,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     // Latch next-state values computed by combinational block
     r_state             <= w_nxt_state;
     r_chunk_cnt         <= w_nxt_chunk_cnt;
-    r_pipe_data         <= w_nxt_pipe_data;
-    r_pipe_valid        <= w_nxt_pipe_valid;
+   // r_pipe_data         <= w_nxt_pipe_data;
+  //  r_pipe_valid        <= w_nxt_pipe_valid;
     r_pid               <= w_nxt_pid;
     r_sid               <= w_nxt_sid;
     r_dllp_ofc          <= w_nxt_dllp_ofc;
@@ -381,4 +399,5 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
 end
 
 endmodule
+
 
