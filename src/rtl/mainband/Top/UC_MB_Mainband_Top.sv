@@ -93,7 +93,6 @@ module UC_MB_Mainband (
   );
 
 
-
   /////////////////// Internal wires ///////////////////
 
 
@@ -196,7 +195,6 @@ UC_MB_Packer           U1_UC_MB_Packer (
   .o_lp_valid_rdi      (o_lp_valid_rdi),
   .o_lp_irdy_rdi       (o_lp_irdy_rdi)
 );
-
 
 
 // =============================================================================
