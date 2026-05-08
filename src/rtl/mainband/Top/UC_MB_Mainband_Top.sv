@@ -159,14 +159,14 @@ UC_MB_Packer           U1_UC_MB_Packer (
   .i_lp_stream         (i_lp_stream),
 
   // Retry Inputs
-  .i_seq_num           (w_seq_num),           // connect to Retry
-  .i_replay_command    (w_replay_command),    // connect to Retry
-  .i_deassert_trdy     (w_deassert_trdy),     // connect to Retry
-  .i_retry_data        (w_retry_data),        // connect to Retry
-  .i_retry_sid         (w_retry_sid),         // connect to Retry
-  .i_retry_pid         (w_retry_pid),         // connect to Retry
-  .i_buffer_empty      (w_buffer_empty),      // connect to Retry
-  .i_retry_use         (w_retry_use),         // connect to Retry
+  .i_seq_num           (8'h5A),           // connect to Retry
+  .i_replay_command    (2'b01),    // connect to Retry
+  .i_deassert_trdy     ('0),     // connect to Retry
+  .i_retry_data        (512'b0),        // connect to Retry
+  .i_retry_sid         ('0),         // connect to Retry
+  .i_retry_pid         ('0),         // connect to Retry
+  .i_buffer_empty      ('0),      // connect to Retry
+  .i_retry_use         ('0),         // connect to Retry
 
   // LSM Inputs
   .i_packer_en         (i_packer_en),         
