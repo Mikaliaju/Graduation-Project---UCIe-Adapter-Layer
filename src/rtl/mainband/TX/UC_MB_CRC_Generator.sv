@@ -31,7 +31,7 @@ logic [CRC_SIZE-1:0] r_crc_reg0;     // Store value of CRC  for CRC0.
 logic [CRC_SIZE-1:0] r_crc_reg1;     // Store value of CRC  for CRC1.
 logic [CRC_SIZE-1:0] r_crc_next;     // Used in Combinational CRC calculation Logic.
 
-chunk_state r_state;               // Count 4chunk of 256B.
+chunk_state r_state;                 // Count 4chunk of 256B.
 // ===========================================================================================================
 
 // =============================================================================
