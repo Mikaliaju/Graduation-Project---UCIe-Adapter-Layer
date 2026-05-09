@@ -498,6 +498,8 @@ initial begin : main
   @(negedge i_clk);
   RP_i_fdi_lp_data[351:0]   = {44{8'hAA}};
   RP_i_fdi_lp_data[511:352] = 160'h0;
+  @(negedge i_clk);
+  RP_i_fdi_lp_valid       = 1'b1;
 
   repeat(20) begin
     @(negedge i_clk);
