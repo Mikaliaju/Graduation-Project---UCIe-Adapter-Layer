@@ -25,6 +25,8 @@ add wave -position insertpoint  \
 sim:/UC_TOP_tb/UC_TOP_RP_inst/UC_MB_Mainband_inst/U1_UC_MB_Packer/U1_UC_MB_crc_gen/r_crc_reg0 \
 sim:/UC_TOP_tb/UC_TOP_RP_inst/UC_MB_Mainband_inst/U1_UC_MB_Packer/U1_UC_MB_crc_gen/r_crc_reg1 \
 sim:/UC_TOP_tb/UC_TOP_RP_inst/UC_MB_Mainband_inst/U1_UC_MB_Packer/U1_UC_MB_crc_gen/r_crc_next
+add wave -position insertpoint  \
+sim:/UC_TOP_tb/UC_TOP_RP_inst/UC_MB_Mainband_inst/U1_UC_MB_Packer/r_state
 
 add wave -position insertpoint  \
 sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_MB_Mainband_inst/U2_UC_MB_Unpacker/r_crc_payload
