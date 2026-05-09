@@ -71,11 +71,11 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     r_crc_reg1   <= CRC_INIT;
     r_state      <= S_CHUNK0;
   end
-  else if (~i_crc_payload_valid) begin
-    r_crc_reg0   <= CRC_INIT;
-    r_crc_reg1   <= CRC_INIT;
-    r_state      <= S_CHUNK0;
-  end
+  // else if (~i_crc_payload_valid) begin
+  //   r_crc_reg0   <= CRC_INIT;
+  //   r_crc_reg1   <= CRC_INIT;
+  //   r_state      <= S_CHUNK0;
+  // end
   else begin
 //    o_crc_valid <= 0;
     if (i_crc_payload_valid) begin

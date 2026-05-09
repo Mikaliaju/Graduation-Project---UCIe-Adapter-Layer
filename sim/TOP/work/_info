@@ -3,76 +3,6 @@ K4
 z2
 Z0 !s99 nomlopt
 R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
-R0
 !s11f vlog 2021.1 2021.01, Jan 19 2021
 13
 !s112 1.1
@@ -80,144 +10,98 @@ R0
 !i10e 25
 !i10f 100
 cModel Technology
-Z1 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/ALSM
+Z1 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/TOP
 T_opt
-!s110 1777019043
-VBI3[Egz9@IO@LYKjAZ;3_3
-Z2 04 9 4 work UC_TOP_tb fast 0
-=1-28d043fe16f2-69eb28a3-1ce-38ac
-Z3 !s124 OEM100
-Z4 o-quiet -auto_acc_if_foreign -work work +acc
-Z5 tCvgOpt 0
+!s110 1778288807
+VPNiMkJX[24e2=HJYVcVFN1
+04 9 4 work UC_TOP_tb fast 0
+=1-28d043fe16f2-69fe88a7-a2-1f54
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work +acc
+Z2 tCvgOpt 0
 n@_opt
-Z6 OL;O;2021.1;73
-R1
-T_opt1
-!s110 1778286404
-VID_@BWmB5L;a=@_ZU2Y?@0
-R2
-=1-28d043fe16f2-69fe7f43-3bf-1d5c
-R3
-R4
-R5
-n@_opt1
-R6
-T_opt2
-!s110 1778264235
-V`6FMoI0PWnNX5>U@7KTkg3
-R2
-=1-28d043fe16f2-69fe28ab-28-4960
-R3
-R4
-R5
-n@_opt2
-R6
-R1
-vtx_rdi_controller
-Z7 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-!s110 1778253222
-!i10b 1
-!s100 NWP7bV]YZRf3CKo0J]M<20
-I5=nb@cNcTWG:9;EaQQ7R42
-S1
-Z8 dD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/sim/TOP
-Z9 w1778096125
-8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
-FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
-!i122 229
-L0 19 203
-Z10 VDg1SIo80bB@j0V0VzS_@n1
-Z11 OL;L;2021.1;73
-r1
-!s85 0
-31
-!s108 1778253222.000000
-!s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|
-!s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|
-!i113 0
-Z12 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
-R5
+OL;O;2021.1;73
 vtx_rdi_controller_EP
-R7
-Z13 !s110 1778286403
+Z3 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z4 !s110 1778288806
 !i10b 1
 !s100 `VA?9_2_BlbiKh:FZFF>N1
 IYTf9L<[j:8=m88IeoXj633
 S1
-R8
-Z14 w1778185537
+R1
+Z5 w1778185537
 8../../src/rtl/Sideband_duplicated/tx_rdi_cntrl_EP.sv
 F../../src/rtl/Sideband_duplicated/tx_rdi_cntrl_EP.sv
-!i122 271
+!i122 1
 L0 19 189
-R10
-R11
+Z6 VDg1SIo80bB@j0V0VzS_@n1
+Z7 OL;L;2021.1;73
 r1
 !s85 0
 31
-Z15 !s108 1778286402.000000
-Z16 !s107 ../../src/rtl/TOP/../common/UC_all_defs.svh|UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/TOP/UC_TOP_RP.sv|../../src/rtl/TOP/UC_TOP_EP.sv|../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sb_tx_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_tx_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sync_fifo.sv|../../src/rtl/Sideband_duplicated/UC_sb_tag_manager.sv|../../src/rtl/Sideband_duplicated/UC_sb_remote_die_request_controller.sv|../../src/rtl/Sideband_duplicated/UC_sb_FDI_Packer.sv|../../src/rtl/Sideband_duplicated/UC_sb_FDI_Controller.sv|../../src/rtl/Sideband_duplicated/UC_sb_credit_loop.sv|../../src/rtl/Sideband_duplicated/UC_rx_sync_fifo.sv|../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv|../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv|../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv|../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv|../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv|../../src/rtl/Sideband_duplicated/UC_remote_decoder.sv|../../src/rtl/Sideband_duplicated/UC_parameterexchange_RP.sv|../../src/rtl/Sideband_duplicated/UC_parameterexchange_EP.sv|../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv|../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv|../../src/rtl/Sideband_duplicated/uc_mailbox_controller.sv|../../src/rtl/Sideband_duplicated/UC_fdi_decoder.sv|../../src/rtl/Sideband_duplicated/uc_access_arbiter.sv|../../src/rtl/Sideband_duplicated/tx_rdi_controller_RP.sv|../../src/rtl/Sideband_duplicated/tx_rdi_cntrl_EP.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_rx_pkg_RP.sv|../../src/rtl/common/UC_sb_rx_pkg_EP.sv|../../src/rtl/common/UC_sb_rx_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|../../src/rtl/common/UC_all_defs.svh|
-Z17 !s90 -reportprogress|300|-f|sources.list|
+Z8 !s108 1778288806.000000
+Z9 !s107 ../../src/rtl/TOP/../common/UC_all_defs.svh|UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/TOP/UC_TOP_RP.sv|../../src/rtl/TOP/UC_TOP_EP.sv|../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sb_tx_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_tx_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv|../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv|../../src/rtl/Sideband_duplicated/UC_sync_fifo.sv|../../src/rtl/Sideband_duplicated/UC_sb_tag_manager.sv|../../src/rtl/Sideband_duplicated/UC_sb_remote_die_request_controller.sv|../../src/rtl/Sideband_duplicated/UC_sb_FDI_Packer.sv|../../src/rtl/Sideband_duplicated/UC_sb_FDI_Controller.sv|../../src/rtl/Sideband_duplicated/UC_sb_credit_loop.sv|../../src/rtl/Sideband_duplicated/UC_rx_sync_fifo.sv|../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv|../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv|../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv|../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv|../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv|../../src/rtl/Sideband_duplicated/UC_remote_decoder.sv|../../src/rtl/Sideband_duplicated/UC_parameterexchange_RP.sv|../../src/rtl/Sideband_duplicated/UC_parameterexchange_EP.sv|../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv|../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv|../../src/rtl/Sideband_duplicated/uc_mailbox_controller.sv|../../src/rtl/Sideband_duplicated/UC_fdi_decoder.sv|../../src/rtl/Sideband_duplicated/uc_access_arbiter.sv|../../src/rtl/Sideband_duplicated/tx_rdi_controller_RP.sv|../../src/rtl/Sideband_duplicated/tx_rdi_cntrl_EP.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_rx_pkg_RP.sv|../../src/rtl/common/UC_sb_rx_pkg_EP.sv|../../src/rtl/common/UC_sb_rx_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|../../src/rtl/common/UC_all_defs.svh|
+Z10 !s90 -reportprogress|300|-f|sources.list|
 !i113 0
-R12
-R5
+Z11 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2
 ntx_rdi_controller_@e@p
 vtx_rdi_controller_RP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 Re<9OQzmH]Y1M`VPZXhdn0
 Iho5RHGKJUkg5bdPKQ:EKQ2
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/tx_rdi_controller_RP.sv
 F../../src/rtl/Sideband_duplicated/tx_rdi_controller_RP.sv
-!i122 271
+!i122 1
 L0 19 188
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 ntx_rdi_controller_@r@p
 vuc_access_arbiter
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 d7f@CKXe0GB]c]GA4n=Ll3
 IgCgnnBdDCCUA]c06GfQWB0
 S1
-R8
-R9
+R1
+Z12 w1778096125
 8../../src/rtl/sideband/common/uc_access_arbiter.sv
 F../../src/rtl/sideband/common/uc_access_arbiter.sv
-!i122 271
+!i122 1
 L0 10 93
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-vUC_ALSM
-R7
-Z18 DXx4 work 15 UC_ALSM_package 0 22 V^zGRWW>=^:[6Hb?^98`l3
-Z19 DXx4 work 12 UC_sb_rx_pkg 0 22 23zEdHCiLnTZJMXDDRb=V0
-DXx4 work 15 UC_ALSM_sv_unit 0 22 [RYMG;RVW>F]:YU:DlMP?3
-R13
+R8
+R9
 R10
+!i113 0
+R11
+R2
+vUC_ALSM
+R3
+Z13 DXx4 work 15 UC_ALSM_package 0 22 V^zGRWW>=^:[6Hb?^98`l3
+Z14 DXx4 work 12 UC_sb_rx_pkg 0 22 23zEdHCiLnTZJMXDDRb=V0
+DXx4 work 15 UC_ALSM_sv_unit 0 22 [RYMG;RVW>F]:YU:DlMP?3
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -225,51 +109,51 @@ r1
 I1YK>US^XhgdYKXZ6WfC2l1
 !s105 UC_ALSM_sv_unit
 S1
-R8
-Z20 w1778148727
-Z21 8../../src/rtl/LSM/UC_ALSM.sv
-Z22 F../../src/rtl/LSM/UC_ALSM.sv
-!i122 271
+R1
+Z15 w1778148727
+Z16 8../../src/rtl/LSM/UC_ALSM.sv
+Z17 F../../src/rtl/LSM/UC_ALSM.sv
+!i122 1
 L0 81 973
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@a@l@s@m
 XUC_ALSM_package
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 CJ<WB]a<beR90Plmk_UO`3
 IV^zGRWW>=^:[6Hb?^98`l3
 S1
-R8
+R1
 w1778147825
 8../../src/rtl/common/UC_ALSM_package.sv
 F../../src/rtl/common/UC_ALSM_package.sv
-!i122 271
-Z23 L0 1 0
+!i122 1
+Z18 L0 1 0
 VV^zGRWW>=^:[6Hb?^98`l3
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@a@l@s@m_package
 XUC_ALSM_sv_unit
-R7
-R18
-R19
+R3
 R13
+R14
+R4
 V[RYMG;RVW>F]:YU:DlMP?3
 r1
 !s85 0
@@ -278,220 +162,77 @@ r1
 I[RYMG;RVW>F]:YU:DlMP?3
 !i103 1
 S1
-R8
-R20
-R21
-R22
-!i122 271
-Z24 L0 12 0
-R11
-31
+R1
 R15
 R16
 R17
-!i113 0
-R12
-R5
-n@u@c_@a@l@s@m_sv_unit
-vUC_ALSM_wrap
+!i122 1
+Z19 L0 12 0
 R7
-R7
-R18
-R7
-Z25 DXx4 work 9 UC_sb_pkg 0 22 kg=CHg4U3GVfQk^I2<hMI1
-DXx4 work 20 UC_ALSM_wrap_sv_unit 0 22 o[]O;:?S0=JEg?:?Fn7;T3
-Z26 !s110 1777658264
+31
+R8
+R9
 R10
-r1
-!s85 0
-!i10b 1
-!s100 _4<nWVlL`@ZhUB8jjS`NK2
-IZOZjn<PlKGlbAl=5D9zie3
-!s105 UC_ALSM_wrap_sv_unit
-S1
-R8
-Z27 w1777081490
-Z28 8../../src/rtl/TOP/UC_ALSM_wrap.sv
-Z29 F../../src/rtl/TOP/UC_ALSM_wrap.sv
-!i122 140
-L0 13 213
-R11
-31
-Z30 !s108 1777658264.000000
-Z31 !s107 ../../src/rtl/common/UC_all_defs.svh|../../src/rtl/TOP/../common/UC_all_defs.svh|UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/TOP/UC_sb_top_wrap.sv|../../src/rtl/TOP/UC_regfile_wrap.sv|../../src/rtl/TOP/UC_MB_Mainband_wrap.sv|../../src/rtl/TOP/UC_ALSM_wrap.sv|../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/sideband/UC_sb_top.sv|../../src/rtl/sideband/TX/UC_sb_tx_top.sv|../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|../../src/rtl/sideband/TX/uc_mailbox_controller.sv|../../src/rtl/sideband/TX/UC_sync_fifo.sv|../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv|../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv|../../src/rtl/sideband/TX/UC_remote_decoder.sv|../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv|../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv|../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_regfile_if.sv|../../src/rtl/common/UC_rdi_if.sv|../../src/rtl/common/UC_fdi_if.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|
-R17
 !i113 0
-R12
-R5
-n@u@c_@a@l@s@m_wrap
-XUC_ALSM_wrap_sv_unit
-R7
-R7
-R18
-R7
-R25
-R26
-Vo[]O;:?S0=JEg?:?Fn7;T3
-r1
-!s85 0
-!i10b 1
-!s100 <oBW`ISa>:=c4gc_WGSz[2
-Io[]O;:?S0=JEg?:?Fn7;T3
-!i103 1
-S1
-R8
-R27
-R28
-R29
-!i122 140
-L0 6 0
 R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_@a@l@s@m_wrap_sv_unit
+R2
+n@u@c_@a@l@s@m_sv_unit
 vUC_fdi_decoder
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 WL_nNSBG<7YBY@9Y6_6452
 IKYcBSE[^<1i[jen4;F1Jz0
 S1
-R8
-Z32 w1778185536
+R1
+Z20 w1778185536
 8../../src/rtl/Sideband_duplicated/UC_fdi_decoder.sv
 F../../src/rtl/Sideband_duplicated/UC_fdi_decoder.sv
-!i122 271
+!i122 1
 L0 3 74
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_fdi_decoder
-YUC_fdi_if
-R7
-R18
-DXx4 work 17 UC_fdi_if_sv_unit 0 22 NTg[9Z1C8lYSh>OORoYf>0
-R26
-R10
-r1
-!s85 0
-!i10b 1
-!s100 g8YCMB1@VS>jWGYBPWYPl3
-Ii5S2kF]1mN@^ZQSocMkXS2
-!s105 UC_fdi_if_sv_unit
-S1
-R8
-Z33 w1777078549
-Z34 8../../src/rtl/common/UC_fdi_if.sv
-Z35 F../../src/rtl/common/UC_fdi_if.sv
-!i122 140
-Z36 L0 9 0
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_fdi_if
-XUC_fdi_if_sv_unit
-R7
-R18
-R26
-VNTg[9Z1C8lYSh>OORoYf>0
-r1
-!s85 0
-!i10b 1
-!s100 48`kQ]9GNkAS[g16zWVl_1
-INTg[9Z1C8lYSh>OORoYf>0
-!i103 1
-S1
-R8
-R33
-R34
-R35
-!i122 140
-Z37 L0 8 0
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_fdi_if_sv_unit
 vuc_mailbox_controller
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 Y7]1:_9X^SgMdc<eYnE=S0
 IGzQH`eT2E=R_5O40?DeAP0
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/uc_mailbox_controller.sv
 F../../src/rtl/Sideband_duplicated/uc_mailbox_controller.sv
-!i122 271
+!i122 1
 L0 16 239
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-Xuc_mailbox_controller_sv_unit
-R7
-R7
-R25
-Z38 !s110 1777706700
-VMP3?GUMCG@`jl1nEk=I8U1
-r1
-!s85 0
-!i10b 1
-!s100 8o2?7DbkLJ^SL3=KD6=;L2
-IMP3?GUMCG@`jl1nEk=I8U1
-!i103 1
-S1
 R8
-Z39 w1777036038
-8../../src/rtl/sideband/TX/uc_mailbox_controller.sv
-F../../src/rtl/sideband/TX/uc_mailbox_controller.sv
-!i122 159
-Z40 L0 16 0
-R11
-31
-Z41 !s108 1777706700.000000
-Z42 !s107 ../../src/rtl/TOP/../common/UC_all_defs.svh|UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/sideband/UC_sb_top.sv|../../src/rtl/sideband/TX/UC_sb_tx_top.sv|../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|../../src/rtl/sideband/TX/uc_mailbox_controller.sv|../../src/rtl/sideband/TX/UC_sync_fifo.sv|../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv|../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv|../../src/rtl/sideband/TX/UC_remote_decoder.sv|../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv|../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv|../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_all_defs.svh|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|
-R17
-!i113 0
-R12
-R5
-vUC_MB_CRC_Generator
-R7
-R7
-Z43 DXx4 work 18 UC_MB_Mainband_pkg 0 22 ]`NUV5:ga>3d17oHL]74k3
-DXx4 work 27 UC_MB_CRC_Generator_sv_unit 0 22 _?7I4;UQR3:Nz;;eH2ba62
-R13
+R9
 R10
+!i113 0
+R11
+R2
+vUC_MB_CRC_Generator
+R3
+R3
+Z21 DXx4 work 18 UC_MB_Mainband_pkg 0 22 ]`NUV5:ga>3d17oHL]74k3
+DXx4 work 27 UC_MB_CRC_Generator_sv_unit 0 22 _?7I4;UQR3:Nz;;eH2ba62
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -499,26 +240,26 @@ r1
 I=d<=@9b[Y8Dg=XJlRbj?^2
 !s105 UC_MB_CRC_Generator_sv_unit
 S1
-R8
-Z44 w1778286381
-Z45 8../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
-Z46 F../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
-!i122 271
+R1
+Z22 w1778288757
+Z23 8../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
+Z24 F../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
+!i122 1
 L0 19 91
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@c@r@c_@generator
 XUC_MB_CRC_Generator_sv_unit
-R7
-R7
-R43
-R13
+R3
+R3
+R21
+R4
 V_?7I4;UQR3:Nz;;eH2ba62
 r1
 !s85 0
@@ -527,28 +268,28 @@ r1
 I_?7I4;UQR3:Nz;;eH2ba62
 !i103 1
 S1
-R8
-R44
-R45
-R46
-!i122 271
-Z47 L0 18 0
-R11
+R1
+R22
+R23
+R24
+!i122 1
+Z25 L0 18 0
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@c@r@c_@generator_sv_unit
 vUC_MB_Mainband
-R7
-R7
-R43
+R3
+R3
+R21
 DXx4 work 26 UC_MB_Mainband_Top_sv_unit 0 22 RdMFNBMCXM:c?oE2AeC7o2
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -556,51 +297,51 @@ r1
 I5o1>]J0QGB9:b2Ec@Q_YN2
 !s105 UC_MB_Mainband_Top_sv_unit
 S1
-R8
-Z48 w1778263561
-Z49 8../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
-Z50 F../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
-!i122 271
+R1
+Z26 w1778287751
+Z27 8../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
+Z28 F../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
+!i122 1
 L0 21 281
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@mainband
 XUC_MB_Mainband_pkg
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 Gk:MK<Kni9AA?Iagz9[fB0
 I]`NUV5:ga>3d17oHL]74k3
 S1
-R8
+R1
 w1777705861
 8../../src/rtl/common/UC_MB_Mainband_pkg.sv
 F../../src/rtl/common/UC_MB_Mainband_pkg.sv
-!i122 271
-Z51 L0 14 0
+!i122 1
+L0 14 0
 V]`NUV5:ga>3d17oHL]74k3
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@mainband_pkg
 XUC_MB_Mainband_Top_sv_unit
-R7
-R7
-R43
-R13
+R3
+R3
+R21
+R4
 VRdMFNBMCXM:c?oE2AeC7o2
 r1
 !s85 0
@@ -609,52 +350,27 @@ r1
 IRdMFNBMCXM:c?oE2AeC7o2
 !i103 1
 S1
-R8
-R48
-R49
-R50
-!i122 271
-R47
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_@m@b_@mainband_@top_sv_unit
-vUC_MB_Mainband_wrap
-R7
+R1
 R26
-!i10b 1
-!s100 o42j0So8Qim1=VAiNLH<`2
-IQ8ZJk2]:MGzS7=AhK0_CN1
-S1
-R8
-w1777088874
-8../../src/rtl/TOP/UC_MB_Mainband_wrap.sv
-F../../src/rtl/TOP/UC_MB_Mainband_wrap.sv
-!i122 140
-L0 9 145
-R10
-R11
-r1
-!s85 0
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_@m@b_@mainband_wrap
-vUC_MB_Packer
+R27
+R28
+!i122 1
+R25
 R7
-R43
-DXx4 work 20 UC_MB_Packer_sv_unit 0 22 <0E>:jO6dOTo[JAoeI[TB3
-R13
+31
+R8
+R9
 R10
+!i113 0
+R11
+R2
+n@u@c_@m@b_@mainband_@top_sv_unit
+vUC_MB_Packer
+R3
+R21
+DXx4 work 20 UC_MB_Packer_sv_unit 0 22 <0E>:jO6dOTo[JAoeI[TB3
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -662,25 +378,25 @@ r1
 ITo`K2MKUK6Ph_LVL<;VZg2
 !s105 UC_MB_Packer_sv_unit
 S1
-R8
-Z52 w1778286036
-Z53 8../../src/rtl/mainband/TX/UC_MB_Packer.sv
-Z54 F../../src/rtl/mainband/TX/UC_MB_Packer.sv
-!i122 271
+R1
+Z29 w1778286036
+Z30 8../../src/rtl/mainband/TX/UC_MB_Packer.sv
+Z31 F../../src/rtl/mainband/TX/UC_MB_Packer.sv
+!i122 1
 L0 28 606
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@packer
 XUC_MB_Packer_sv_unit
-R7
-R43
-R13
+R3
+R21
+R4
 V<0E>:jO6dOTo[JAoeI[TB3
 r1
 !s85 0
@@ -689,28 +405,28 @@ r1
 I<0E>:jO6dOTo[JAoeI[TB3
 !i103 1
 S1
-R8
-R52
-R53
-R54
-!i122 271
-Z55 L0 27 0
-R11
+R1
+R29
+R30
+R31
+!i122 1
+Z32 L0 27 0
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@packer_sv_unit
 vUC_MB_Unpacker
-R7
-R7
-R43
+R3
+R3
+R21
 DXx4 work 22 UC_MB_Unpacker_sv_unit 0 22 Wcjjlm97Ig:]::SU<Fg9P1
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -718,26 +434,26 @@ r1
 ISSP45oE@E<Y0zUH?OXEG[0
 !s105 UC_MB_Unpacker_sv_unit
 S1
-R8
-Z56 w1778285475
-Z57 8../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
-Z58 F../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
-!i122 271
+R1
+R26
+Z33 8../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
+Z34 F../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
+!i122 1
 L0 28 374
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@m@b_@unpacker
 XUC_MB_Unpacker_sv_unit
-R7
-R7
-R43
-R13
+R3
+R3
+R21
+R4
 VWcjjlm97Ig:]::SU<Fg9P1
 r1
 !s85 0
@@ -746,55 +462,28 @@ r1
 IWcjjlm97Ig:]::SU<Fg9P1
 !i103 1
 S1
-R8
-R56
-R57
-R58
-!i122 271
-R55
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_@m@b_@unpacker_sv_unit
-vuc_msg_controller_tx
+R1
+R26
+R33
+R34
+!i122 1
+R32
 R7
-R19
-DXx4 work 28 uc_msg_controller_tx_sv_unit 0 22 AOALeNhJ:EiM09c2YV?JA0
-Z59 !s110 1778253219
-R10
-r1
-!s85 0
-!i10b 1
-!s100 4fD80[eN4LG:ziQQ2EJ@Y3
-Ii6aa9jLZ5An4n=PdEEJSZ1
-!s105 uc_msg_controller_tx_sv_unit
-S1
+31
 R8
 R9
-Z60 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_msg_controller_tx.sv
-Z61 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_msg_controller_tx.sv
-!i122 208
-L0 38 127
-R11
-31
-Z62 !s108 1778253219.000000
-Z63 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_msg_controller_tx.sv|
-Z64 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/uc_msg_controller_tx.sv|
-!i113 0
-R12
-R5
-vuc_msg_controller_tx_EP
-R7
-R7
-R19
-DXx4 work 31 uc_msg_controller_tx_EP_sv_unit 0 22 :Y9M[:_IcV[DB6<o9VFCZ3
-R13
 R10
+!i113 0
+R11
+R2
+n@u@c_@m@b_@unpacker_sv_unit
+vuc_msg_controller_tx_EP
+R3
+R3
+R14
+DXx4 work 31 uc_msg_controller_tx_EP_sv_unit 0 22 :Y9M[:_IcV[DB6<o9VFCZ3
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -802,26 +491,26 @@ r1
 I=5f]b8OP0^m31z?H4V>691
 !s105 uc_msg_controller_tx_EP_sv_unit
 S1
-R8
-R14
-Z65 8../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv
-Z66 F../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv
-!i122 271
-L0 39 118
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z35 8../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv
+Z36 F../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_EP.sv
+!i122 1
+L0 39 118
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 nuc_msg_controller_tx_@e@p
 Xuc_msg_controller_tx_EP_sv_unit
-R7
-R7
-R19
-R13
+R3
+R3
+R14
+R4
 V:Y9M[:_IcV[DB6<o9VFCZ3
 r1
 !s85 0
@@ -830,28 +519,28 @@ r1
 I:Y9M[:_IcV[DB6<o9VFCZ3
 !i103 1
 S1
-R8
-R14
-R65
-R66
-!i122 271
-R40
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+R35
+R36
+!i122 1
+Z37 L0 16 0
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 nuc_msg_controller_tx_@e@p_sv_unit
 vuc_msg_controller_tx_RP
-R7
-R7
-R19
+R3
+R3
+R14
 DXx4 work 31 uc_msg_controller_tx_RP_sv_unit 0 22 3TLL]RIM:>K7z]28CNJOI1
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -859,26 +548,26 @@ r1
 IY[ldRJz65E8RPk:1RN8@e3
 !s105 uc_msg_controller_tx_RP_sv_unit
 S1
-R8
-R14
-Z67 8../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv
-Z68 F../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv
-!i122 271
-L0 39 97
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z38 8../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv
+Z39 F../../src/rtl/Sideband_duplicated/uc_msg_controller_tx_RP.sv
+!i122 1
+L0 39 97
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 nuc_msg_controller_tx_@r@p
 Xuc_msg_controller_tx_RP_sv_unit
-R7
-R7
-R19
-R13
+R3
+R3
+R14
+R4
 V3TLL]RIM:>K7z]28CNJOI1
 r1
 !s85 0
@@ -887,188 +576,105 @@ r1
 I3TLL]RIM:>K7z]28CNJOI1
 !i103 1
 S1
-R8
-R14
-R67
-R68
-!i122 271
-R40
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
-nuc_msg_controller_tx_@r@p_sv_unit
-Xuc_msg_controller_tx_sv_unit
+R38
+R39
+!i122 1
+R37
 R7
-R19
-R59
-VAOALeNhJ:EiM09c2YV?JA0
-r1
-!s85 0
-!i10b 1
-!s100 jZ^KJ;E_[0k`[9ORH?_8S2
-IAOALeNhJ:EiM09c2YV?JA0
-!i103 1
-S1
+31
 R8
 R9
-R60
-R61
-!i122 208
-R40
-R11
-31
-R62
-R63
-R64
+R10
 !i113 0
-R12
-R5
+R11
+R2
+nuc_msg_controller_tx_@r@p_sv_unit
 vUC_parameterexchange
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 <C^NXJT9ZCPn`W;VO>NOZ0
 IgWU<;3?J73gfkmA_<Qg3D0
 S1
-R8
-R9
+R1
+R12
 8../../src/rtl/sideband/common/UC_parameterexchange.sv
 F../../src/rtl/sideband/common/UC_parameterexchange.sv
-!i122 271
+!i122 1
 L0 15 488
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_parameterexchange
 vUC_parameterexchange_EP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 ici6OP6WFTJZLOihi5FTG3
 I=UD^W6DzNT2IV87oW5]mL3
 S1
-R8
-R32
+R1
+R20
 8../../src/rtl/Sideband_duplicated/UC_parameterexchange_EP.sv
 F../../src/rtl/Sideband_duplicated/UC_parameterexchange_EP.sv
-!i122 271
+!i122 1
 L0 15 371
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_parameterexchange_@e@p
 vUC_parameterexchange_RP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 V9K_;OF2RdPZW:P8?XHV]0
 I4jRZ107caHdH6P`?bS34Y0
 S1
-R8
-R32
+R1
+R20
 8../../src/rtl/Sideband_duplicated/UC_parameterexchange_RP.sv
 F../../src/rtl/Sideband_duplicated/UC_parameterexchange_RP.sv
-!i122 271
+!i122 1
 L0 15 338
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_parameterexchange_@r@p
-YUC_rdi_if
-R7
-R7
-R18
-DXx4 work 17 UC_rdi_if_sv_unit 0 22 cE9Y558b[@Jn8SLcjmCWn1
-R26
-R10
-r1
-!s85 0
-!i10b 1
-!s100 hkWO]?7R`8oa8Ag4B@F;31
-IH]ZeJI0O>8o]^TB3eKNie1
-!s105 UC_rdi_if_sv_unit
-S1
-R8
-R33
-Z69 8../../src/rtl/common/UC_rdi_if.sv
-Z70 F../../src/rtl/common/UC_rdi_if.sv
-!i122 140
-R36
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_rdi_if
-XUC_rdi_if_sv_unit
-R7
-R7
-R18
-R26
-VcE9Y558b[@Jn8SLcjmCWn1
-r1
-!s85 0
-!i10b 1
-!s100 _j0J=Y5aDUbhH5`Xi_<iY0
-IcE9Y558b[@Jn8SLcjmCWn1
-!i103 1
-S1
-R8
-R33
-R69
-R70
-!i122 140
-R37
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_rdi_if_sv_unit
 vUC_regfile
-R7
-R7
-R18
-R19
-Z71 DXx4 work 18 UC_regfile_package 0 22 6j9^o8820BXjSR5]HO0Sl3
-DXx4 work 18 UC_regfile_sv_unit 0 22 UZP5JFO:ELm>DJX`W[`R=3
+R3
+R3
 R13
-R10
+R14
+Z40 DXx4 work 18 UC_regfile_package 0 22 6j9^o8820BXjSR5]HO0Sl3
+DXx4 work 18 UC_regfile_sv_unit 0 22 UZP5JFO:ELm>DJX`W[`R=3
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1076,112 +682,53 @@ r1
 I95>fTSf<@BXXHGUIUA]VD1
 !s105 UC_regfile_sv_unit
 S1
-R8
-Z72 w1778150670
-Z73 8../../src/rtl/RegisterFile/UC_regfile.sv
-Z74 F../../src/rtl/RegisterFile/UC_regfile.sv
-!i122 271
+R1
+Z41 w1778150670
+Z42 8../../src/rtl/RegisterFile/UC_regfile.sv
+Z43 F../../src/rtl/RegisterFile/UC_regfile.sv
+!i122 1
 L0 19 439
-R11
+R7
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_regfile
-YUC_regfile_if
-R7
-R7
-R18
-R25
-DXx4 work 21 UC_regfile_if_sv_unit 0 22 W2JS>0oTNZ;>]6H>Vj@_S3
-R26
+R8
+R9
 R10
-r1
-!s85 0
-!i10b 1
-!s100 >5IHCgA;H_3aHaB:H^gJO2
-IgTIzZQ2OaYc[lVJ?DEbko1
-!s105 UC_regfile_if_sv_unit
-S1
-R8
-R33
-Z75 8../../src/rtl/common/UC_regfile_if.sv
-Z76 F../../src/rtl/common/UC_regfile_if.sv
-!i122 140
-L0 10 0
-R11
-31
-R30
-R31
-R17
 !i113 0
-R12
-R5
-n@u@c_regfile_if
-XUC_regfile_if_sv_unit
-R7
-R7
-R18
-R25
-R26
-VW2JS>0oTNZ;>]6H>Vj@_S3
-r1
-!s85 0
-!i10b 1
-!s100 ZTLKL2BJFk_`1WzZOIU@B0
-IW2JS>0oTNZ;>]6H>Vj@_S3
-!i103 1
-S1
-R8
-R33
-R75
-R76
-!i122 140
-Z77 L0 7 0
 R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_regfile_if_sv_unit
+R2
+n@u@c_regfile
 XUC_regfile_package
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 C[ID>4P@AP`;ViZ<]`@6W1
 I6j9^o8820BXjSR5]HO0Sl3
 S1
-R8
-R33
+R1
+w1777078549
 8../../src/rtl/common/UC_regfile_package.sv
 F../../src/rtl/common/UC_regfile_package.sv
-!i122 271
+!i122 1
 L0 2 0
 V6j9^o8820BXjSR5]HO0Sl3
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_regfile_package
 XUC_regfile_sv_unit
-R7
-R7
-R18
-R19
-R71
+R3
+R3
 R13
+R14
+R40
+R4
 VUZP5JFO:ELm>DJX`W[`R=3
 r1
 !s85 0
@@ -1190,113 +737,52 @@ r1
 IUZP5JFO:ELm>DJX`W[`R=3
 !i103 1
 S1
-R8
-R72
-R73
-R74
-!i122 271
-R23
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_regfile_sv_unit
-vUC_regfile_wrap
-R7
-R7
+R1
+R41
+R42
+R43
+!i122 1
 R18
 R7
-R25
-DXx4 work 23 UC_regfile_wrap_sv_unit 0 22 H>601JV`6Sk:f]BRDe=bG3
-R26
+31
+R8
+R9
 R10
-r1
-!s85 0
-!i10b 1
-!s100 C^TGYXmN8nGAM]_`M18992
-IS=MaIg^ZDI`L6afJ8`l<@1
-!s105 UC_regfile_wrap_sv_unit
-S1
-R8
-R27
-Z78 8../../src/rtl/TOP/UC_regfile_wrap.sv
-Z79 F../../src/rtl/TOP/UC_regfile_wrap.sv
-!i122 140
-L0 12 315
-R11
-31
-R30
-R31
-R17
 !i113 0
-R12
-R5
-n@u@c_regfile_wrap
-XUC_regfile_wrap_sv_unit
-R7
-R7
-R18
-R7
-R25
-R26
-VH>601JV`6Sk:f]BRDe=bG3
-r1
-!s85 0
-!i10b 1
-!s100 ZYDDjljEk49Za?V0e27k]3
-IH>601JV`6Sk:f]BRDe=bG3
-!i103 1
-S1
-R8
-R27
-R78
-R79
-!i122 140
-Z80 L0 5 0
 R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_regfile_wrap_sv_unit
+R2
+n@u@c_regfile_sv_unit
 vUC_remote_decoder
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 1BBGVNSKZYQQgbaTPF;D>1
 I`ckWYQO3NSNQAbgSn>7`l0
 S1
-R8
-R32
+R1
+R20
 8../../src/rtl/Sideband_duplicated/UC_remote_decoder.sv
 F../../src/rtl/Sideband_duplicated/UC_remote_decoder.sv
-!i122 271
+!i122 1
 L0 10 146
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_remote_decoder
 vUC_rx_completions_controller
-R7
-Z81 DXx4 work 15 UC_sb_rx_pkg_RP 0 22 E8VT4:=]QbW24_27ZQ_^]3
+R3
+Z44 DXx4 work 15 UC_sb_rx_pkg_RP 0 22 E8VT4:=]QbW24_27ZQ_^]3
 DXx4 work 36 UC_rx_completions_controller_sv_unit 0 22 h99ENADfnR4XCd<hn]`jY2
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1304,25 +790,25 @@ r1
 IH_`4_3>c9Hz02=KH9obII2
 !s105 UC_rx_completions_controller_sv_unit
 S1
-R8
-R32
-Z82 8../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv
-Z83 F../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv
-!i122 271
+R1
+R20
+Z45 8../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv
+Z46 F../../src/rtl/Sideband_duplicated/UC_rx_completions_controller.sv
+!i122 1
 L0 12 364
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_completions_controller
 XUC_rx_completions_controller_sv_unit
-R7
-R81
-R13
+R3
+R44
+R4
 Vh99ENADfnR4XCd<hn]`jY2
 r1
 !s85 0
@@ -1331,50 +817,27 @@ r1
 Ih99ENADfnR4XCd<hn]`jY2
 !i103 1
 S1
-R8
-R32
-R82
-R83
-!i122 271
-Z84 L0 11 0
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_rx_completions_controller_sv_unit
-vUC_rx_controller_decoder
+R1
+R20
+R45
+R46
+!i122 1
+L0 11 0
 R7
-!i10b 1
-!s100 ZNZA7S@5N[6g=nLIJ?82C1
-Ie8j?ilXBa@mD;X7IWYQ3^0
-!s105 UC_rx_controller_decoder_sv_unit
-S1
+31
 R8
 R9
-Z85 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv
-Z86 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv
-!i122 186
-L0 14 373
 R10
-R11
-31
-Z87 !s108 1778253216.000000
-Z88 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|
-Z89 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|
 !i113 0
-R12
-R5
-n@u@c_rx_controller_decoder
+R11
+R2
+n@u@c_rx_completions_controller_sv_unit
 vUC_rx_controller_decoder_EP
-R7
-Z90 DXx4 work 15 UC_sb_rx_pkg_EP 0 22 mB7KBBN`EUh:9<d0g<SnI2
+R3
+Z47 DXx4 work 15 UC_sb_rx_pkg_EP 0 22 mB7KBBN`EUh:9<d0g<SnI2
 DXx4 work 35 UC_rx_controller_decoder_EP_sv_unit 0 22 NZ[EdHMbGe=RTY49<KzbT0
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1382,25 +845,25 @@ r1
 I4lNl@Yld]dVmH_?9e0F=S0
 !s105 UC_rx_controller_decoder_EP_sv_unit
 S1
-R8
-R32
-Z91 8../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv
-Z92 F../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv
-!i122 271
+R1
+R20
+Z48 8../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv
+Z49 F../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_EP.sv
+!i122 1
 L0 14 360
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_controller_decoder_@e@p
 XUC_rx_controller_decoder_EP_sv_unit
-R7
-R90
-R13
+R3
+R47
+R4
 VNZ[EdHMbGe=RTY49<KzbT0
 r1
 !s85 0
@@ -1409,28 +872,28 @@ r1
 INZ[EdHMbGe=RTY49<KzbT0
 !i103 1
 S1
-R8
-R32
-R91
-R92
-!i122 271
-Z93 L0 13 0
-R11
+R1
+R20
+R48
+R49
+!i122 1
+Z50 L0 13 0
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_controller_decoder_@e@p_sv_unit
 vUC_rx_controller_decoder_RP
-R7
-R7
-R81
+R3
+R3
+R44
 DXx4 work 35 UC_rx_controller_decoder_RP_sv_unit 0 22 T8Ki:k8_LR8>FGVXij?F]3
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1438,26 +901,26 @@ r1
 IA`B]eEHAN^Qihi@GP[_]P2
 !s105 UC_rx_controller_decoder_RP_sv_unit
 S1
-R8
-R32
-Z94 8../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv
-Z95 F../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv
-!i122 271
+R1
+R20
+Z51 8../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv
+Z52 F../../src/rtl/Sideband_duplicated/UC_rx_controller_decoder_RP.sv
+!i122 1
 L0 14 246
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_controller_decoder_@r@p
 XUC_rx_controller_decoder_RP_sv_unit
-R7
-R7
-R81
-R13
+R3
+R3
+R44
+R4
 VT8Ki:k8_LR8>FGVXij?F]3
 r1
 !s85 0
@@ -1466,80 +929,30 @@ r1
 IT8Ki:k8_LR8>FGVXij?F]3
 !i103 1
 S1
-R8
-R32
-R94
-R95
-!i122 271
-R93
-R11
+R1
+R20
+R51
+R52
+!i122 1
+R50
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_controller_decoder_@r@p_sv_unit
-XUC_rx_controller_decoder_sv_unit
-R7
-R19
-!s110 1778253216
-VViOB1zMCnha;]PCzB2<EE0
-r1
-!s85 0
-!i10b 1
-!s100 4hATAA:LzcfN9aVcH::QH0
-IViOB1zMCnha;]PCzB2<EE0
-!i103 1
-S1
-R8
-R9
-R85
-R86
-!i122 186
-R93
-R11
-31
-R87
-R88
-R89
-!i113 0
-R12
-R5
-n@u@c_rx_controller_decoder_sv_unit
-vUC_rx_msgs_ctrl
-R7
-!i10b 1
-!s100 =O7gUXPW9DDN<mlBz>]4d1
-I0@XoJj4kKYZYhZhl^Sg>^0
-!s105 UC_rx_msgs_ctrl_sv_unit
-S1
-R8
-R9
-Z96 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv
-Z97 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv
-!i122 188
-L0 13 279
-R10
-R11
-31
-R87
-Z98 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|
-Z99 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|
-!i113 0
-R12
-R5
-n@u@c_rx_msgs_ctrl
 vUC_rx_msgs_ctrl_EP
-R7
-R7
-R19
-R7
-R90
+R3
+R3
+R14
+R3
+R47
 DXx4 work 26 UC_rx_msgs_ctrl_EP_sv_unit 0 22 cMc;oUD95SYk_Z2CD1=b42
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1547,28 +960,28 @@ r1
 IcS<U1271;SFoT4S02lkBE0
 !s105 UC_rx_msgs_ctrl_EP_sv_unit
 S1
-R8
-R32
-Z100 8../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv
-Z101 F../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv
-!i122 271
+R1
+R20
+Z53 8../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv
+Z54 F../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_EP.sv
+!i122 1
 L0 14 247
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_msgs_ctrl_@e@p
 XUC_rx_msgs_ctrl_EP_sv_unit
-R7
-R7
-R19
-R7
-R90
-R13
+R3
+R3
+R14
+R3
+R47
+R4
 VcMc;oUD95SYk_Z2CD1=b42
 r1
 !s85 0
@@ -1577,30 +990,30 @@ r1
 IcMc;oUD95SYk_Z2CD1=b42
 !i103 1
 S1
-R8
-R32
-R100
-R101
-!i122 271
-R24
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_rx_msgs_ctrl_@e@p_sv_unit
-vUC_rx_msgs_ctrl_RP
-R7
-R7
+R1
+R20
+R53
+R54
+!i122 1
 R19
 R7
-R81
-DXx4 work 26 UC_rx_msgs_ctrl_RP_sv_unit 0 22 LKkcRi?CGLRH5T<nMCJe>2
-R13
+31
+R8
+R9
 R10
+!i113 0
+R11
+R2
+n@u@c_rx_msgs_ctrl_@e@p_sv_unit
+vUC_rx_msgs_ctrl_RP
+R3
+R3
+R14
+R3
+R44
+DXx4 work 26 UC_rx_msgs_ctrl_RP_sv_unit 0 22 LKkcRi?CGLRH5T<nMCJe>2
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -1608,28 +1021,28 @@ r1
 I6l;_S7OnhmUo63D^KE<b23
 !s105 UC_rx_msgs_ctrl_RP_sv_unit
 S1
-R8
-R32
-Z102 8../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv
-Z103 F../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv
-!i122 271
+R1
+R20
+Z55 8../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv
+Z56 F../../src/rtl/Sideband_duplicated/UC_rx_msgs_ctrl_RP.sv
+!i122 1
 L0 14 269
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_rx_msgs_ctrl_@r@p
 XUC_rx_msgs_ctrl_RP_sv_unit
-R7
-R7
-R19
-R7
-R81
-R13
+R3
+R3
+R14
+R3
+R44
+R4
 VLKkcRi?CGLRH5T<nMCJe>2
 r1
 !s85 0
@@ -1638,475 +1051,230 @@ r1
 ILKkcRi?CGLRH5T<nMCJe>2
 !i103 1
 S1
-R8
-R32
-R102
-R103
-!i122 271
-R24
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_rx_msgs_ctrl_@r@p_sv_unit
-XUC_rx_msgs_ctrl_sv_unit
-R7
+R1
+R20
+R55
+R56
+!i122 1
 R19
-!s110 1778253217
-V1hMBmzzI5Q@SgoBVen:^z3
-r1
-!s85 0
-!i10b 1
-!s100 n0Lk][iLXZJ6c]^?RL@902
-I1hMBmzzI5Q@SgoBVen:^z3
-!i103 1
-S1
+R7
+31
 R8
 R9
-R96
-R97
-!i122 188
-R24
-R11
-31
-R87
-R98
-R99
+R10
 !i113 0
-R12
-R5
-n@u@c_rx_msgs_ctrl_sv_unit
+R11
+R2
+n@u@c_rx_msgs_ctrl_@r@p_sv_unit
 vUC_rx_sync_fifo
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 ;;J4Jd<EWg^ie0mOFZSnM2
 I5>zYXMfQ[>Jz?42I40WJQ2
 S1
-R8
-R32
+R1
+R20
 8../../src/rtl/Sideband_duplicated/UC_rx_sync_fifo.sv
 F../../src/rtl/Sideband_duplicated/UC_rx_sync_fifo.sv
-!i122 271
+!i122 1
 L0 9 109
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_rx_sync_fifo
-vUC_sb_controller_tx
-R7
-R7
-Z104 DXx4 work 9 UC_sb_pkg 0 22 UDzDfo^9Abm2PH383DGOR0
-Z105 DXx4 work 31 UC_sb_msg_controller_tx_sv_unit 0 22 e6Oo9<h=7`fBEM6:I:X3A2
-!s110 1777086203
-R10
-r1
-!s85 0
-!i10b 1
-!s100 SAo[1NLHgR@BP<D_cCQV^2
-IVY`k=UXfEA8b^5PDFRG[53
-Z106 !s105 UC_sb_msg_controller_tx_sv_unit
-S1
 R8
-R39
-Z107 8../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv
-Z108 F../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv
-!i122 85
-Z109 L0 17 110
-R11
-31
-!s108 1777086203.000000
-!s107 UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/TOP/UC_sb_top_wrap.sv|../../src/rtl/TOP/UC_regfile_wrap.sv|../../src/rtl/TOP/UC_MB_Mainband_wrap.sv|../../src/rtl/TOP/UC_ALSM_wrap.sv|../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/sideband/UC_sb_top.sv|../../src/rtl/sideband/TX/UC_sb_tx_top.sv|../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|../../src/rtl/sideband/TX/uc_mailbox_controller.sv|../../src/rtl/sideband/TX/UC_sync_fifo.sv|../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv|../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv|../../src/rtl/sideband/TX/UC_remote_decoder.sv|../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv|../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv|../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_regfile_if.sv|../../src/rtl/common/UC_rdi_if.sv|../../src/rtl/common/UC_fdi_if.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|
-R17
+R9
+R10
 !i113 0
-R12
-R5
-n@u@c_sb_controller_tx
+R11
+R2
+n@u@c_rx_sync_fifo
 vUC_sb_credit_loop
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 XWlW<U[52`3S61;Xh45^e3
 INcX`n=P8E6dkz=z2B9D[=0
 S1
-R8
-R9
+R1
+R12
 8../../src/rtl/sideband/common/UC_sb_credit_loop.sv
 F../../src/rtl/sideband/common/UC_sb_credit_loop.sv
-!i122 271
+!i122 1
 L0 17 77
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sb_credit_loop
 vUC_sb_FDI_Controller
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 ANTaZ<S=_VQ2`gUX>Nnl[0
 IVX2Q:GKj:fJ56TfDOo<fZ3
 S1
-R8
-R32
+R1
+R20
 8../../src/rtl/Sideband_duplicated/UC_sb_FDI_Controller.sv
 F../../src/rtl/Sideband_duplicated/UC_sb_FDI_Controller.sv
-!i122 271
+!i122 1
 L0 2 297
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_@f@d@i_@controller
-XUC_sb_FDI_Controller_sv_unit
-R7
-R7
-R25
-R38
-V1]RD<>hY6WA>EmDQdgPfj2
-r1
-!s85 0
-!i10b 1
-!s100 :l@4]9TkBAg5LLOaD`jI53
-I1]RD<>hY6WA>EmDQdgPfj2
-!i103 1
-S1
 R8
-R39
-8../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv
-F../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv
-!i122 159
-R84
-R11
-31
-R41
-R42
-R17
+R9
+R10
 !i113 0
-R12
-R5
-n@u@c_sb_@f@d@i_@controller_sv_unit
+R11
+R2
+n@u@c_sb_@f@d@i_@controller
 vUC_sb_FDI_Packer
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 4RcX35=G<L2a>m`nIS:;V3
 I>GelRkdWR;M?LOG=Qi??A3
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/UC_sb_FDI_Packer.sv
 F../../src/rtl/Sideband_duplicated/UC_sb_FDI_Packer.sv
-!i122 271
+!i122 1
 L0 1 272
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sb_@f@d@i_@packer
-XUC_sb_FDI_Packer_sv_unit
-R7
-R7
-R25
-R38
-V3RCZC]ghREVFbdE;FXjgY1
-r1
-!s85 0
-!i10b 1
-!s100 =Lcn6753V4TzX?EmFRZ181
-I3RCZC]ghREVFbdE;FXjgY1
-!i103 1
-S1
-R8
-w1777087693
-8../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv
-F../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv
-!i122 159
-R24
-R11
-31
-R41
-R42
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_@f@d@i_@packer_sv_unit
-vUC_sb_msg_controller_tx
-R7
-R7
-R25
-R105
-R38
-R10
-r1
-!s85 0
-!i10b 1
-!s100 Gm3zRO@NA:6L38M>J57nm2
-IRW=O0?UlX=z;M?8gFn`;d0
-R106
-S1
-R8
-Z110 w1777086446
-R107
-R108
-!i122 159
-R109
-R11
-31
-R41
-R42
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_msg_controller_tx
-XUC_sb_msg_controller_tx_sv_unit
-R7
-R7
-R25
-R38
-Ve6Oo9<h=7`fBEM6:I:X3A2
-r1
-!s85 0
-!i10b 1
-!s100 <VFLgzh1VJ=DBk8nHIVEL2
-Ie6Oo9<h=7`fBEM6:I:X3A2
-!i103 1
-S1
-R8
-R110
-R107
-R108
-!i122 159
-R40
-R11
-31
-R41
-R42
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_msg_controller_tx_sv_unit
-XUC_sb_pkg
-R7
-R38
-!i10b 1
-!s100 >ajmm3W9j60jkW;K1iM481
-Ikg=CHg4U3GVfQk^I2<hMI1
-S1
-R8
-w1777087559
-8../../src/rtl/common/UC_sb_pkg.sv
-F../../src/rtl/common/UC_sb_pkg.sv
-!i122 159
-R23
-Vkg=CHg4U3GVfQk^I2<hMI1
-R11
-r1
-!s85 0
-31
-R41
-R42
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_pkg
 vUC_sb_remote_die_request_controller
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 W3Bi5PFMYzPzT62LV5lMo3
 IlmPkiSL_;[cj3dFkjUO8f1
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/UC_sb_remote_die_request_controller.sv
 F../../src/rtl/Sideband_duplicated/UC_sb_remote_die_request_controller.sv
-!i122 271
+!i122 1
 L0 16 391
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_remote_die_request_controller
-XUC_sb_reomte_die_request_controller_sv_unit
-R7
-R7
-R25
-R38
-V48>OHz<=1ho]8fV=UGT8E3
-r1
-!s85 0
-!i10b 1
-!s100 hX@2ZXI2G]:]YnO??>b8Z3
-I48>OHz<=1ho]8fV=UGT8E3
-!i103 1
-S1
 R8
-R39
-8../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv
-F../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv
-!i122 159
-R51
-R11
-31
-R41
-R42
-R17
+R9
+R10
 !i113 0
-R12
-R5
-n@u@c_sb_reomte_die_request_controller_sv_unit
+R11
+R2
+n@u@c_sb_remote_die_request_controller
 XUC_sb_rx_pkg
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 TLmPYMLiFD4]a0K]:1XoS3
 I23zEdHCiLnTZJMXDDRb=V0
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/common/UC_sb_rx_pkg.sv
 F../../src/rtl/common/UC_sb_rx_pkg.sv
-!i122 271
-R23
+!i122 1
+R18
 V23zEdHCiLnTZJMXDDRb=V0
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sb_rx_pkg
 XUC_sb_rx_pkg_EP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 Gch@fnaNZAR4bL5Xb1MlT2
 ImB7KBBN`EUh:9<d0g<SnI2
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/common/UC_sb_rx_pkg_EP.sv
 F../../src/rtl/common/UC_sb_rx_pkg_EP.sv
-!i122 271
-R23
+!i122 1
+R18
 VmB7KBBN`EUh:9<d0g<SnI2
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sb_rx_pkg_@e@p
 XUC_sb_rx_pkg_RP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 ]b=I2Qa3WSgazAQD1:R=23
 IE8VT4:=]QbW24_27ZQ_^]3
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/common/UC_sb_rx_pkg_RP.sv
 F../../src/rtl/common/UC_sb_rx_pkg_RP.sv
-!i122 271
-R23
+!i122 1
+R18
 VE8VT4:=]QbW24_27ZQ_^]3
-R11
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_rx_pkg_@r@p
-vUC_sb_rx_top
-R7
-!i10b 1
-!s100 ikKe<9fhSOYbZ?eA[J_3Z1
-I>K>K7C5<mlPXh?nImRHkB1
-!s105 UC_sb_rx_top_sv_unit
-S1
 R8
 R9
-Z111 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_sb_rx_top.sv
-Z112 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_sb_rx_top.sv
-!i122 198
-L0 14 277
 R10
-R11
-31
-Z113 !s108 1778253218.000000
-Z114 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_sb_rx_top.sv|
-Z115 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/RX_path/UC_sb_rx_top.sv|
 !i113 0
-R12
-R5
-n@u@c_sb_rx_top
+R11
+R2
+n@u@c_sb_rx_pkg_@r@p
 vUC_sb_rx_top_EP
-R7
-R7
-R19
-R7
-R90
+R3
+R3
+R14
+R3
+R47
 DXx4 work 23 UC_sb_rx_top_EP_sv_unit 0 22 _]ZTl4ibL_`SRH29h`BjX0
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2114,28 +1282,28 @@ r1
 IjTl5k`>OmO=RG14l][`]80
 !s105 UC_sb_rx_top_EP_sv_unit
 S1
-R8
-R14
-Z116 8../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv
-Z117 F../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv
-!i122 271
-L0 16 258
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z57 8../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv
+Z58 F../../src/rtl/Sideband_duplicated/UC_sb_rx_top_EP.sv
+!i122 1
+L0 16 258
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_rx_top_@e@p
 XUC_sb_rx_top_EP_sv_unit
-R7
-R7
-R19
-R7
-R90
-R13
+R3
+R3
+R14
+R3
+R47
+R4
 V_]ZTl4ibL_`SRH29h`BjX0
 r1
 !s85 0
@@ -2144,30 +1312,30 @@ r1
 I_]ZTl4ibL_`SRH29h`BjX0
 !i103 1
 S1
-R8
-R14
-R116
-R117
-!i122 271
-R93
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+R57
+R58
+!i122 1
+R50
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_rx_top_@e@p_sv_unit
 vUC_sb_rx_top_RP
-R7
-R7
-R19
-R7
-R81
+R3
+R3
+R14
+R3
+R44
 DXx4 work 23 UC_sb_rx_top_RP_sv_unit 0 22 KNAcdJl7Z4Fj;NN5dHQP40
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2175,28 +1343,28 @@ r1
 I1hAe6igzQEQda=:34h<Ig0
 !s105 UC_sb_rx_top_RP_sv_unit
 S1
-R8
-R14
-Z118 8../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv
-Z119 F../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv
-!i122 271
-L0 16 254
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z59 8../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv
+Z60 F../../src/rtl/Sideband_duplicated/UC_sb_rx_top_RP.sv
+!i122 1
+L0 16 254
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_rx_top_@r@p
 XUC_sb_rx_top_RP_sv_unit
-R7
-R7
-R19
-R7
-R81
-R13
+R3
+R3
+R14
+R3
+R44
+R4
 VKNAcdJl7Z4Fj;NN5dHQP40
 r1
 !s85 0
@@ -2205,110 +1373,55 @@ r1
 IKNAcdJl7Z4Fj;NN5dHQP40
 !i103 1
 S1
-R8
-R14
-R118
-R119
-!i122 271
-R93
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
-n@u@c_sb_rx_top_@r@p_sv_unit
-XUC_sb_rx_top_sv_unit
+R59
+R60
+!i122 1
+R50
 R7
-R19
-Z120 !s110 1778253218
-Vm<gUz?P1A@m0lUNM4a9GH2
-r1
-!s85 0
-!i10b 1
-!s100 IFcR]XCL>iXhBkZ><eoXF1
-Im<gUz?P1A@m0lUNM4a9GH2
-!i103 1
-S1
+31
 R8
 R9
-R111
-R112
-!i122 198
-R93
-R11
-31
-R113
-R114
-R115
+R10
 !i113 0
-R12
-R5
-n@u@c_sb_rx_top_sv_unit
+R11
+R2
+n@u@c_sb_rx_top_@r@p_sv_unit
 vUC_sb_tag_manager
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 6>iSVi:37?8mN70ML::Ve1
 IgQP;4MbVl9mkJRPVNXS0Z3
 S1
-R8
-R9
+R1
+R12
 8../../src/rtl/sideband/common/UC_sb_tag_manager.sv
 F../../src/rtl/sideband/common/UC_sb_tag_manager.sv
-!i122 271
+!i122 1
 L0 12 160
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_tag_manager
-vUC_sb_top
-R7
-R19
-DXx4 work 17 UC_sb_top_sv_unit 0 22 IYY7FzRD^9SinWBT>FN;j3
-R59
-R10
-r1
-!s85 0
-!i10b 1
-!s100 aXL5n6741R3>V=FT>ZWoC0
-IMG594R8D8ZnWhQ1___FDW3
-!s105 UC_sb_top_sv_unit
-S1
 R8
-Z121 w1778150192
-Z122 8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/UC_sb_top.sv
-Z123 FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/UC_sb_top.sv
-!i122 209
-L0 17 462
-R11
-31
-R62
-Z124 !s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/UC_sb_top.sv|
-Z125 !s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/UC_sb_top.sv|
-!i113 0
-R12
-R5
-n@u@c_sb_top
-vUC_sb_top_EP
-R7
-R7
-R90
-R7
-R19
-DXx4 work 20 UC_sb_top_EP_sv_unit 0 22 U3<H1B]RQ2LEm@<?4nXXG3
-R13
+R9
 R10
+!i113 0
+R11
+R2
+n@u@c_sb_tag_manager
+vUC_sb_top_EP
+R3
+R3
+R47
+R3
+R14
+DXx4 work 20 UC_sb_top_EP_sv_unit 0 22 U3<H1B]RQ2LEm@<?4nXXG3
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2316,28 +1429,28 @@ r1
 IOGK58NH`0oJ3RE<eP6Pfe3
 !s105 UC_sb_top_EP_sv_unit
 S1
-R8
-R14
-Z126 8../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv
-Z127 F../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv
-!i122 271
-L0 18 408
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z61 8../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv
+Z62 F../../src/rtl/Sideband_duplicated/UC_sb_top_EP.sv
+!i122 1
+L0 18 408
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_top_@e@p
 XUC_sb_top_EP_sv_unit
-R7
-R7
-R90
-R7
-R19
-R13
+R3
+R3
+R47
+R3
+R14
+R4
 VU3<H1B]RQ2LEm@<?4nXXG3
 r1
 !s85 0
@@ -2346,30 +1459,30 @@ r1
 IU3<H1B]RQ2LEm@<?4nXXG3
 !i103 1
 S1
-R8
-R14
-R126
-R127
-!i122 271
-R93
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+R61
+R62
+!i122 1
+R50
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_top_@e@p_sv_unit
 vUC_sb_top_RP
-R7
-R7
-R19
-R7
-R81
+R3
+R3
+R14
+R3
+R44
 DXx4 work 20 UC_sb_top_RP_sv_unit 0 22 IB5o[Fob2YmbSk:7ZNEjT2
-R13
-R10
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2377,28 +1490,28 @@ r1
 I5a=nY7HBa^5]<zWzd<a7c0
 !s105 UC_sb_top_RP_sv_unit
 S1
-R8
-R14
-Z128 8../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv
-Z129 F../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv
-!i122 271
-L0 16 423
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
+Z63 8../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv
+Z64 F../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv
+!i122 1
+L0 16 423
+R7
+31
+R8
+R9
+R10
+!i113 0
+R11
+R2
 n@u@c_sb_top_@r@p
 XUC_sb_top_RP_sv_unit
-R7
-R7
-R19
-R7
-R81
-R13
+R3
+R3
+R14
+R3
+R44
+R4
 VIB5o[Fob2YmbSk:7ZNEjT2
 r1
 !s85 0
@@ -2407,314 +1520,142 @@ r1
 IIB5o[Fob2YmbSk:7ZNEjT2
 !i103 1
 S1
-R8
-R14
-R128
-R129
-!i122 271
-R93
-R11
-31
-R15
-R16
-R17
-!i113 0
-R12
+R1
 R5
-n@u@c_sb_top_@r@p_sv_unit
-XUC_sb_top_sv_unit
+R63
+R64
+!i122 1
+R50
 R7
-R19
-R59
-VIYY7FzRD^9SinWBT>FN;j3
-r1
-!s85 0
-!i10b 1
-!s100 c3z<K1cCM5]Hf?7fMXFPW3
-IIYY7FzRD^9SinWBT>FN;j3
-!i103 1
-S1
-R8
-R121
-R122
-R123
-!i122 209
-R93
-R11
 31
-R62
-R124
-R125
-!i113 0
-R12
-R5
-n@u@c_sb_top_sv_unit
-vUC_sb_top_wrap
-R7
-R7
-R25
-DXx4 work 22 UC_sb_top_wrap_sv_unit 0 22 `<<g;Eo^LJOa;DLH2jQz[2
-R26
-R10
-r1
-!s85 0
-!i10b 1
-!s100 ZDe@RO6n33zjZzBZ<>M_R0
-I`7<3kma:^hQDbNC18?hUR3
-!s105 UC_sb_top_wrap_sv_unit
-S1
-R8
-Z130 w1777087170
-Z131 8../../src/rtl/TOP/UC_sb_top_wrap.sv
-Z132 F../../src/rtl/TOP/UC_sb_top_wrap.sv
-!i122 140
-L0 10 274
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_top_wrap
-XUC_sb_top_wrap_sv_unit
-R7
-R7
-R25
-R26
-V`<<g;Eo^LJOa;DLH2jQz[2
-r1
-!s85 0
-!i10b 1
-!s100 <[Hd8eYFo^VkbdW_2i8]M3
-I`<<g;Eo^LJOa;DLH2jQz[2
-!i103 1
-S1
-R8
-R130
-R131
-R132
-!i122 140
-R80
-R11
-31
-R30
-R31
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_top_wrap_sv_unit
-vUC_sb_tx_top
-R7
-R120
-!i10b 1
-!s100 1[Y[@K@jFk8_]c[DHGhf21
-I@XWXi`bf3n`<JaM]:Sk=R1
-S1
 R8
 R9
-8D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/UC_sb_tx_top.sv
-FD:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/UC_sb_tx_top.sv
-!i122 199
-L0 13 713
 R10
-R11
-r1
-!s85 0
-31
-R113
-!s107 D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/UC_sb_tx_top.sv|
-!s90 -reportprogress|300|-L|mtiAvm|-L|mtiRnm|-L|mtiOvm|-L|mtiUvm|-L|mtiUPF|-L|infact|D:/GraduationProject/Implementation/Graduation-Project---UCIe-Adapter-Layer/src/rtl/sideband/TX/UC_sb_tx_top.sv|
 !i113 0
-R12
-R5
-n@u@c_sb_tx_top
+R11
+R2
+n@u@c_sb_top_@r@p_sv_unit
 vUC_sb_tx_top_EP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 V^jZe;HRITWZ[hI0KzZ]H3
 IIVg3lUgG`IIkC]3G4_GJ20
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/UC_sb_tx_top_EP.sv
 F../../src/rtl/Sideband_duplicated/UC_sb_tx_top_EP.sv
-!i122 271
+!i122 1
 L0 13 598
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sb_tx_top_@e@p
 vUC_sb_tx_top_RP
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 joeanG9OXKW=EN:om=df81
 Ij103;M9oY6TKi2n=PF]^33
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/UC_sb_tx_top_RP.sv
 F../../src/rtl/Sideband_duplicated/UC_sb_tx_top_RP.sv
-!i122 271
+!i122 1
 L0 13 593
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_sb_tx_top_@r@p
-XUC_sb_tx_top_sv_unit
-R7
-R7
-R25
-!s110 1777706701
-VK6ISKY2XNFAAb>0[nk;=h1
-r1
-!s85 0
-!i10b 1
-!s100 ?]m>36bIOai]>j`SI[F:M1
-IK6ISKY2XNFAAb>0[nk;=h1
-!i103 1
-S1
 R8
-w1777087754
-8../../src/rtl/sideband/TX/UC_sb_tx_top.sv
-F../../src/rtl/sideband/TX/UC_sb_tx_top.sv
-!i122 159
-L0 22 0
-R11
-31
-R41
-R42
-R17
+R9
+R10
 !i113 0
-R12
-R5
-n@u@c_sb_tx_top_sv_unit
+R11
+R2
+n@u@c_sb_tx_top_@r@p
 vUC_sync_fifo
-R7
-R13
+R3
+R4
 !i10b 1
 !s100 XS>A7c@PG7^?F]0?XD[`@2
 IDf0GUfa[Ko6F:hNFbIUl;3
 S1
-R8
-R14
+R1
+R5
 8../../src/rtl/Sideband_duplicated/UC_sync_fifo.sv
 F../../src/rtl/Sideband_duplicated/UC_sync_fifo.sv
-!i122 271
+!i122 1
 L0 10 61
-R10
-R11
+R6
+R7
 r1
 !s85 0
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_sync_fifo
 vUC_TOP
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
-DXx4 work 14 UC_TOP_sv_unit 0 22 >dk<VamEb06zL3n=g]_Fj3
+R3
+R3
 R13
-R10
+R14
+R3
+R21
+R3
+R40
+DXx4 work 14 UC_TOP_sv_unit 0 22 >dk<VamEb06zL3n=g]_Fj3
+R4
+R6
 r1
 !s85 0
 !i10b 1
 !s100 zMY]Th[LBo8j;?<VRb?RL1
 IcK>27[8Qk<_e5=B^mDHbO1
-Z133 !s105 UC_TOP_sv_unit
+!s105 UC_TOP_sv_unit
 S1
-R8
+R1
 w1778164409
-Z134 8../../src/rtl/TOP/UC_TOP.sv
-Z135 F../../src/rtl/TOP/UC_TOP.sv
-!i122 271
+Z65 8../../src/rtl/TOP/UC_TOP.sv
+Z66 F../../src/rtl/TOP/UC_TOP.sv
+!i122 1
 L0 14 484
-R11
+R7
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_@t@o@p
-vUC_top
-R7
-R7
-DXx4 work 15 UC_ALSM_package 0 22 ];N16;IUn4N:[P6ahS@990
-R7
-R104
-R7
-DXx4 work 18 UC_MB_Mainband_pkg 0 22 Gna?718[?HZiJ`lX_hH5h1
-R7
-R71
-DXx4 work 14 UC_TOP_sv_unit 0 22 U]=BoR[EQPg8^zdCnEU[F0
-!s110 1777032964
-R10
-r1
-!s85 0
-!i10b 1
-!s100 4Y[5Cb>Scn>mX<Y5=b]9T1
-Il0HFz<I?f=09?0HLV`L:P1
-R133
-S1
 R8
-w1777032106
-R134
-R135
-!i122 82
-L0 13 666
-R11
-31
-!s108 1777032964.000000
-!s107 UC_TOP_tb.sv|../../src/rtl/TOP/UC_TOP.sv|../../src/rtl/TOP/UC_sb_top_wrap.sv|../../src/rtl/TOP/UC_regfile_wrap.sv|../../src/rtl/TOP/UC_MB_Mainband_wrap.sv|../../src/rtl/TOP/UC_ALSM_wrap.sv|../../src/rtl/mainband/RX/UC_MB_Unpacker.sv|../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv|../../src/rtl/mainband/TX/UC_MB_Packer.sv|../../src/rtl/sideband/common/uc_access_arbiter.sv|../../src/rtl/sideband/common/UC_sb_tag_manager.sv|../../src/rtl/sideband/common/UC_sb_credit_loop.sv|../../src/rtl/sideband/common/UC_parameterexchange.sv|../../src/rtl/sideband/TX/UC_sb_tx_top.sv|../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv|../../src/rtl/sideband/TX/uc_mailbox_controller.sv|../../src/rtl/sideband/TX/UC_sync_fifo.sv|../../src/rtl/sideband/TX/UC_sb_reomte_die_request_controller.sv|../../src/rtl/sideband/TX/UC_sb_msg_controller_tx.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Packer.sv|../../src/rtl/sideband/TX/UC_sb_FDI_Controller.sv|../../src/rtl/sideband/TX/UC_remote_decoder.sv|../../src/rtl/sideband/RX_path/UC_sb_rx_top.sv|../../src/rtl/sideband/RX_path/UC_rx_msgs_ctrl.sv|../../src/rtl/sideband/RX_path/UC_rx_completions_controller.sv|../../src/rtl/sideband/RX_path/UC_rx_controller_decoder.sv|../../src/rtl/sideband/RX_path/UC_rx_sync_fifo.sv|../../src/rtl/RegisterFile/UC_regfile.sv|../../src/rtl/LSM/UC_ALSM.sv|../../src/rtl/common/UC_regfile_if.sv|../../src/rtl/common/UC_rdi_if.sv|../../src/rtl/common/UC_fdi_if.sv|../../src/rtl/common/UC_regfile_package.sv|../../src/rtl/common/UC_MB_Mainband_pkg.sv|../../src/rtl/common/UC_sb_pkg.sv|../../src/rtl/common/UC_ALSM_package.sv|
-R17
-!i113 0
-R12
-R5
-n@u@c_top
-vUC_TOP_EP
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
-DXx4 work 17 UC_TOP_EP_sv_unit 0 22 D;gVSl7>c^FQIKn7M^l2M2
-R13
+R9
 R10
+!i113 0
+R11
+R2
+n@u@c_@t@o@p
+vUC_TOP_EP
+R3
+R3
+R13
+R14
+R3
+R21
+R3
+R40
+DXx4 work 17 UC_TOP_EP_sv_unit 0 22 D;gVSl7>c^FQIKn7M^l2M2
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2722,31 +1663,31 @@ r1
 I6<iX]X^lzXe73^MBzH9>h3
 !s105 UC_TOP_EP_sv_unit
 S1
-R8
-Z136 w1778263959
-Z137 8../../src/rtl/TOP/UC_TOP_EP.sv
-Z138 F../../src/rtl/TOP/UC_TOP_EP.sv
-!i122 271
+R1
+R26
+Z67 8../../src/rtl/TOP/UC_TOP_EP.sv
+Z68 F../../src/rtl/TOP/UC_TOP_EP.sv
+!i122 1
 L0 14 463
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_@e@p
 XUC_TOP_EP_sv_unit
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
+R3
+R3
 R13
+R14
+R3
+R21
+R3
+R40
+R4
 VD;gVSl7>c^FQIKn7M^l2M2
 r1
 !s85 0
@@ -2755,34 +1696,34 @@ r1
 ID;gVSl7>c^FQIKn7M^l2M2
 !i103 1
 S1
-R8
-R136
-R137
-R138
-Z139 F../../src/rtl/TOP/../common/UC_all_defs.svh
-!i122 271
-R77
-R11
+R1
+R26
+R67
+R68
+Z69 F../../src/rtl/TOP/../common/UC_all_defs.svh
+!i122 1
+Z70 L0 7 0
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_@e@p_sv_unit
 vUC_TOP_RP
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
-DXx4 work 17 UC_TOP_RP_sv_unit 0 22 Lm[4H=kdZ80JJcJ6Kl0_03
+R3
+R3
 R13
-R10
+R14
+R3
+R21
+R3
+R40
+DXx4 work 17 UC_TOP_RP_sv_unit 0 22 Lm[4H=kdZ80JJcJ6Kl0_03
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2790,31 +1731,31 @@ r1
 I^h7TF3Shd@b[lPY39LGk51
 !s105 UC_TOP_RP_sv_unit
 S1
-R8
-Z140 w1778263944
-Z141 8../../src/rtl/TOP/UC_TOP_RP.sv
-Z142 F../../src/rtl/TOP/UC_TOP_RP.sv
-!i122 271
+R1
+R26
+Z71 8../../src/rtl/TOP/UC_TOP_RP.sv
+Z72 F../../src/rtl/TOP/UC_TOP_RP.sv
+!i122 1
 L0 14 474
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_@r@p
 XUC_TOP_RP_sv_unit
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
+R3
+R3
 R13
+R14
+R3
+R21
+R3
+R40
+R4
 VLm[4H=kdZ80JJcJ6Kl0_03
 r1
 !s85 0
@@ -2823,32 +1764,32 @@ r1
 ILm[4H=kdZ80JJcJ6Kl0_03
 !i103 1
 S1
-R8
-R140
-R141
-R142
-R139
-!i122 271
-R77
-R11
+R1
+R26
+R71
+R72
+R69
+!i122 1
+R70
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_@r@p_sv_unit
 XUC_TOP_sv_unit
-R7
-R7
-R18
-R19
-R7
-R43
-R7
-R71
+R3
+R3
 R13
+R14
+R3
+R21
+R3
+R40
+R4
 V>dk<VamEb06zL3n=g]_Fj3
 r1
 !s85 0
@@ -2857,34 +1798,33 @@ r1
 I>dk<VamEb06zL3n=g]_Fj3
 !i103 1
 S1
-R8
+R1
 w1778244221
-R134
-R135
-R139
-!i122 271
-R77
-R11
+R65
+R66
+R69
+!i122 1
+R70
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_sv_unit
 vUC_TOP_tb
-R7
-R7
-R18
-R25
-R7
-R43
-R7
-R71
-DXx4 work 17 UC_TOP_tb_sv_unit 0 22 OI=2h>8JVPKVQVGFch7e@1
+R3
+R3
 R13
-R10
+R3
+R21
+R3
+R40
+DXx4 work 17 UC_TOP_tb_sv_unit 0 22 gNlc[jTXNJgGja6@;aWiO0
+R4
+R6
 r1
 !s85 0
 !i10b 1
@@ -2892,79 +1832,51 @@ r1
 In<fP9k8?_zL[>3I7I2OM62
 !s105 UC_TOP_tb_sv_unit
 S1
-R8
-Z143 w1778285364
-Z144 8UC_TOP_tb.sv
-Z145 FUC_TOP_tb.sv
-!i122 271
+R1
+Z73 w1778287933
+Z74 8UC_TOP_tb.sv
+Z75 FUC_TOP_tb.sv
+!i122 1
 L0 95 551
-R11
+R7
 31
-R15
-R16
-R17
+R8
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
 n@u@c_@t@o@p_tb
 XUC_TOP_tb_sv_unit
-R7
-R7
-R18
-R25
-R7
-R43
-R7
-R71
+R3
+R3
 R13
-VOI=2h>8JVPKVQVGFch7e@1
+R3
+R21
+R3
+R40
+R4
+VgNlc[jTXNJgGja6@;aWiO0
 r1
 !s85 0
 !i10b 1
-!s100 faH]0PIQWQ3AKgf[VakiF2
-IOI=2h>8JVPKVQVGFch7e@1
+!s100 @O89[idKbTVU?F2?P7[Gz0
+IgNlc[jTXNJgGja6@;aWiO0
 !i103 1
 S1
-R8
-R143
-R144
-R145
+R1
+R73
+R74
+R75
 F../../src/rtl/common/UC_all_defs.svh
-!i122 271
-R23
-R11
+!i122 1
+R18
+R7
 31
-R15
-R16
-R17
-!i113 0
-R12
-R5
-n@u@c_@t@o@p_tb_sv_unit
-Xuc_tx_rdi_cntrl_sv_unit
-R7
-R7
-R25
-R38
-VEA@b68LN_mGM_a1H?`5eG2
-r1
-!s85 0
-!i10b 1
-!s100 hRMRIB^zc>>]lbR2OQDji2
-IEA@b68LN_mGM_a1H?`5eG2
-!i103 1
-S1
 R8
-R39
-8../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
-F../../src/rtl/sideband/TX/uc_tx_rdi_cntrl.sv
-!i122 159
-L0 19 0
-R11
-31
-R41
-R42
-R17
+R9
+R10
 !i113 0
-R12
-R5
+R11
+R2
+n@u@c_@t@o@p_tb_sv_unit
