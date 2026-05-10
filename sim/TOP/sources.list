@@ -49,7 +49,7 @@
 ../../src/rtl/mainband/TX/UC_MB_CRC_Generator.sv
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
-../../src/rtl/mainband/TOP/UC_MB_Mainband_Top.sv
+../../src/rtl/mainband/Top/UC_MB_Mainband_Top.sv
 
 ../../src/rtl/TOP/UC_TOP_EP.sv
 ../../src/rtl/TOP/UC_TOP_RP.sv
