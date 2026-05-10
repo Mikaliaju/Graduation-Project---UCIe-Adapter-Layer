@@ -212,8 +212,8 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
   .i_pl_valid_rdi      (i_pl_valid_rdi),
 
   // Retry Inputs
-  .i_check_pass        (w_check_pass),        // connect to Retry
-  .i_discarded_flit    (w_discarded_flit),    // connect to Retry
+  .i_check_pass        ('0),        // connect to Retry
+  .i_discarded_flit    ('0),    // connect to Retry
 
   // LSM Inputs
   .i_unpacker_en       (i_unpacker_en),   

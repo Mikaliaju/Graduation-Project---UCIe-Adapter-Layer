@@ -103,12 +103,6 @@ module UC_rx_controller_decoder_EP #(parameter NC = 32) (
                     end else begin
                         r_req_pkt <= 128'(r_req_pkt | (128'(i_pl_cfg) << (r_chunk_counter * NC)));      // Append chunk at correct bit position
                     end
-
-                    if (s_req_collecting_done) begin
-                        r_chunk_counter <= 'b0;                                                         // Reset counter once packet is complete
-                    end else begin
-                        r_chunk_counter <= r_chunk_counter + 1'b1;
-                    end
                 end
 
                 default: ;
@@ -142,6 +136,13 @@ module UC_rx_controller_decoder_EP #(parameter NC = 32) (
                         r_chunk_counter <= 'b0;
                     else
                         r_chunk_counter <= r_chunk_counter + 1'b1;
+                end
+                RXD_COLLECT_WRITE_REQ: begin
+                    if (s_req_collecting_done) begin
+                        r_chunk_counter <= 'b0;                                                         // Reset counter once packet is complete
+                    end else begin
+                        r_chunk_counter <= r_chunk_counter + 1'b1;
+                    end
                 end
                 default: r_chunk_counter <= 'b0;
             endcase
