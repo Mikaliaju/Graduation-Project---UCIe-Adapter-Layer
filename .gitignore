@@ -11,3 +11,4 @@ sim/Mainband/Packer.mpf
 sim/Mainband/Packer.mpf_new
 sim/Mainband/UC_MB_Packer_tb.ucdb
 sim/Mainband/work/_opt__lock
+sim/TOP/work/_opt__lock
