@@ -1,5 +1,0 @@
-INPUT@@/home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP/spyglass-1/UC_TOP/lint/lint_rtl/spyglass_reports@@/home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP/spyglass-1/html_reports/data_files/@@UC_TOP@@lint-lint_rtl@@
-COPY@@/home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP/spyglass-1/UC_TOP/lint/lint_rtl/spyglass_reports/moresimple.rpt@@data_files/UC_TOP_lint-lint_rtl_moresimple.rpt@@
-COPY@@/home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP/spyglass-1/UC_TOP/lint/lint_rtl/spyglass_reports/no_msg_reporting_rules.rpt@@data_files/UC_TOP_lint-lint_rtl_no_msg_reporting_rules.rpt@@
-PROCESS@@Audits@@area@@lowpower@@clock-reset@@const_intern1@@constraints@@dft@@dft_dsm@@power_est@@txv@@miscellaneous@@starc2002@@timing@@morelint@@latch@@lint@@simulation@@erc@@starc2005@@starc@@openmore@@SpyGlass
-COPY@@/home/ICer/UCIe_Git/Graduation-Project---UCIe-Adapter-Layer/spyglass/TOP/spyglass-1/UC_TOP/lint/lint_rtl/spyglass.log@@data_files/UC_TOP_lint-lint_rtl_spyglass.log@@

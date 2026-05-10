@@ -1,5 +1,0 @@
-#x TXT_BEGIN T.1
-#x TXT_BEGIN T.2
-List of extra connections: o_tx_lsm_remote_time_out, i_mailbox_index_low, i_mailbox_index_high, i_mailbox_data_low, i_mailbox_data_high, i_mailbox_trigger, i_remote_access_threshold, i_e2e_crd_return, o_mailbox_data_low, o_mailbox_data_high, o_mailbox_data_en, o_mailbox_trigger_en, o_mailbox_status, o_header_log_1, o_header_log_en
-#x TXT_END T.2
-#x TXT_BEGIN T.3
