@@ -286,6 +286,7 @@ always_comb begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
           w_nxt_crc_payload       = i_lp_valid_fdi ? i_lp_data_fdi : '0;
+          // w_nxt_crc_payload_valid = i_lp_valid_fdi;
           w_nxt_crc_payload_valid = 1'b1;
           w_nxt_state       = S_COLLECT;
         end
@@ -363,7 +364,6 @@ always_comb begin
 
       // Normal mode (data from FDI)
       else if (i_lp_irdy_fdi && !i_deassert_trdy) begin
-
         // 1) Receive from FDI
         if (i_lp_valid_fdi) begin
           w_nxt_nop_chunk[r_collect_cnt] = 1'b0;
