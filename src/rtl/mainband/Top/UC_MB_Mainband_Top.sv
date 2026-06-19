@@ -285,7 +285,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   // Outputs to transmitter
   // -------------------------------------------------------------------------
   .pl_trdy_control     (w_deassert_trdy_i),
-  .tx_replay_command   (replay_command_t'(w_replay_command_i)),
+  .tx_replay_command   (w_replay_command_i),
   .tx_seq_num          (w_seq_num_i),
 
   // -------------------------------------------------------------------------
