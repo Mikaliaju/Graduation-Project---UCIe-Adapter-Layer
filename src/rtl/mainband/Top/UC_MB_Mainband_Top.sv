@@ -100,7 +100,7 @@ module UC_MB_Mainband (
   // Retry Interface ? Packer (Inputs)
   // -------------------------
   logic    [SEQUENS_NUM-1:0] w_seq_num_i;            // Sequence number     
-  logic    [REPLAY_CMD-1:0]  w_replay_command_i;     // Replay command       
+  replay_command_t          w_replay_command_i;     // Replay command       
   logic                      w_deassert_trdy_i;      // Deassert trdy        
   logic    [DATA_PATH-1:0]   w_retry_data_i;         // Retry payload       
   logic                      w_retry_sid_i;          // Retry SID           
@@ -163,7 +163,7 @@ UC_MB_Packer           U1_UC_MB_Packer (
 
   // Retry Inputs
   .i_seq_num           (w_seq_num_i),           // connect to Retry
-  .i_replay_command    (w_replay_command_i),    // connect to Retry
+  .i_replay_command    (2'(w_replay_command_i)),    // connect to Retry
   .i_deassert_trdy     (w_deassert_trdy_i),     // connect to Retry
   .i_retry_data        (w_retry_data_i),        // connect to Retry
   .i_retry_sid         (w_retry_sid_i),         // connect to Retry
