@@ -1,6 +1,6 @@
 vlib work
 vlog -f sources.list
-vsim -voptargs=+acc work.UC_TOP_tb
+vsim -voptargs=+acc work.UC_TOP_tb -suppress 7061
 add wave /UC_TOP_tb/i_rst_n
 add wave /UC_TOP_tb/i_init
 add wave /UC_TOP_tb/i_clk
