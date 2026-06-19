@@ -270,7 +270,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .rx_crc_error        (w_crc_err_o),
   .rx_seq_num          (w_seq_num_o),
   .rx_replay_command   (replay_command_t'(w_replay_command_o)),
-  .rx_flit_type        (w_rx_flit_type_o),
+  .rx_flit_type        (flit_type_t'(w_rx_flit_type_o)),
 
   // -------------------------------------------------------------------------
   // TX buffer ports
