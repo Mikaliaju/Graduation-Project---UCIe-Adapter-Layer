@@ -16,7 +16,7 @@
 // =================================================================================================
 
 import UC_MB_Mainband_pkg::*;
-// import UC_MB_retry_pkg::*;
+import UC_MB_retry_pkg::*;
 
 module UC_MB_Mainband (
   // -------------------------
@@ -257,7 +257,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .fdi_active          (i_fdi_active),
   .tx_en               (i_packer_en),
   .rx_en               (i_unpacker_en),
-  .data_rate           (i_data_rate), //needed from register file
+  .data_rate           (1'b0(i_data_rate), //needed from register file
   .rx_flit_valid       (o_rx_flit_valid),           //needed from unpacker, when starting creating a flit waiting for seq number
   .tx_flit_valid       (o_tx_flit_valid),           //needed from packer, when starting creating a flit waiting for seq number
   .transmitter_write   (), //needed from packer, when writing in buffer
