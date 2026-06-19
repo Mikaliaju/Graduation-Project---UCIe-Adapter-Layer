@@ -13,7 +13,7 @@ module UC_MB_retry_ack_nak_processing (
     input logic            i_rx_crc_error,  // crc error in the received flit from mainband receiver
     input logic [7:0]      i_next_tx_flit_seq_num,  //from transmitting_rules module
     input logic [7:0]      i_tx_replay_flit_seq_num,
-    output logic [2:0]     o_flit_replay_num,
+    output logic           o_clear_flit_replay_num,
     output logic [7:0]     o_ackd_flit_seq_num,
     output logic [7:0]     o_tx_replay_flit_seq_num,
     output logic [7:0]     o_nak_ignore_flit_seq_num,
@@ -27,14 +27,14 @@ module UC_MB_retry_ack_nak_processing (
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       o_log_uie                <= 1'b0;
-      o_flit_replay_num        <= 3'b0;
+      o_clear_flit_replay_num  <= 1'b0;
       ackd_flit_seq_num        <= 8'b0;
       o_tx_replay_flit_seq_num <= 8'b0;
       nak_ignore_flit_seq_num  <= 8'b0;
       o_start_replay           <= 1'b0;
     end else if (!init || i_rx_phase == R_IDLE) begin
       o_log_uie                <= 1'b0;
-      o_flit_replay_num        <= 3'b0;
+      o_clear_flit_replay_num  <= 1'b0;
       ackd_flit_seq_num        <= 8'b0;
       o_tx_replay_flit_seq_num <= 8'b0;
       nak_ignore_flit_seq_num  <= 8'b0;
@@ -51,7 +51,8 @@ module UC_MB_retry_ack_nak_processing (
             // ignore ack/nak
           end else begin  // valid ack/nak
             if ((i_rx_seq_num - ackd_flit_seq_num) % 255 > 0) begin
-              o_flit_replay_num <= 3'b0;
+              //o_flit_replay_num <= 3'b0;
+              o_clear_flit_replay_num <= 1'b1;
               ackd_flit_seq_num <= i_rx_seq_num;
             end
             // pruge retry buffer 
