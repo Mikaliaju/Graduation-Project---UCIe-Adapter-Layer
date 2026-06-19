@@ -21,7 +21,7 @@ module UC_MB_retry_buffer (
     input  logic          [STREAM_WIDTH-1:0] i_stream,
     output logic          [  DATA_WIDTH-1:0] o_data,
     output logic          [STREAM_WIDTH-1:0] o_stream,
-    output buffer_state_t                    o_buffer_state
+    output logic                             o_buffer_state // 1 is empty, 0 is counting
 );
 
   logic [1:0] chunk_counter, w_chunk_counter;
@@ -58,8 +58,8 @@ module UC_MB_retry_buffer (
   assign w_acked_stream_ptr = i_ackd_flit_seq_num - 1;
 
   always_comb begin
-    if (acked_data_ptr == write_data_ptr - 2) o_buffer_state <= empty;
-    else o_buffer_state <= counting;
+    if (acked_data_ptr == write_data_ptr - 2) o_buffer_state <= 1'b1;
+    else o_buffer_state <= 1'b0;
   end
 
   always_comb begin

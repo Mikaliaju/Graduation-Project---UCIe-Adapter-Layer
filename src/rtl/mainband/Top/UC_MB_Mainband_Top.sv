@@ -163,12 +163,12 @@ UC_MB_Packer           U1_UC_MB_Packer (
 
   // Retry Inputs
   .i_seq_num           (w_seq_num_i),           // connect to Retry
-  .i_replay_command    (2'b'(w_replay_command_i)),    // connect to Retry
+  .i_replay_command    (w_replay_command_i),    // connect to Retry
   .i_deassert_trdy     (w_deassert_trdy_i),     // connect to Retry
   .i_retry_data        (w_retry_data_i),        // connect to Retry
   .i_retry_sid         (w_retry_sid_i),         // connect to Retry
   .i_retry_pid         (w_retry_pid_i),         // connect to Retry
-  .i_buffer_empty      (1'b'(w_buffer_empty)),      // connect to Retry
+  .i_buffer_empty      (w_buffer_empty),      // connect to Retry
   .i_retry_use         ('1),                   // ?? 
 
   // LSM Inputs
@@ -233,7 +233,7 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 
   // Retry Outputs
   .o_seq_num           (w_seq_num_o),         // connect to Retry
-  .o_replay_com        (2'b'(w_replay_command_o)),        // connect to Retry
+  .o_replay_com        (w_replay_command_o),        // connect to Retry
   .o_crc_err           (w_crc_err_o)            // connect to Retry
 );
 
@@ -257,7 +257,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .fdi_active          (i_fdi_active),
   .tx_en               (i_packer_en),
   .rx_en               (i_unpacker_en),
-  .data_rate           (1'b0(i_data_rate), //needed from register file
+  .data_rate           (data_rate_t'(i_data_rate)), //needed from register file
   .rx_flit_valid       (o_rx_flit_valid),           //needed from unpacker, when starting creating a flit waiting for seq number
   .tx_flit_valid       (o_tx_flit_valid),           //needed from packer, when starting creating a flit waiting for seq number
   .transmitter_write   (), //needed from packer, when writing in buffer
@@ -269,7 +269,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   // -------------------------------------------------------------------------
   .rx_crc_error        (w_crc_err_o),
   .rx_seq_num          (w_seq_num_o),
-  .rx_replay_command   (w_replay_command_o),
+  .rx_replay_command   (replay_command_t'(w_replay_command_o)),
   .rx_flit_type        (w_rx_flit_type_o),
 
   // -------------------------------------------------------------------------
@@ -285,7 +285,7 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   // Outputs to transmitter
   // -------------------------------------------------------------------------
   .pl_trdy_control     (w_deassert_trdy_i),
-  .tx_replay_command   (w_replay_command_i),
+  .tx_replay_command   (replay_command_t'(w_replay_command_i)),
   .tx_seq_num          (w_seq_num_i),
 
   // -------------------------------------------------------------------------
@@ -300,4 +300,5 @@ UC_MB_retry_top U3_UC_MB_retry_top (
 );
 
 endmodule
+
 

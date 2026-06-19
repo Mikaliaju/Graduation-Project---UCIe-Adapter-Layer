@@ -42,9 +42,4 @@ package UC_MB_retry_pkg;
         PAYLOAD
     } flit_type_t;
 
-    typedef enum logic [1:0] {
-        counting,
-        empty 
-    } buffer_state_t;
-
 endpackage
