@@ -17,7 +17,7 @@ package UC_MB_retry_pkg;
 
     typedef enum logic [1:0] {
         R_IDLE, //when tx and rx not enabled
-        SNH, //Sequence Number Handshake
+        SNH,    //Sequence Number Handshake
         SNH_FDI_ACTIVE, //Sequence Number Handshake when FDI is active
         NORMAL_EXCHANGE
     } phase_t;

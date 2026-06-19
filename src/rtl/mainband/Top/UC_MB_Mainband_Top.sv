@@ -163,12 +163,12 @@ UC_MB_Packer           U1_UC_MB_Packer (
 
   // Retry Inputs
   .i_seq_num           (w_seq_num_i),           // connect to Retry
-  .i_replay_command    (w_replay_command_i),    // connect to Retry
+  .i_replay_command    (2'b'(w_replay_command_i)),    // connect to Retry
   .i_deassert_trdy     (w_deassert_trdy_i),     // connect to Retry
   .i_retry_data        (w_retry_data_i),        // connect to Retry
   .i_retry_sid         (w_retry_sid_i),         // connect to Retry
   .i_retry_pid         (w_retry_pid_i),         // connect to Retry
-  .i_buffer_empty      (w_buffer_empty),      // connect to Retry
+  .i_buffer_empty      (1'b'(w_buffer_empty)),      // connect to Retry
   .i_retry_use         ('1),                   // ?? 
 
   // LSM Inputs
@@ -233,7 +233,7 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 
   // Retry Outputs
   .o_seq_num           (w_seq_num_o),         // connect to Retry
-  .o_replay_com        (w_replay_command_o),        // connect to Retry
+  .o_replay_com        (2'b'(w_replay_command_o)),        // connect to Retry
   .o_crc_err           (w_crc_err_o)            // connect to Retry
 );
 
