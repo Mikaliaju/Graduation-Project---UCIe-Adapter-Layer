@@ -99,14 +99,14 @@ module UC_MB_Mainband (
   // -------------------------
   // Retry Interface ? Packer (Inputs)
   // -------------------------
-  logic    [SEQUENS_NUM-1:0] w_seq_num;            // Sequence number     
-  logic    [REPLAY_CMD-1:0]  w_replay_command;     // Replay command       
-  logic                      w_deassert_trdy;      // Deassert trdy        
-  logic    [DATA_PATH-1:0]   w_retry_data;         // Retry payload       
-  logic                      w_retry_sid;          // Retry SID           
-  logic    [PROTOCOL_ID-1:0] w_retry_pid;          // Retry PID            
-  logic                      w_buffer_empty;       // Buffer empty flag  
-  logic                      w_retry_use;          // Retry enable     
+  logic    [SEQUENS_NUM-1:0] w_seq_num_i;            // Sequence number     
+  logic    [REPLAY_CMD-1:0]  w_replay_command_i;     // Replay command       
+  logic                      w_deassert_trdy_i;      // Deassert trdy        
+  logic    [DATA_PATH-1:0]   w_retry_data_i;         // Retry payload       
+  logic                      w_retry_sid_i;          // Retry SID           
+  logic    [PROTOCOL_ID-1:0] w_retry_pid_i;          // Retry PID            
+  logic                      w_buffer_empty;         // Buffer empty flag  
+  logic                      w_retry_use;            // Retry enable     
 
   // -------------------------
   // Retry Interface ? Packer (Outputs)
@@ -126,19 +126,22 @@ module UC_MB_Mainband (
   // Retry Interface ? Unpacker (Outputs)
   // -------------------------
   logic    [SEQUENS_NUM-1:0] w_seq_num_o;          // Extracted seq num  
-  logic    [REPLAY_CMD-1:0]  w_replay_com;         // Extracted replay cmd  
-  logic                      w_crc_err;            // CRC error flag       
-  logic                      w_rx_flit_type;
+  logic    [REPLAY_CMD-1:0]  w_replay_command_o;         // Extracted replay cmd  
+  logic                      w_crc_err_o;            // CRC error flag       
+  logic                      w_rx_flit_type_o;
   // -------------------------
   // Internal Wires ? Retry 
   // -------------------------
-  logic                      w_discard_flit_top;
+  //logic                      w_discard_flit_top;
   logic                      w_log_uie;
   logic                      w_log_cie;
   logic                      w_rdi_retrain;
   logic                      w_discard_payload;
-  logic                      w_tx_flit_type;
-
+  //logic                      w_tx_flit_type;
+  // signals needed from both rx and tx sides to the retry top level
+  logic                      o_rx_flit_valid;
+  logic                      o_tx_flit_valid;
+  logic                      o_transmitter_write;
 // =============================================================================
 // Packer Instantiation (TX Path)
 // =============================================================================
@@ -159,14 +162,14 @@ UC_MB_Packer           U1_UC_MB_Packer (
   .i_lp_stream         (i_lp_stream),
 
   // Retry Inputs
-  .i_seq_num           (8'h5A),           // connect to Retry
-  .i_replay_command    (2'b01),    // connect to Retry
-  .i_deassert_trdy     ('0),     // connect to Retry
-  .i_retry_data        (512'b0),        // connect to Retry
-  .i_retry_sid         ('0),         // connect to Retry
-  .i_retry_pid         ('0),         // connect to Retry
-  .i_buffer_empty      ('0),      // connect to Retry
-  .i_retry_use         ('0),         // connect to Retry
+  .i_seq_num           (w_seq_num_i),           // connect to Retry
+  .i_replay_command    (w_replay_command_i),    // connect to Retry
+  .i_deassert_trdy     (w_deassert_trdy_i),     // connect to Retry
+  .i_retry_data        (w_retry_data_i),        // connect to Retry
+  .i_retry_sid         (w_retry_sid_i),         // connect to Retry
+  .i_retry_pid         (w_retry_pid_i),         // connect to Retry
+  .i_buffer_empty      (w_buffer_empty),      // connect to Retry
+  .i_retry_use         ('1),                   // ?? 
 
   // LSM Inputs
   .i_packer_en         (i_packer_en),         
@@ -212,8 +215,8 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
   .i_pl_valid_rdi      (i_pl_valid_rdi),
 
   // Retry Inputs
-  .i_check_pass        ('0),        // connect to Retry
-  .i_discarded_flit    ('0),    // connect to Retry
+  .i_check_pass        ('0),           // ??
+  .i_discarded_flit    (w_discarded_flit),   
 
   // LSM Inputs
   .i_unpacker_en       (i_unpacker_en),   
@@ -230,9 +233,8 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 
   // Retry Outputs
   .o_seq_num           (w_seq_num_o),         // connect to Retry
-  .o_replay_com        (w_replay_com),        // connect to Retry
-  .o_crc_err           (w_crc_err)            // connect to Retry
-
+  .o_replay_com        (w_replay_command_o),        // connect to Retry
+  .o_crc_err           (w_crc_err_o)            // connect to Retry
 );
 
 // =============================================================================
@@ -240,7 +242,6 @@ UC_MB_Unpacker         U2_UC_MB_Unpacker (
 // =============================================================================
 
 
-/*
 UC_MB_retry_top U3_UC_MB_retry_top (
 
   // -------------------------------------------------------------------------
@@ -257,7 +258,8 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .tx_en               (i_packer_en),
   .rx_en               (i_unpacker_en),
   .data_rate           (i_data_rate), //needed from register file
-  .flit_valid          (), //needed from packer, when starting creating a flit waiting for seq number
+  .rx_flit_valid       (o_rx_flit_valid),           //needed from unpacker, when starting creating a flit waiting for seq number
+  .tx_flit_valid       (o_tx_flit_valid),           //needed from packer, when starting creating a flit waiting for seq number
   .transmitter_write   (), //needed from packer, when writing in buffer
   .flush               (i_flush),
   .drain               (i_drain),
@@ -265,10 +267,10 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   // -------------------------------------------------------------------------
   // RX ports from mainband receiver
   // -------------------------------------------------------------------------
-  .rx_crc_error        (w_crc_err),
+  .rx_crc_error        (w_crc_err_o),
   .rx_seq_num          (w_seq_num_o),
-  .rx_replay_command   (w_replay_com),
-  .rx_flit_type        (), //needed a flit type signal whether its NOP OR PAYLOAD from unpacker
+  .rx_replay_command   (w_replay_command_o),
+  .rx_flit_type        (w_rx_flit_type_o),
 
   // -------------------------------------------------------------------------
   // TX buffer ports
@@ -277,26 +279,25 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .tx_i_stream         ({w_buffer_sid, w_buffer_pid}),
   .tx_o_data           (w_retry_data),
   .tx_o_stream         ({w_retry_sid, w_retry_pid}),
-  //w_buffer_empty ? needed for what ?
-  //i_retry_use    ? needed for what ?
+  .buffer_state        (w_buffer_empty),
 
   // -------------------------------------------------------------------------
   // Outputs to transmitter
   // -------------------------------------------------------------------------
-  .pl_trdy_control     (w_deassert_trdy),
-  .tx_replay_command   (w_replay_command),
-  .tx_seq_num          (w_seq_num),
+  .pl_trdy_control     (w_deassert_trdy_i),
+  .tx_replay_command   (w_replay_command_i),
+  .tx_seq_num          (w_seq_num_i),
 
   // -------------------------------------------------------------------------
   // Outputs to error/status handling
   // -------------------------------------------------------------------------
   .discard_flit        (w_discarded_flit),
-  .discard_payload     (), //this logic for uncorrected payload but with correct DLLPs
+  .discard_payload     (w_discard_payload), //this logic for uncorrected payload but with correct DLLPs
   // should it be connected for w_check_pass ?
   .log_uie             (o_log_uie),      //needed to connect to LSM/Register File
   .log_cie             (o_log_cie),      //needed to connect to LSM/Register File
   .rdi_retrain         (o_rdi_retrain)   //needed to connect to LSM
 );
-*/
+
 endmodule
 

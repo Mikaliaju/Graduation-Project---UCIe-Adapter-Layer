@@ -26,7 +26,8 @@ module UC_MB_retry_top (
     input logic tx_en,
     input logic rx_en,
     input data_rate_t data_rate,
-    input logic flit_valid,  // flit boundary pulse (every 4 clk)
+    input logic rx_flit_valid,  // flit boundary pulse (every 4 clk)
+    input logic tx_flit_valid, 
     input logic transmitter_write,  // from outside retry - buffer write enable
     input logic flush,  // from outside - buffer flush
     input logic drain,  // from outside - buffer drain
@@ -44,6 +45,7 @@ module UC_MB_retry_top (
     input logic [STREAM_WIDTH-1:0] tx_i_stream,
     output logic [DATA_WIDTH-1:0] tx_o_data,
     output logic [STREAM_WIDTH-1:0] tx_o_stream,
+    output buffer_state_t buffer_state,
     // -------------------------------------------------------------------------
     // Outputs to transmitter
     // -------------------------------------------------------------------------
@@ -79,7 +81,6 @@ module UC_MB_retry_top (
   logic                  clear_flit_replay_num;
   // Phase wire from transmitting_rules (exposed via internal signal)
   phase_t  tx_phase, rx_phase;
-  buffer_state_t buffer_state;
 
   //  counters signals 
   logic [7:0] tx_acknak_flit_seq_num;
@@ -105,7 +106,7 @@ module UC_MB_retry_top (
       .i_replay_command          (rx_replay_command),
       .i_rx_flit_type            (rx_flit_type),
       .i_rx_phase                (rx_phase),
-      .i_flit_valid              (flit_valid),
+      .i_flit_valid              (rx_flit_valid),
       .o_implicit_rx_flit_seq_num(implicit_rx_flit_seq_num)
   );
 
@@ -125,7 +126,7 @@ module UC_MB_retry_top (
       .i_fdi_active              (fdi_active),
       .i_rx_en                   (rx_en),
       .i_implicit_rx_flit_seq_num(implicit_rx_flit_seq_num),
-      .i_flit_valid              (flit_valid),
+      .i_flit_valid              (rx_flit_valid),
       .o_rx_phase                (rx_phase),
       .o_log_uie                 (log_uie_a),
       .o_discard_flit            (discard_flit),
@@ -222,7 +223,7 @@ module UC_MB_retry_top (
       .i_tx_en                    (tx_en),
       .i_buffer_state             (buffer_state),
       .i_fdi_active               (fdi_active),
-      .i_flit_valid               (flit_valid),
+      .i_flit_valid               (tx_flit_valid),
       .i_data_rate                (data_rate),
       .i_clear_flit_replay_num    (clear_flit_replay_num),
       .i_tx_replay_flit_seq_num   (tx_replay_flit_seq_num_u2),
@@ -247,7 +248,7 @@ module UC_MB_retry_top (
       .rst_n                   (rst_n),
       .init                    (init),
       .i_tx_phase              (tx_phase),
-      .i_flit_sent             (flit_valid),
+      .i_flit_sent             (tx_flit_valid),
       .i_tx_replay_command     (tx_replay_command),
       .i_tx_flit_seq_num       (tx_seq_num),
       .i_tx_acknak_flit_seq_num(tx_acknak_flit_seq_num),
