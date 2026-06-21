@@ -121,10 +121,12 @@ module UC_ALSM_tb;
   logic                 i_mb_flush_done_UP;
   logic                 i_mb_retrain_trigger_UP;
   logic                 i_mb_rx_path_empty_UP;
+  logic                 i_mb_drain_done_UP;
   logic                 o_mb_flush_UP;
   logic                 o_mb_retry_clean_boundary_UP;
   logic                 o_mb_tx_enable_UP;
   logic                 o_mb_rx_enable_UP;
+  logic                 o_mb_drain_UP;
   logic                 i_regfile_linkerror_UP;
   logic                 i_regfile_start_retrain_UP;
   Adapter_Response      o_adpater_lsm_response_type_UP;
@@ -134,6 +136,8 @@ module UC_ALSM_tb;
   logic                 o_link_status_UP;
   logic                 o_ce_adapter_transition_retrain_UP;
 
+  logic                 i_regfile_start_link_train_UP;
+  logic                 o_regfile_start_link_train_clear_UP;
   // DP only ports
   ll_state              i_rdi_pl_state_sts_DP;
   logic                 i_rdi_pl_wake_ack_DP;
@@ -168,10 +172,12 @@ module UC_ALSM_tb;
   logic                 i_mb_flush_done_DP;
   logic                 i_mb_retrain_trigger_DP;
   logic                 i_mb_rx_path_empty_DP;
+  logic                 i_mb_drain_done_DP;
   logic                 o_mb_flush_DP;
   logic                 o_mb_retry_clean_boundary_DP;
   logic                 o_mb_tx_enable_DP;
   logic                 o_mb_rx_enable_DP;
+  logic                 o_mb_drain_DP;
   logic                 i_regfile_linkerror_DP;
   logic                 i_regfile_start_retrain_DP;
   Adapter_Response      o_adpater_lsm_response_type_DP;
@@ -181,15 +187,9 @@ module UC_ALSM_tb;
   logic                 o_link_status_DP;
   logic                 o_ce_adapter_transition_retrain_DP;
 
-  logic                 i_regfile_start_link_train_UP;
-  logic                 o_regfile_start_link_train_clear_UP;
-  logic                 o_mb_drain_UP;
-  logic                 i_mb_drain_done_UP;
 
   logic                 i_regfile_start_link_train_DP;
   logic                 o_regfile_start_link_train_clear_DP;
-  logic                 o_mb_drain_DP;
-  logic                 i_mb_drain_done_DP;
 
   UC_ALSM  U0_ALSM_UP (
     .i_clk                             (i_clk),
@@ -235,7 +235,7 @@ module UC_ALSM_tb;
     .i_mb_retry_clean_boundary_done    (i_mb_retry_clean_boundary_done_UP),
     .i_mb_flush_done                   (i_mb_flush_done_UP),
     .i_mb_retrain_trigger              (i_mb_retrain_trigger_UP),
-    .i_mb_drain_done                   (i_mb_drain_done_DP),
+    .i_mb_drain_done                   (i_mb_drain_done_UP),
     .o_mb_flush                        (o_mb_flush_UP),
     .o_mb_retry_clean_boundary         (o_mb_retry_clean_boundary_UP),
     .o_mb_tx_enable                    (o_mb_tx_enable_UP),
@@ -332,12 +332,14 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     i_rdi_pl_wake_ack_UP              <= 'b0;
     i_fdi_lp_clk_ack_UP               <= 'b0;
     i_mb_retry_clean_boundary_done_UP <= 'b0;
+    i_mb_drain_done_UP                <= 'b0;
     i_fdi_lp_rx_active_sts_UP         <= 'b0;
     i_sb_param_exch_done_UP           <= 'b0;
 
     i_rdi_pl_wake_ack_DP              <= 'b0;
     i_fdi_lp_clk_ack_DP               <= 'b0;
     i_mb_retry_clean_boundary_done_DP <= 'b0;
+    i_mb_drain_done_DP                <= 'b0;
     i_fdi_lp_rx_active_sts_DP         <= 'b0;
     i_sb_param_exch_done_DP           <= 'b0;
   end
@@ -345,12 +347,15 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     i_rdi_pl_wake_ack_UP              <= o_rdi_lp_wake_req_UP;
     i_fdi_lp_clk_ack_UP               <= o_fdi_pl_clk_req_UP;
     i_mb_retry_clean_boundary_done_UP <= o_mb_retry_clean_boundary_UP;
+    i_mb_drain_done_UP                <= o_mb_drain_UP;
     i_fdi_lp_rx_active_sts_UP         <= o_fdi_pl_rx_active_req_UP;
     i_sb_param_exch_done_UP           <= 'b1;
 
     i_rdi_pl_wake_ack_DP              <= o_rdi_lp_wake_req_DP;
     i_fdi_lp_clk_ack_DP               <= o_fdi_pl_clk_req_DP;
     i_mb_retry_clean_boundary_done_DP <= o_mb_retry_clean_boundary_DP;
+    i_mb_retry_clean_boundary_done_DP <= o_mb_retry_clean_boundary_DP;
+    i_mb_drain_done_DP                <= o_mb_drain_DP;
     i_fdi_lp_rx_active_sts_DP         <= o_fdi_pl_rx_active_req_DP;
     i_sb_param_exch_done_DP           <= 'b1;
   end
@@ -367,10 +372,34 @@ initial begin : BOTH_ALSM_TEST
   bringup_both_at_same_time();
   link_error_entry_both();
   bringup_both_at_same_time();
-
+  Go_LinkReset();
+  bringup_both_at_same_time();
   $stop();
   $finish();
 end
+
+task Go_LinkReset();
+  repeat(5) begin
+    @(negedge i_clk);
+  end
+  i_fdi_lp_state_req_UP = Req_LinkReset;
+  repeat(15) begin
+    @(negedge i_clk);
+  end
+  i_rdi_pl_state_sts_DP = LL_LinkReset;
+  i_rdi_pl_state_sts_UP = LL_LinkReset;
+  repeat(10) begin
+    @(negedge i_clk);
+  end
+  i_rdi_pl_state_sts_DP = LL_Reset;
+  repeat(10) begin
+    @(negedge i_clk);
+  end
+  i_fdi_lp_state_req_UP = Req_Active;
+  repeat(3) begin
+    @(negedge i_clk);
+  end
+endtask
 
 task link_error_entry_both();
   i_regfile_linkerror_UP = 'b1;
@@ -504,7 +533,6 @@ task reset_values();
   i_mb_rx_path_empty_UP          = 'b0;
   i_rdi_pl_stall_req_UP          = 'b0;
   i_regfile_start_retrain_UP     = 'b0;
-  i_mb_drain_done_UP             = 'b0;
   i_regfile_start_link_train_UP  = 'b0;
 
   i_rdi_pl_state_sts_DP          = LL_Reset;
@@ -519,7 +547,6 @@ task reset_values();
   i_mb_rx_path_empty_DP          = 'b0;
   i_rdi_pl_stall_req_DP          = 'b0;
   i_regfile_start_retrain_DP     = 'b0;
-  i_mb_drain_done_DP             = 'b0;
   i_regfile_start_link_train_DP  = 'b0;
 
   repeat(2) begin
