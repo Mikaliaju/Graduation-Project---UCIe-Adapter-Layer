@@ -129,6 +129,7 @@ logic                     r_crc_payload_valid;     // Indicates valid data for C
 logic [FLIT_HEADER-1:0]   w_fh_b0;                 // Collect flit header first byte (pid,sid,dllp_ofc,seq[7:4])
 logic [FLIT_HEADER-1:0]   w_fh_b1;                 // Collect flit header second byte (replay_cmd,seq[3:0])
 logic [DATA_PATH-1:0]     w_chunk3_masked;         // chunk3 after adding header ,reserved and dllp but crc=0
+logic [DATA_PATH-1:0]     w_chunk3_masked_r;       // chunk3 after adding header ,reserved and dllp but crc=0 (retry)
 
 // =============================================================================
 // Next State Signals (driven by always_comb)
@@ -205,6 +206,20 @@ always_comb begin
 end
 
 // =============================================================================
+// Chunk 3 Masked RETRY ? for CRC_Generator input (Combinational)
+// =============================================================================
+always_comb begin
+  w_chunk3_masked_r[351:0]        = i_retry_data[351:0];
+  // w_chunk3_masked[351:0]        = r_chunk3_buf[351:0];
+  w_chunk3_masked_r[C3_FH_B0+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+  w_chunk3_masked_r[C3_FH_B1+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+  w_chunk3_masked_r[C3_DLP+:32]   = r_dllp_valid   ? r_dllp_buf : 32'h0;
+  w_chunk3_masked_r[C3_RSV+:80]   = 80'h0;
+  w_chunk3_masked_r[C3_CRC0+:16]  = 16'h0;
+  w_chunk3_masked_r[C3_CRC1+:16]  = 16'h0;
+end
+
+// =============================================================================
 // Retry Buffer Outputs (Combinational) only used retry buffer when use retry
 // =============================================================================
 always_comb begin
@@ -275,7 +290,7 @@ always_comb begin
       w_nxt_drain_pending         = 1'b0;
       w_nxt_flush_pending         = 1'b0;
 
-      if (i_packer_en) begin
+      if (i_packer_en && i_lp_irdy_fdi) begin
         if (i_flush) begin
           w_nxt_state      = S_FLUSH;
         end
@@ -341,7 +356,7 @@ always_comb begin
 
         // 2) Feed CRC_Generator
         if (r_collect_cnt == 2'd3) begin
-          w_nxt_crc_payload       = w_chunk3_masked;
+          w_nxt_crc_payload       = w_chunk3_masked_r;
           w_nxt_crc_payload_valid = 1'b1;
         end
         else begin
@@ -354,12 +369,22 @@ always_comb begin
 
         if (r_collect_cnt == 2'd3) begin
           w_nxt_collect_cnt = 2'd0;
-          w_nxt_state       = S_INSERT;
-        end
+          if (w_crc_valid) begin
+            w_nxt_lp_data_rdi[351:0]       = i_retry_data[351:0];
+            w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+            w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+            w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
+            w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
+            w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
+            w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
+            w_nxt_lp_valid_rdi             = 1'b1;
+            w_nxt_state       = S_INSERT;
+          end        
         else begin
           w_nxt_collect_cnt = r_collect_cnt + 1'b1;
         end
       end
+     end 
 
       // Normal mode (data from FDI)
       else if (i_lp_irdy_fdi && !i_deassert_trdy) begin
