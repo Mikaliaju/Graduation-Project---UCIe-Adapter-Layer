@@ -16,6 +16,7 @@ module UC_MB_retry_receiver_rules (
     input logic                i_snh_timeout,
     input logic                i_fdi_active,
     input logic                i_rx_en,
+    input logic                i_flit_valid,
     output phase_t             o_rx_phase,
     output logic               o_log_uie,  // log uncorrectable internal error in register file
     output logic               o_discard_flit,  // discard flit
@@ -84,44 +85,55 @@ module UC_MB_retry_receiver_rules (
       o_discard_payload           <= 1'b0;
       o_nak_scheduled             <= 1'b0;
       o_nak_schedule_type         <= standard_nak;
-      tx_acknak_flit_seq_num      <= 8'b0;
-      next_expect_rx_flit_seq_num <= 8'b0;
+      tx_acknak_flit_seq_num      <= 8'hFF;
+      next_expect_rx_flit_seq_num <= 8'b1;
     end else if (!init || rx_phase == R_IDLE) begin
       o_log_uie                   <= 1'b0;
       o_discard_flit              <= 1'b0;
       o_discard_payload           <= 1'b0;
       o_nak_scheduled             <= 1'b0;
       o_nak_schedule_type         <= standard_nak;
-      tx_acknak_flit_seq_num      <= 8'b0;
-      next_expect_rx_flit_seq_num <= 8'b0;
+      tx_acknak_flit_seq_num      <= 8'hFF;
+      next_expect_rx_flit_seq_num <= 8'b1;
     end else begin
-      o_discard_flit    <= 1'b0;
-      o_discard_payload <= 1'b0;
-      o_log_uie         <= 1'b0;
-      if (r_rx_crc_error_d) begin
-        if (o_nak_scheduled) begin
-          flit_discard_1();
-        end else begin
-          nak_schedule_0();
+      if(i_flit_valid) begin
+        o_discard_flit    <= 1'b0;
+        o_discard_payload <= 1'b0;
+        o_log_uie         <= 1'b0;
+        if(next_expect_rx_flit_seq_num == 8'h00) begin
+          next_expect_rx_flit_seq_num <= 8'b1;
         end
-      end
+        if (r_rx_crc_error_d) begin
+          if (o_nak_scheduled) begin
+            flit_discard_1();
+          end else begin
+            nak_schedule_0();
+          end
+        end
         else if (r_rx_replay_command_d == explicit && rx_phase == NORMAL_EXCHANGE
                  && r_rx_seq_num_d == 8'b0) begin
-        flit_discard_2();
-      end else begin
-        if (r_rx_flit_type_d == NOP) begin
-          if (bad_nop_sequence_number()) begin
-            nak_schedule_2();
-          end else begin
-            flit_discard_0();
-          end
+          flit_discard_2();
         end else begin
-          if (o_nak_scheduled) begin
-            standard_nak_procedure();
+          if (r_rx_flit_type_d == NOP) begin
+            if (bad_nop_sequence_number()) begin
+              nak_schedule_2();
+            end else begin
+              flit_discard_0();
+            end
           end else begin
-            if (duplicate_sequence_number()) flit_discard_0();
-            else if (bad_sequence_number()) nak_schedule_2();
-            else ack_schedule_0();
+            if (o_nak_scheduled) begin
+              standard_nak_procedure();
+            end else begin
+              if (duplicate_sequence_number()) begin
+                flit_discard_0();
+              end
+              else if (bad_sequence_number()) begin 
+                nak_schedule_2();
+              end
+              else begin 
+                ack_schedule_0();
+              end
+            end
           end
         end
       end
@@ -151,7 +163,8 @@ module UC_MB_retry_receiver_rules (
     else if ((r_rx_replay_command_d == explicit) &&
              (i_implicit_rx_flit_seq_num == next_expect_rx_flit_seq_num)) begin
       ack_schedule_1();
-    end else begin
+    end 
+    else begin
       if (o_nak_scheduled) begin
         flit_discard_0();
       end else begin

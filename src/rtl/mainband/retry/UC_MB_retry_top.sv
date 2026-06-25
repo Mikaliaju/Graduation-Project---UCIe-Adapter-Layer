@@ -76,7 +76,7 @@ module UC_MB_retry_top (
   logic                  start_buffer_replay_mode;
   logic                  snh_done;
   logic                  snh_timeout;
-
+  logic                  clear_flit_replay_num;
   // Phase wire from transmitting_rules (exposed via internal signal)
   phase_t  tx_phase, rx_phase;
   buffer_state_t buffer_state;
@@ -92,7 +92,6 @@ module UC_MB_retry_top (
   logic [7:0] nak_ignore_flit_seq_num_u2;
 
   logic [8:0] replay_timeout_flit_count;
-  logic [2:0] flit_replay_num;
 
   // =========================================================================
   // 1. implicit_rx_rules
@@ -104,8 +103,9 @@ module UC_MB_retry_top (
       .i_rx_seq_num              (rx_seq_num),
       .i_crc_error               (rx_crc_error),
       .i_replay_command          (rx_replay_command),
-      .i_flit_type               (rx_flit_type),
+      .i_rx_flit_type            (rx_flit_type),
       .i_rx_phase                (rx_phase),
+      .i_flit_valid              (flit_valid),
       .o_implicit_rx_flit_seq_num(implicit_rx_flit_seq_num)
   );
 
@@ -125,6 +125,7 @@ module UC_MB_retry_top (
       .i_fdi_active              (fdi_active),
       .i_rx_en                   (rx_en),
       .i_implicit_rx_flit_seq_num(implicit_rx_flit_seq_num),
+      .i_flit_valid              (flit_valid),
       .o_rx_phase                (rx_phase),
       .o_log_uie                 (log_uie_a),
       .o_discard_flit            (discard_flit),
@@ -147,7 +148,7 @@ module UC_MB_retry_top (
       .i_next_tx_flit_seq_num   (next_tx_flit_seq_num),
       .i_tx_replay_flit_seq_num (tx_replay_flit_seq_num_u2),
       .i_rx_phase               (rx_phase),
-      .o_flit_replay_num        (flit_replay_num),
+      .o_clear_flit_replay_num  (clear_flit_replay_num),
       .o_ackd_flit_seq_num      (ackd_flit_seq_num),
       .o_tx_replay_flit_seq_num (tx_replay_flit_seq_num_u1),
       .o_nak_ignore_flit_seq_num(nak_ignore_flit_seq_num_u1),
@@ -162,7 +163,7 @@ module UC_MB_retry_top (
       .clk                        (clk),
       .rst_n                      (rst_n),
       .init                       (init),
-      .i_tx_phase                    (tx_phase),
+      .i_tx_phase                 (tx_phase),
       .i_replay_in_progress       (replay_in_progress),
       .i_start_replay             (start_replay),
       .i_rx_seq_num               (rx_seq_num),
@@ -206,7 +207,7 @@ module UC_MB_retry_top (
   // =========================================================================
   // 6. transmitting_rules
   // =========================================================================
-  UC_MB_retry_transmitter_rules u_transmitter_rules (
+  UC_MB_retry_transmitter_rules_v2 u_transmitter_rules (
       .clk                        (clk),
       .rst_n                      (rst_n),
       .init                       (init),
@@ -223,7 +224,7 @@ module UC_MB_retry_top (
       .i_fdi_active               (fdi_active),
       .i_flit_valid               (flit_valid),
       .i_data_rate                (data_rate),
-      .i_flit_replay_num          (flit_replay_num),
+      .i_clear_flit_replay_num    (clear_flit_replay_num),
       .i_tx_replay_flit_seq_num   (tx_replay_flit_seq_num_u2),
       .i_nak_ignore_flit_seq_num  (nak_ignore_flit_seq_num_u2),
       .i_ackd_flit_seq_num        (ackd_flit_seq_num),
@@ -231,11 +232,11 @@ module UC_MB_retry_top (
       .o_replay_timeout_flit_count(replay_timeout_flit_count),
       .o_tx_replay_command        (tx_replay_command),
       .o_pl_trdy_control          (pl_trdy_control),
+      .o_tx_phase                 (tx_phase),
       .o_tx_seq_num               (tx_seq_num),
       .o_rdi_retrain              (rdi_retrain),
       .o_replay_in_progress       (replay_in_progress),
-      .o_log_cie                  (log_cie_c),
-      .o_tx_phase                 (tx_phase)
+      .o_log_cie                  (log_cie_c)
   );
 
   // =========================================================================
