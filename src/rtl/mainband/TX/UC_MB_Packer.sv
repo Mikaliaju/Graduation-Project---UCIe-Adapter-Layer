@@ -80,6 +80,7 @@ module UC_MB_Packer (
   output logic                    o_flit_boundary_done, // Clean boundary complet
   output logic                    o_flush_done,         // Assert after flash complete 
   output logic                    o_drain_done,         // Assert after drain complete
+  output logic                    o_txflit_valid,
   // -------------------------
   // RDI Interface (Outputs)
   // -------------------------
@@ -159,6 +160,7 @@ logic                     w_nxt_lp_irdy_rdi;
 logic                     w_nxt_flit_boundary_done;
 logic                     w_nxt_flush_done;
 logic                     w_nxt_drain_done;
+logic                     w_nxt_txflit_valid;
 
 packer_state_e r_state;                            // packer state
 packer_state_e w_nxt_state;                        // next state
@@ -268,6 +270,7 @@ always_comb begin
   w_nxt_flit_boundary_done   = 1'b0;           // pulse: default de-asserted
   w_nxt_flush_done           = 1'b0;           // pulse: default de-asserted
   w_nxt_drain_done           = 1'b0;           // pulse: default de-asserted
+  w_nxt_txflit_valid         = 1'b0;
 
   // Latch pending commands mid-flit
   if (i_flit_boundary) w_nxt_flit_boundary_pending = 1'b1;
@@ -301,8 +304,8 @@ always_comb begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
           w_nxt_crc_payload       = i_lp_valid_fdi ? i_lp_data_fdi : '0;
-          // w_nxt_crc_payload_valid = i_lp_valid_fdi;
           w_nxt_crc_payload_valid = 1'b1;
+          w_nxt_txflit_valid = 1'b1;
           w_nxt_state       = S_COLLECT;
         end
       end
@@ -389,6 +392,7 @@ always_comb begin
 
       // Normal mode (data from FDI)
       else if (i_lp_irdy_fdi && !i_deassert_trdy) begin
+
         // 1) Receive from FDI
         if (i_lp_valid_fdi) begin
           w_nxt_nop_chunk[r_collect_cnt] = 1'b0;
@@ -597,6 +601,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= 1'b0;
     o_flush_done            <= 1'b0;
     o_drain_done            <= 1'b0;
+    o_txflit_valid          <= 1'b0;
   end
   else if (!i_init) begin
     r_state                 <= S_IDLE;
@@ -624,6 +629,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= 1'b0;
     o_flush_done            <= 1'b0;
     o_drain_done            <= 1'b0;
+    o_txflit_valid          <= 1'b0;
   end
   else begin
     // Latch next-state values computed by combinational block
@@ -652,6 +658,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= w_nxt_flit_boundary_done;
     o_flush_done            <= w_nxt_flush_done;
     o_drain_done            <= w_nxt_drain_done;
+    o_txflit_valid          <= w_nxt_txflit_valid;
   end
 end
 

@@ -40,7 +40,6 @@ module UC_MB_Unpacker (
   // -------------------------
   // Retry Interface (Inputs)
   // -------------------------
-  input  logic                      i_check_pass,        // Retry: sequence check passed
   input  logic                      i_discarded_flit,    // Retry: flit must be discarded
   // -------------------------
   // LSM Interface (Inputs)
@@ -63,7 +62,9 @@ module UC_MB_Unpacker (
   // -------------------------
   output logic    [SEQUENS_NUM-1:0] o_seq_num,           // Sequence number extracted from FH
   output logic    [REPLAY_CMD-1:0]  o_replay_com,        // Replay command extracted from FH
-  output logic                      o_crc_err            // CRC mismatch detected
+  output logic                      o_crc_err,           // CRC mismatch detected
+  output logic                      o_flit_type,
+  output logic                      o_rxflit_valid
 );
 
 // =============================================================================
@@ -124,6 +125,8 @@ logic                      w_nxt_pl_dllp_valid;
 logic                      w_nxt_pl_dllp_ofc;
 logic                      w_nxt_flit_cancel;
 logic                      w_nxt_crc_err;
+logic                      w_nxt_rxflit_valid;
+logic                      w_nxt_flit_type;
 
 
 // =============================================================================
@@ -199,8 +202,10 @@ always_comb begin
   w_nxt_pl_valid_fdi     = 1'b0;           // pulse: default de-asserted
   w_nxt_pl_dllp_valid    = 1'b0;           // pulse: default de-asserted
   w_nxt_pl_dllp_ofc      = o_pl_dllp_ofc;
+  w_nxt_flit_type        = o_flit_type ;
   w_nxt_flit_cancel      = 1'b0;           // pulse: default de-asserted
   w_nxt_crc_err          = 1'b0;           // pulse: default de-asserted
+  w_nxt_rxflit_valid     = 1'b0;
 
   case (r_state)
 
@@ -237,13 +242,15 @@ always_comb begin
           // Extract chunk 3 fields
           // FH Byte 0: [7:6]=PID  [5]=SID  [4]=OFC  [3:0]=SEQ[7:4]
           // FH Byte 1: [7:6]=Flit_Type  [5:4]=Ack/Nak  [3:0]=SEQ[3:0]
-          w_nxt_pid        = i_pl_data_rdi[C3_FH_B0+7 : C3_FH_B0+6];
-          w_nxt_sid        = i_pl_data_rdi[C3_FH_B0+5];
-          w_nxt_dllp_ofc   = i_pl_data_rdi[C3_FH_B0+4];
-          w_nxt_replay_cmd = i_pl_data_rdi[C3_FH_B1+5 : C3_FH_B1+4];
+          w_nxt_pid          = i_pl_data_rdi[C3_FH_B0+7 : C3_FH_B0+6];
+          w_nxt_sid          = i_pl_data_rdi[C3_FH_B0+5];
+          w_nxt_dllp_ofc     = i_pl_data_rdi[C3_FH_B0+4];
+          w_nxt_replay_cmd   = i_pl_data_rdi[C3_FH_B1+5 : C3_FH_B1+4];
+          w_nxt_rxflit_valid = 1'b1;
 
           // Sequence number: upper=FH_B0[3:0], lower=FH_B1[3:0]
           w_nxt_seq_num    = {i_pl_data_rdi[C3_FH_B0+3 : C3_FH_B0], i_pl_data_rdi[C3_FH_B1+3 : C3_FH_B1]};
+          w_nxt_flit_type  = i_pl_data_rdi[C3_FH_B1+7 : C3_FH_B1+6] ;
 
           // DLLP bytes
           w_nxt_dllp_buf   = i_pl_data_rdi[C3_DLP +: 32];
@@ -270,6 +277,7 @@ always_comb begin
         if (i_pl_valid_rdi && r_chunk_cnt == 2'd3) begin //&& r_chunk_cnt == 2'd3
           w_nxt_pl_data_fdi  = w_chunk3_Raw;
           w_nxt_pl_valid_fdi = 1'b1;
+          
         end
         else if (i_pl_valid_rdi) begin
           w_nxt_pl_data_fdi  = i_pl_data_rdi;
@@ -307,7 +315,7 @@ always_comb begin
       end
 
       // Sequence check from retry block
-      if (i_discarded_flit || i_check_pass != 1'b1)
+      if (i_discarded_flit )
         w_nxt_flit_cancel = 1'b1;
 
       // Reset for next flit
@@ -350,6 +358,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_pl_dllp_ofc       <= 1'b0;
     o_flit_cancel       <= 1'b0;
     o_crc_err           <= 1'b0;
+    o_rxflit_valid      <= 1'b0;
+    o_flit_type         <= 1'b0;
   end
   else if (!i_init) begin
     r_state             <= S_START;
@@ -372,6 +382,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_pl_dllp_ofc       <= 1'b0;
     o_flit_cancel       <= 1'b0;
     o_crc_err           <= 1'b0;
+    o_rxflit_valid      <= 1'b0;
+    o_flit_type         <= 1'b0;
   end
   else begin
     // Latch next-state values computed by combinational block
@@ -395,6 +407,8 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_pl_dllp_ofc       <= w_nxt_pl_dllp_ofc;
     o_flit_cancel       <= w_nxt_flit_cancel;
     o_crc_err           <= w_nxt_crc_err;
+    o_rxflit_valid      <= w_nxt_rxflit_valid;
+    o_flit_type         <= w_nxt_flit_type;
   end
 end
 
