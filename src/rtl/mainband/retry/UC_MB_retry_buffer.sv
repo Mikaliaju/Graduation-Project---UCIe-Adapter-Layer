@@ -18,6 +18,10 @@ module UC_MB_retry_buffer (
     input  logic          [             7:0] i_next_tx_flit_seq_num,
     input  logic          [  DATA_WIDTH-1:0] i_data,
     input  logic          [STREAM_WIDTH-1:0] i_stream,
+    input  logic          [DATA_WIDTH-1:0]   i_dout,
+    output logic                             write_enable,
+    output logic          [ADDR_DATA_WIDTH-1:0] addr,
+    output logic          [DATA_WIDTH-1:0]      o_din,
     output logic          [  DATA_WIDTH-1:0] o_data,
     output logic          [STREAM_WIDTH-1:0] o_stream,
     output logic                             o_buffer_state, // 1 is empty, 0 is counting
@@ -36,11 +40,14 @@ module UC_MB_retry_buffer (
   logic [  ADDR_DATA_WIDTH-1:0] addr_data;
   logic [ADDR_STREAM_WIDTH-1:0] addr_stream;
 
-  logic [       DATA_WIDTH-1:0] r_data      [  0:DATA_DEPTH-1];
+  //ram model 
+  //logic [       DATA_WIDTH-1:0] r_data      [  0:DATA_DEPTH-1];
   logic [     STREAM_WIDTH-1:0] r_stream    [0:STREAM_DEPTH-1];
+
   logic i_transmitter_write;
   assign i_transmitter_write = (!i_pl_trdy_control);
   assign o_retry_in_use      = (i_replay_scheduled) || (i_replay_in_progress);
+
 
   //operation purge
   //a acked_flits_ptr determine which address has been acked.
@@ -128,29 +135,50 @@ module UC_MB_retry_buffer (
 
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-      for (int i = 0; i < DATA_DEPTH; i = i + 1) begin
-        r_data[i] <= 'b0;
-      end
+      // for (int i = 0; i < DATA_DEPTH; i = i + 1) begin
+      //   r_data[i] <= 'b0;
+      // end
       for (int i = 0; i < STREAM_DEPTH; i = i + 1) begin
         r_stream[i] <= 'b0;
       end
-      o_data   <= '0;
+      //o_data   <= '0;
       o_stream <= '0;
     end else if (!init || i_tx_phase == R_IDLE) begin
-      for (int i = 0; i < DATA_DEPTH; i = i + 1) begin
-        r_data[i] <= 'b0;
-      end
+      // for (int i = 0; i < DATA_DEPTH; i = i + 1) begin
+      //   r_data[i] <= 'b0;
+      // end
       for (int i = 0; i < STREAM_DEPTH; i = i + 1) begin
         r_stream[i] <= 'b0;
       end
-      o_data   <= '0;
+      //o_data   <= '0;
       o_stream <= '0;
     end else if (i_replay_scheduled || i_replay_in_progress || i_drain || i_flush) begin
-      o_data   <= r_data[addr_data];
+      //o_data   <= r_data[addr_data];
       o_stream <= r_stream[addr_stream];
     end else if (i_transmitter_write) begin
-      r_data[addr_data] <= i_data;
+      //r_data[addr_data] <= i_data;
       r_stream[addr_stream] <= i_stream;
+    end
+  end
+
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      write_enable <= 1'b0;
+      addr <= '0;
+      o_din <= '0;
+    end else if (!init || i_tx_phase == R_IDLE) begin
+      write_enable <= 1'b0;
+      addr <= '0;
+      o_din <= '0;
+    end else if (i_replay_scheduled || i_replay_in_progress || i_drain || i_flush) begin
+      write_enable <= 1'b0;
+      addr <= addr_data;
+      o_data <= i_dout;
+      o_din <= '0;
+    end else if(i_transmitter_write) begin
+      write_enable <= 1'b1;
+      addr <= addr_data;
+      o_din <= i_data;
     end
   end
 
