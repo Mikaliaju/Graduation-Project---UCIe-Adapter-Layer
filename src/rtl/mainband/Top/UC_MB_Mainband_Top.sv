@@ -306,9 +306,9 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .log_cie             (o_log_cie),      //needed to connect to LSM/Register File
   .rdi_retrain         (o_rdi_retrain),   //needed to connect to LSM
 
-  .ram_i_dout         (ram_i_dout)
-  .ram_o_write_enable (ram_o_write_enable)
-  .ram_o_addr         (ram_o_addr)
+  .ram_i_dout         (ram_i_dout),
+  .ram_o_write_enable (ram_o_write_enable),
+  .ram_o_addr         (ram_o_addr),
   .ram_o_din          (ram_o_din)
 );
 
