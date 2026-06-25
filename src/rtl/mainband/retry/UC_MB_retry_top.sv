@@ -193,7 +193,6 @@ module UC_MB_retry_top (
       .i_ackd_flit_seq_num     (ackd_flit_seq_num),
       .i_replay_scheduled      (replay_scheduled),
       .i_replay_in_progress    (replay_in_progress),
-      .i_transmitter_write     (transmitter_write),
       .i_flush                 (flush),
       .i_drain                 (drain),
       .i_pl_trdy_control       (pl_trdy_control),

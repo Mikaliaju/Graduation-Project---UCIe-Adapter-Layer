@@ -1,5 +1,9 @@
 ../../src/rtl/common/UC_MB_Mainband_pkg.sv
+../../src/rtl/common/UC_MB_retry_pkg.sv
+../../src/rtl/mainband/retry/*.sv
+
 ../../src/rtl/mainband/RX/UC_MB_Unpacker.sv
 ../../src/rtl/mainband/TX/*.sv
+
 ../../src/rtl/mainband/Top/*.sv
 UC_MB_Top_tb.sv

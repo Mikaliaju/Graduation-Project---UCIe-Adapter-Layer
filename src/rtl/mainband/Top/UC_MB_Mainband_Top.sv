@@ -279,8 +279,8 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   // -------------------------------------------------------------------------
   .tx_i_data           (w_buffer_data),
   .tx_i_stream         ({w_buffer_sid, w_buffer_pid}),
-  .tx_o_data           (w_retry_data),
-  .tx_o_stream         ({w_retry_sid, w_retry_pid}),
+  .tx_o_data           (w_retry_data_i),
+  .tx_o_stream         ({w_retry_sid_i, w_retry_pid_i}),
   .buffer_state        (w_buffer_empty),
 
   // -------------------------------------------------------------------------
