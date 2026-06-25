@@ -28,7 +28,6 @@ module UC_MB_retry_top (
     input data_rate_t data_rate,
     input logic rx_flit_valid,  // flit boundary pulse (every 4 clk)
     input logic tx_flit_valid, 
-    input logic transmitter_write,  // from outside retry - buffer write enable
     input logic flush,  // from outside - buffer flush
     input logic drain,  // from outside - buffer drain
     // -------------------------------------------------------------------------
@@ -52,6 +51,7 @@ module UC_MB_retry_top (
     output logic pl_trdy_control,
     output replay_command_t tx_replay_command,
     output logic [7:0] tx_seq_num,
+    output logic retry_in_use,
     // -------------------------------------------------------------------------
     // Outputs to error/status handling
     // -------------------------------------------------------------------------
@@ -202,7 +202,8 @@ module UC_MB_retry_top (
       .i_stream                (tx_i_stream),
       .o_data                  (tx_o_data),
       .o_stream                (tx_o_stream),
-      .o_buffer_state          (buffer_state)
+      .o_buffer_state          (buffer_state),
+      .o_retry_in_use          (retry_in_use)
   );
 
   // =========================================================================

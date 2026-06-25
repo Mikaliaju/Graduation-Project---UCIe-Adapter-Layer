@@ -30,6 +30,7 @@ module UC_MB_retry_receiver_rules (
   logic                  r_rx_flit_type_d;
   logic            [7:0] r_rx_seq_num_d;
   replay_command_t       r_rx_replay_command_d;
+  logic                  r_rx_flit_valid_d;
 
   logic            [7:0] next_expect_rx_flit_seq_num;
   logic            [7:0] tx_acknak_flit_seq_num;
@@ -65,16 +66,19 @@ module UC_MB_retry_receiver_rules (
       r_rx_flit_type_d      <= NOP;
       r_rx_seq_num_d        <= 0;
       r_rx_replay_command_d <= explicit;
+      r_rx_flit_valid_d     <= 0;
     end else if (!init || rx_phase == R_IDLE) begin
       r_rx_crc_error_d      <= 0;
       r_rx_flit_type_d      <= NOP;
       r_rx_seq_num_d        <= 0;
       r_rx_replay_command_d <= explicit;
+      r_rx_flit_valid_d     <= 0;
     end else begin
       r_rx_crc_error_d      <= i_rx_crc_error;
       r_rx_flit_type_d      <= i_rx_flit_type;
       r_rx_seq_num_d        <= i_rx_seq_num;
       r_rx_replay_command_d <= i_rx_replay_command;
+      r_rx_flit_valid_d     <= i_flit_valid;
     end
   end
 
@@ -96,7 +100,7 @@ module UC_MB_retry_receiver_rules (
       tx_acknak_flit_seq_num      <= 8'hFF;
       next_expect_rx_flit_seq_num <= 8'b1;
     end else begin
-      if(i_flit_valid) begin
+      if(r_rx_flit_valid_d) begin
         o_discard_flit    <= 1'b0;
         o_discard_payload <= 1'b0;
         o_log_uie         <= 1'b0;

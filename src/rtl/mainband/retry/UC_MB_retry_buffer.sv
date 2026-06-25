@@ -12,7 +12,6 @@ module UC_MB_retry_buffer (
     input  logic          [             7:0] i_ackd_flit_seq_num,
     input  logic                             i_replay_scheduled,
     input  logic                             i_replay_in_progress,
-    input  logic                             i_transmitter_write, //from outside the retry
     input  logic                             i_flush, //from outside
     input  logic                             i_drain, //from outside
     input  logic                             i_pl_trdy_control,
@@ -21,7 +20,8 @@ module UC_MB_retry_buffer (
     input  logic          [STREAM_WIDTH-1:0] i_stream,
     output logic          [  DATA_WIDTH-1:0] o_data,
     output logic          [STREAM_WIDTH-1:0] o_stream,
-    output logic                             o_buffer_state // 1 is empty, 0 is counting
+    output logic                             o_buffer_state, // 1 is empty, 0 is counting
+    output logic                             o_retry_in_use
 );
 
   logic [1:0] chunk_counter, w_chunk_counter;
@@ -38,6 +38,9 @@ module UC_MB_retry_buffer (
 
   logic [       DATA_WIDTH-1:0] r_data      [  0:DATA_DEPTH-1];
   logic [     STREAM_WIDTH-1:0] r_stream    [0:STREAM_DEPTH-1];
+  logic i_transmitter_write;
+  assign i_transmitter_write = (!i_pl_trdy_control);
+  assign o_retry_in_use      = (i_replay_scheduled) || (i_replay_in_progress);
 
   //operation purge
   //a acked_flits_ptr determine which address has been acked.
