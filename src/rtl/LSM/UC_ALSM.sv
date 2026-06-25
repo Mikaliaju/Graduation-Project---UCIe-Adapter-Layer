@@ -207,8 +207,9 @@ module UC_ALSM (
 					w_link_status_comb,
 					w_retrain_triggers,              //! all retrain triggers
 					s_link_error_state_condition,    //! Global condition signal at which must immediatly enter ALSM_LinkError
-					s_error_entry_state_condition;   //! Global condition signal at which must immediatly enter ALSM_Error_Entry
-	
+					s_error_entry_state_condition,   //! Global condition signal at which must immediatly enter ALSM_Error_Entry
+					r_fdi_linkreset,
+					w_fdi_linkreset_comb;
 
 	state_req w_rdi_lp_state_req_comb;
 	ll_state w_fdi_pl_state_sts_comb;
@@ -223,10 +224,11 @@ module UC_ALSM (
 	assign w_protocol_active_comb 			    = r_protocol_active 			    | (i_fdi_lp_state_req == Req_Active);
 	assign w_sb_active_req_received_comb    = r_sb_active_req_received    | (i_sb_state_rx      == ACTIVE_REQ);
 	assign w_sb_active_rsp_received_comb    = r_sb_active_rsp_received    | (i_sb_state_rx      == ACTIVE_RESP);
-	assign w_linkreset_local_req_comb       = r_linkreset_local_req       | (i_fdi_lp_state_req == Req_LinkReset);
+	assign w_linkreset_local_req_comb       = r_linkreset_local_req       | (o_sb_state_tx		  == LINKRESET_REQ);
 	assign w_disable_local_req_comb         = r_disable_local_req         | (i_fdi_lp_state_req == Req_Disable);
 	assign w_sb_linkreset_req_received_comb = r_sb_linkreset_req_received | (i_sb_state_rx      == LINKRESET_REQ);
 	assign w_sb_disable_req_received_comb   = r_sb_disable_req_received   | (i_sb_state_rx      == DISABLED_REQ);
+	assign w_fdi_linkreset_comb							= r_fdi_linkreset     				| (i_fdi_lp_state_req == Req_LinkReset);
 
 	assign w_linkreset_trigger    = (i_regfile_start_link_train) || (i_fdi_lp_state_req == Req_LinkReset) || (i_sb_state_rx == LINKRESET_REQ);
 	assign w_disable_trigger      = (i_fdi_lp_state_req == Req_Disable)   | (i_sb_state_rx == DISABLED_REQ);
@@ -440,30 +442,21 @@ module UC_ALSM (
 			r_disable_local_req         <= 'b0;
 			r_sb_linkreset_req_received <= 'b0;
 			r_sb_disable_req_received   <= 'b0;
+			r_fdi_linkreset 					  <= 'b0;
 		end
-		else if (~i_init) begin
+		else if (~i_init || (s_cs == ALSM_Reset)) begin
 			r_linkreset_local_req       <= 'b0;
 			r_disable_local_req         <= 'b0;
 			r_sb_linkreset_req_received <= 'b0;
 			r_sb_disable_req_received   <= 'b0;
-		end
-		else if (s_ns_in_linkreset_flow) begin
-			r_linkreset_local_req       <= w_linkreset_local_req_comb;
-			r_disable_local_req         <= 'b0;
-			r_sb_linkreset_req_received <= w_sb_linkreset_req_received_comb;
-			r_sb_disable_req_received   <= 'b0;
-		end
-		else if (s_ns_in_disable_flow) begin
-			r_linkreset_local_req       <= 'b0;
-			r_disable_local_req         <= w_disable_local_req_comb;
-			r_sb_linkreset_req_received <= 'b0;
-			r_sb_disable_req_received   <= w_sb_disable_req_received_comb;
+			r_fdi_linkreset 					  <= 'b0;
 		end
 		else begin
-			r_linkreset_local_req       <= 'b0;
-			r_disable_local_req         <= 'b0;
-			r_sb_linkreset_req_received <= 'b0;
-			r_sb_disable_req_received   <= 'b0;
+			r_linkreset_local_req       <= w_linkreset_local_req_comb;
+			r_disable_local_req         <= w_disable_local_req_comb;
+			r_sb_linkreset_req_received <= w_sb_linkreset_req_received_comb;
+			r_sb_disable_req_received   <= w_sb_disable_req_received_comb;
+			r_fdi_linkreset 					  <= w_fdi_linkreset_comb;
 		end
 	end
 
@@ -583,6 +576,7 @@ module UC_ALSM (
 				ALSM_Param_exch:
 					if (i_sb_param_exch_done) begin
 						w_fdi_pl_inband_pres_comb = 'b1;
+						w_sb_start_param_exch_comb = 'b0;
 						s_ns = ALSM_Active_Entry;
 					end
 					else begin
@@ -733,24 +727,30 @@ module UC_ALSM (
 					w_link_status_comb             = 'b0;
 					w_mb_rx_enable_comb = (i_fdi_lp_rx_active_sts == 'b0) ? 'b0 : o_mb_rx_enable;		
 					// Drain only when TX is currently enabled
-					if (w_mb_tx_enable_comb) begin
-						w_mb_drain_comb = ~i_mb_drain_done;
+					if (o_mb_tx_enable) begin
+						w_mb_drain_comb = '1;
+					end
+					else if (i_mb_drain_done) begin
+						w_mb_tx_enable_comb = '1;
 					end
 					// ── After drain completes, or if TX was already disabled, start SB handshake ─────────────────────────
-					if (i_mb_drain_done && w_drain_timer_done && !w_mb_tx_enable_comb) begin
-					w_mb_drain_comb     = 'b0;              
-					// Remote partner already requested LinkReset -> respond immediately
-						if (w_sb_linkreset_req_received_comb || (i_sb_state_rx == LINKRESET_REQ)) begin
+					if (i_mb_drain_done && w_drain_timer_done || !o_mb_tx_enable) begin
+						w_mb_drain_comb     = 'b1;              
+						// Remote partner already requested LinkReset -> respond immediately
+						if (w_sb_linkreset_req_received_comb) begin
 							w_sb_state_tx_comb = LINKRESET_RESP;
+							w_fdi_pl_state_sts_comb = LL_LinkReset;
 							s_ns               = ALSM_LinkReset_Transition;
 						end
 						// We already sent the request — wait here for the response
-						else if (r_sb_req_sent) begin
+						else if (w_linkreset_local_req_comb) begin
 							if (i_sb_state_rx == LINKRESET_RESP) begin
 								s_ns = ALSM_LinkReset_Transition;
+								w_fdi_pl_state_sts_comb = LL_LinkReset;
 							end
 							else if (i_sb_state_rx == LINKRESET_REQ) begin
 								w_sb_state_tx_comb = LINKRESET_RESP;
+								w_fdi_pl_state_sts_comb = LL_LinkReset;
 								s_ns               = ALSM_LinkReset_Transition;
 							end
 							else begin
@@ -777,13 +777,23 @@ module UC_ALSM (
 					w_link_status_comb                   = 'b0;
                     // MB disabled 
 					if (~i_fdi_lp_rx_active_sts && ~w_mb_tx_enable_comb && ~w_mb_rx_enable_comb) begin
-						w_rdi_lp_state_req_comb = Req_LinkReset;
-						if (i_rdi_pl_state_sts == LL_LinkReset) begin
+						if (!r_fdi_linkreset) begin
+							if (i_rdi_pl_state_sts == LL_Reset) begin
+								s_ns = ALSM_Reset;
+								w_fdi_pl_state_sts_comb = LL_Reset;
+							end
+							else begin
+								s_ns = ALSM_LinkReset_Transition;
+							end
+						end
+						else if (i_rdi_pl_state_sts == LL_LinkReset) begin
+							w_rdi_lp_state_req_comb = Req_LinkReset;
 							w_fdi_pl_state_sts_comb = LL_LinkReset;
 							w_rdi_lp_state_req_comb = Req_NOP;
 							s_ns = ALSM_LinkReset;
 						end
 						else begin
+							w_rdi_lp_state_req_comb = Req_LinkReset;
 							s_ns = ALSM_LinkReset_Transition;
 						end
 					end
@@ -1031,7 +1041,8 @@ always_ff @(negedge i_rst_n, posedge i_clk) begin : drain_timer_block
             r_drain_timer <= r_drain_timer + 1'b1;
     end
 end
-assign w_drain_timer_done = (r_drain_timer_en && (r_drain_timer == RETRY_DRAIN_TIMEOUT - 1));
+// assign w_drain_timer_done = (r_drain_timer_en && (r_drain_timer == RETRY_DRAIN_TIMEOUT - 1));
+assign w_drain_timer_done = 'b1;
 
   //! Tracks whether the SB request has been sent during LinkReset/Disable entry
  always_ff @(negedge i_rst_n, posedge i_clk) begin : sb_req_sent_flag

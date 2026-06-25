@@ -108,7 +108,6 @@ module UC_MB_retry_receiver_rules (
             flit_discard_1();
           end else begin
             nak_schedule_0();
-            $display("here nak 0");
           end
         end
         else if (r_rx_replay_command_d == explicit && rx_phase == NORMAL_EXCHANGE
@@ -118,7 +117,6 @@ module UC_MB_retry_receiver_rules (
           if (r_rx_flit_type_d == NOP) begin
             if (bad_nop_sequence_number()) begin
               nak_schedule_2();
-              $display("here nak 1");
             end else begin
               flit_discard_0();
             end
@@ -131,11 +129,9 @@ module UC_MB_retry_receiver_rules (
               end
               else if (bad_sequence_number()) begin 
                 nak_schedule_2();
-                $display("here nak 2");
               end
               else begin 
                 ack_schedule_0();
-                $display("here ack");
               end
             end
           end
@@ -162,7 +158,6 @@ module UC_MB_retry_receiver_rules (
         flit_discard_0();
       end else begin
         nak_schedule_2();
-        $display("here nak 3");
       end
     end
     else if ((r_rx_replay_command_d == explicit) &&
@@ -174,7 +169,6 @@ module UC_MB_retry_receiver_rules (
         flit_discard_0();
       end else begin
         nak_schedule_2();
-        $display("here nak 4");
       end
     end
   endtask

@@ -28,9 +28,9 @@ module UC_MB_retry_implicit_rx_rules (
     end else if(i_flit_valid) begin
       if (!i_crc_error && i_replay_command == explicit && i_rx_seq_num != 8'b0) begin
         o_implicit_rx_flit_seq_num            <= i_rx_seq_num;
-        //r_non_idle_explicit_seq_num_flit_rcvd <= 1'b1;
+        r_non_idle_explicit_seq_num_flit_rcvd <= 1'b1;
       end else if (r_non_idle_explicit_seq_num_flit_rcvd) begin
-        if ((i_rx_flit_type == PAYLOAD && !i_crc_error && i_rx_seq_num != 8'b0 && i_replay_command != explicit) || i_crc_error) begin
+        if (i_rx_flit_type == PAYLOAD && !i_crc_error && i_rx_seq_num != 8'b0 && i_replay_command != explicit) begin
           o_implicit_rx_flit_seq_num <= o_implicit_rx_flit_seq_num + 1;
         end
       end

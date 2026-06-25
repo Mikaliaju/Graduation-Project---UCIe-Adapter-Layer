@@ -80,6 +80,7 @@ module UC_MB_Packer (
   output logic                    o_flit_boundary_done, // Clean boundary complet
   output logic                    o_flush_done,         // Assert after flash complete 
   output logic                    o_drain_done,         // Assert after drain complete
+  output logic                    o_txflit_valid,
   // -------------------------
   // RDI Interface (Outputs)
   // -------------------------
@@ -129,6 +130,7 @@ logic                     r_crc_payload_valid;     // Indicates valid data for C
 logic [FLIT_HEADER-1:0]   w_fh_b0;                 // Collect flit header first byte (pid,sid,dllp_ofc,seq[7:4])
 logic [FLIT_HEADER-1:0]   w_fh_b1;                 // Collect flit header second byte (replay_cmd,seq[3:0])
 logic [DATA_PATH-1:0]     w_chunk3_masked;         // chunk3 after adding header ,reserved and dllp but crc=0
+logic [DATA_PATH-1:0]     w_chunk3_masked_r;       // chunk3 after adding header ,reserved and dllp but crc=0 (retry)
 
 // =============================================================================
 // Next State Signals (driven by always_comb)
@@ -158,6 +160,7 @@ logic                     w_nxt_lp_irdy_rdi;
 logic                     w_nxt_flit_boundary_done;
 logic                     w_nxt_flush_done;
 logic                     w_nxt_drain_done;
+logic                     w_nxt_txflit_valid;
 
 packer_state_e r_state;                            // packer state
 packer_state_e w_nxt_state;                        // next state
@@ -202,6 +205,20 @@ always_comb begin
   w_chunk3_masked[C3_RSV+:80]   = 80'h0;
   w_chunk3_masked[C3_CRC0+:16]  = 16'h0;
   w_chunk3_masked[C3_CRC1+:16]  = 16'h0;
+end
+
+// =============================================================================
+// Chunk 3 Masked RETRY ? for CRC_Generator input (Combinational)
+// =============================================================================
+always_comb begin
+  w_chunk3_masked_r[351:0]        = i_retry_data[351:0];
+  // w_chunk3_masked[351:0]        = r_chunk3_buf[351:0];
+  w_chunk3_masked_r[C3_FH_B0+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+  w_chunk3_masked_r[C3_FH_B1+:8]  = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+  w_chunk3_masked_r[C3_DLP+:32]   = r_dllp_valid   ? r_dllp_buf : 32'h0;
+  w_chunk3_masked_r[C3_RSV+:80]   = 80'h0;
+  w_chunk3_masked_r[C3_CRC0+:16]  = 16'h0;
+  w_chunk3_masked_r[C3_CRC1+:16]  = 16'h0;
 end
 
 // =============================================================================
@@ -253,6 +270,7 @@ always_comb begin
   w_nxt_flit_boundary_done   = 1'b0;           // pulse: default de-asserted
   w_nxt_flush_done           = 1'b0;           // pulse: default de-asserted
   w_nxt_drain_done           = 1'b0;           // pulse: default de-asserted
+  w_nxt_txflit_valid         = 1'b0;
 
   // Latch pending commands mid-flit
   if (i_flit_boundary) w_nxt_flit_boundary_pending = 1'b1;
@@ -275,7 +293,7 @@ always_comb begin
       w_nxt_drain_pending         = 1'b0;
       w_nxt_flush_pending         = 1'b0;
 
-      if (i_packer_en) begin
+      if (i_packer_en && i_lp_irdy_fdi) begin
         if (i_flush) begin
           w_nxt_state      = S_FLUSH;
         end
@@ -286,8 +304,8 @@ always_comb begin
           w_nxt_pl_trdy_fdi = 1'b1;
           w_nxt_lp_irdy_rdi = 1'b1;
           w_nxt_crc_payload       = i_lp_valid_fdi ? i_lp_data_fdi : '0;
-          // w_nxt_crc_payload_valid = i_lp_valid_fdi;
           w_nxt_crc_payload_valid = 1'b1;
+          w_nxt_txflit_valid = 1'b1;
           w_nxt_state       = S_COLLECT;
         end
       end
@@ -342,7 +360,7 @@ always_comb begin
 
         // 2) Feed CRC_Generator
         if (r_collect_cnt == 2'd3) begin
-          w_nxt_crc_payload       = w_chunk3_masked;
+          w_nxt_crc_payload       = w_chunk3_masked_r;
           w_nxt_crc_payload_valid = 1'b1;
         end
         else begin
@@ -355,15 +373,26 @@ always_comb begin
 
         if (r_collect_cnt == 2'd3) begin
           w_nxt_collect_cnt = 2'd0;
-          w_nxt_state       = S_INSERT;
-        end
+          if (w_crc_valid) begin
+            w_nxt_lp_data_rdi[351:0]       = i_retry_data[351:0];
+            w_nxt_lp_data_rdi[C3_FH_B0+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b0;
+            w_nxt_lp_data_rdi[C3_FH_B1+:8] = r_nop_chunk[3] ? 8'h0 : w_fh_b1;
+            w_nxt_lp_data_rdi[C3_DLP+:32]  = r_dllp_valid   ? r_dllp_buf : 32'h0;
+            w_nxt_lp_data_rdi[C3_RSV+:80]  = 80'h0;
+            w_nxt_lp_data_rdi[C3_CRC0+:16] = w_crc0_gen;
+            w_nxt_lp_data_rdi[C3_CRC1+:16] = w_crc1_gen;
+            w_nxt_lp_valid_rdi             = 1'b1;
+            w_nxt_state       = S_INSERT;
+          end        
         else begin
           w_nxt_collect_cnt = r_collect_cnt + 1'b1;
         end
       end
+     end 
 
       // Normal mode (data from FDI)
       else if (i_lp_irdy_fdi && !i_deassert_trdy) begin
+
         // 1) Receive from FDI
         if (i_lp_valid_fdi) begin
           w_nxt_nop_chunk[r_collect_cnt] = 1'b0;
@@ -572,6 +601,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= 1'b0;
     o_flush_done            <= 1'b0;
     o_drain_done            <= 1'b0;
+    o_txflit_valid          <= 1'b0;
   end
   else if (!i_init) begin
     r_state                 <= S_IDLE;
@@ -599,6 +629,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= 1'b0;
     o_flush_done            <= 1'b0;
     o_drain_done            <= 1'b0;
+    o_txflit_valid          <= 1'b0;
   end
   else begin
     // Latch next-state values computed by combinational block
@@ -627,6 +658,7 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     o_flit_boundary_done    <= w_nxt_flit_boundary_done;
     o_flush_done            <= w_nxt_flush_done;
     o_drain_done            <= w_nxt_drain_done;
+    o_txflit_valid          <= w_nxt_txflit_valid;
   end
 end
 
