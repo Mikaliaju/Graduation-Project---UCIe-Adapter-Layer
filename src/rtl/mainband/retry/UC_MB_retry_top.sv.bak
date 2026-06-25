@@ -45,7 +45,7 @@ module UC_MB_retry_top (
     input logic [STREAM_WIDTH-1:0] tx_i_stream,
     output logic [DATA_WIDTH-1:0] tx_o_data,
     output logic [STREAM_WIDTH-1:0] tx_o_stream,
-    output logic   buffer_state,
+    output buffer_state_t buffer_state,
     // -------------------------------------------------------------------------
     // Outputs to transmitter
     // -------------------------------------------------------------------------

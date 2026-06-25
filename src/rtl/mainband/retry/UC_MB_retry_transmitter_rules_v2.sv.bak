@@ -184,7 +184,7 @@ end
       if (r_consecutive_tx_explicit_seq_num < 1) begin
         w_tx_replay_command = explicit;
         w_consecutive_tx_explicit_seq_num = r_consecutive_tx_explicit_seq_num + 1;
-        if (i_buffer_state != 1) w_replay_timeout_flit_count = r_replay_timeout_flit_count + 1;
+        if (i_buffer_state != empty) w_replay_timeout_flit_count = r_replay_timeout_flit_count + 1;
         if (tx_flit_type == NOP) begin
           w_tx_seq_num = r_next_tx_flit_seq_num;
         end else begin
@@ -236,7 +236,7 @@ end
       end else begin
         // -- NORMAL PATH -- 
         w_consecutive_tx_explicit_seq_num = r_consecutive_tx_explicit_seq_num + 1;
-        if (i_buffer_state != 1) w_replay_timeout_flit_count = r_replay_timeout_flit_count + 1;
+        if (i_buffer_state != empty) w_replay_timeout_flit_count = r_replay_timeout_flit_count + 1;
         if (((r_next_tx_flit_seq_num - i_ackd_flit_seq_num) % 8'hFF) > MAX_UNACKNOWLEDGED_FLITS)
           w_pl_trdy_control = 1'b1;
         else w_pl_trdy_control = 1'b0;

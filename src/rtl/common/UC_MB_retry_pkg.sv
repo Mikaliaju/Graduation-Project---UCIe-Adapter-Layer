@@ -9,11 +9,20 @@ package UC_MB_retry_pkg;
   parameter DATA_DEPTH = 1024;  //256 * 4 = 1024; 
   parameter STREAM_DEPTH = 256;
 
+<<<<<<< HEAD
+    typedef enum logic [1:0] {
+        R_IDLE, //when tx and rx not enabled
+        SNH,    //Sequence Number Handshake
+        SNH_FDI_ACTIVE, //Sequence Number Handshake when FDI is active
+        NORMAL_EXCHANGE
+    } phase_t;
+=======
   typedef enum logic [1:0] {
     explicit = 2'b00,
     nak = 2'b10,
     ack = 2'b01
   } replay_command_t;
+>>>>>>> main
 
   typedef enum logic [1:0] {
     R_IDLE,  //when tx and rx not enabled
@@ -37,6 +46,9 @@ package UC_MB_retry_pkg;
     GTs_16
   } data_rate_t;
 
+<<<<<<< HEAD
+endpackage
+=======
   typedef enum {
     NOP,
     PAYLOAD
@@ -48,3 +60,4 @@ package UC_MB_retry_pkg;
   } buffer_state_t;
 
 endpackage
+>>>>>>> main
