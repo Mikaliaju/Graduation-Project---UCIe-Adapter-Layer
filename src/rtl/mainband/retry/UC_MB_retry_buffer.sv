@@ -19,8 +19,8 @@ module UC_MB_retry_buffer (
     input  logic          [  DATA_WIDTH-1:0] i_data,
     input  logic          [STREAM_WIDTH-1:0] i_stream,
     input  logic          [DATA_WIDTH-1:0]   i_dout,
-    output logic                             write_enable,
-    output logic          [ADDR_DATA_WIDTH-1:0] addr,
+    output logic                             o_write_enable,
+    output logic          [ADDR_DATA_WIDTH-1:0] o_addr,
     output logic          [DATA_WIDTH-1:0]      o_din,
     output logic          [  DATA_WIDTH-1:0] o_data,
     output logic          [STREAM_WIDTH-1:0] o_stream,
@@ -163,21 +163,21 @@ module UC_MB_retry_buffer (
 
   always_ff @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-      write_enable <= 1'b0;
-      addr <= '0;
+      o_write_enable <= 1'b0;
+      o_addr <= '0;
       o_din <= '0;
     end else if (!init || i_tx_phase == R_IDLE) begin
-      write_enable <= 1'b0;
-      addr <= '0;
+      o_write_enable <= 1'b0;
+      o_addr <= '0;
       o_din <= '0;
     end else if (i_replay_scheduled || i_replay_in_progress || i_drain || i_flush) begin
-      write_enable <= 1'b0;
-      addr <= addr_data;
+      o_write_enable <= 1'b0;
+      o_addr <= addr_data;
       o_data <= i_dout;
       o_din <= '0;
     end else if(i_transmitter_write) begin
-      write_enable <= 1'b1;
-      addr <= addr_data;
+      o_write_enable <= 1'b1;
+      o_addr <= addr_data;
       o_din <= i_data;
     end
   end

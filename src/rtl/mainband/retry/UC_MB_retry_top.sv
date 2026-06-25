@@ -59,7 +59,13 @@ module UC_MB_retry_top (
     output logic discard_payload,
     output logic log_uie,
     output logic log_cie,
-    output logic rdi_retrain
+    output logic rdi_retrain,
+    // RAM Module interface 
+    input  logic [DATA_WIDTH-1:0]           ram_i_dout,
+    output logic                            ram_o_write_enable,
+    output logic [ADDR_DATA_WIDTH-1:0]      ram_o_addr,
+    output logic [DATA_WIDTH-1:0]           ram_o_din
+
 );
 
   // =========================================================================
@@ -199,6 +205,10 @@ module UC_MB_retry_top (
       .i_next_tx_flit_seq_num  (next_tx_flit_seq_num),
       .i_data                  (tx_i_data),
       .i_stream                (tx_i_stream),
+      .i_dout                  (ram_i_dout),
+      .o_write_enable          (ram_o_write_enable),
+      .o_addr                  (ram_o_addr),
+      .o_din                   (ram_o_din),
       .o_data                  (tx_o_data),
       .o_stream                (tx_o_stream),
       .o_buffer_state          (buffer_state),
