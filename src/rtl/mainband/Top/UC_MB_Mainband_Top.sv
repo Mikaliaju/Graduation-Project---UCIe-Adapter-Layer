@@ -88,7 +88,13 @@ module UC_MB_Mainband (
   // LSM Interface ? Unpacker
   // -------------------------
   input  logic                      i_unpacker_en,        // Enable unpacker        
-  input  logic                      i_stop_stream        // Stop stream     
+  input  logic                      i_stop_stream,        // Stop stream    
+
+  // Ram module interfaces 
+  input  logic [DATA_WIDTH-1:0]           ram_i_dout,
+  output logic                            ram_o_write_enable,
+  output logic [ADDR_DATA_WIDTH-1:0]      ram_o_addr,
+  output logic [DATA_WIDTH-1:0]           ram_o_din 
 
   );
 
@@ -298,7 +304,12 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .discard_payload     (w_discard_payload), 
   .log_uie             (o_log_uie),      //needed to connect to LSM/Register File
   .log_cie             (o_log_cie),      //needed to connect to LSM/Register File
-  .rdi_retrain         (o_rdi_retrain)   //needed to connect to LSM
+  .rdi_retrain         (o_rdi_retrain),   //needed to connect to LSM
+
+  .ram_i_dout         (ram_i_dout)
+  .ram_o_write_enable (ram_o_write_enable)
+  .ram_o_addr         (ram_o_addr)
+  .ram_o_din          (ram_o_din)
 );
 
 endmodule
