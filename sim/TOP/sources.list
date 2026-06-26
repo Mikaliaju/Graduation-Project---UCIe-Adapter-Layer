@@ -58,7 +58,8 @@
 
 ../../src/rtl/TOP/UC_TOP_EP.sv
 ../../src/rtl/TOP/UC_TOP_RP.sv
-../../src/rtl/TOP/UC_TOP.sv
+
+UC_single_port_ram.sv
 
 UC_TOP_tb.sv
 

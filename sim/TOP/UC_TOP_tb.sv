@@ -2,6 +2,7 @@ import UC_ALSM_package::*;
 // import UC_sb_pkg::*;
 import UC_MB_Mainband_pkg::*;
 import UC_regfile_package::*;
+import UC_MB_retry_pkg::*;
 
 `include "../../src/rtl/common/UC_all_defs.svh"
 
@@ -103,164 +104,172 @@ module UC_TOP_tb;
 
 
   // ======================== RP Ports ========================
-  logic [`P_NC-1:0]      RP_i_rdi_pl_cfg;
-  logic                  RP_i_rdi_pl_cfg_vld;
-  logic                  RP_i_rdi_pl_cfg_crd;
-  logic [`P_NC-1:0]      RP_o_rdi_lp_cfg;
-  logic                  RP_o_rdi_lp_cfg_vld;
-  logic                  RP_o_rdi_lp_cfg_crd;
-  logic                  RP_i_rdi_pl_trdy;
-  logic [DATA_PATH-1:0]  RP_o_rdi_lp_data;
-  logic                  RP_o_rdi_lp_valid;
-  logic                  RP_o_rdi_lp_irdy;
-  logic [DATA_PATH-1:0]  RP_i_rdi_pl_data;
-  logic                  RP_i_rdi_pl_valid;
-  logic                  RP_i_rdi_pl_inband_pres;
-  logic                  RP_i_rdi_pl_phyinrecenter;
-  logic [2:0]            RP_i_rdi_pl_speedmode;
-  logic [2:0]            RP_i_rdi_pl_lnk_cfg;
-  logic                  RP_o_fdi_pl_protocol_valid;
-  ll_state               RP_i_rdi_pl_state_sts;
-  logic                  RP_i_rdi_pl_clk_req;
-  logic                  RP_i_rdi_pl_wake_ack;
-  logic                  RP_i_rdi_pl_stall_req;
-  logic                  RP_i_rdi_pl_error;
-  logic                  RP_i_rdi_pl_trdy_alsm;
-  logic                  RP_o_rdi_lp_clk_ack;
-  logic                  RP_o_rdi_lp_wake_req;
-  logic                  RP_o_rdi_lp_linkerror;
-  state_req              RP_o_rdi_lp_state_req;
-  logic                  RP_o_rdi_lp_stall_ack;
-  logic                  RP_i_rdi_pl_trainerror;
-  logic                  RP_i_rdi_pl_error_rf;
-  logic                  RP_i_rdi_pl_cerror;
-  logic                  RP_i_rdi_pl_nferror;
-  logic [`P_NC-1:0]      RP_i_fdi_lp_cfg;
-  logic                  RP_i_fdi_lp_cfg_vld;
-  logic                  RP_i_fdi_lp_cfg_crd;
-  logic [`P_NC-1:0]      RP_o_fdi_pl_cfg;
-  logic                  RP_o_fdi_pl_cfg_vld;
-  logic                  RP_o_fdi_pl_cfg_crd;
-  logic [3:0]            RP_o_fdi_pl_protocol;
-  logic [3:0]            RP_o_fdi_pl_flit_fmt;
-  logic                  RP_o_fdi_pl_valid;
-  logic                  RP_i_fdi_lp_irdy;
-  logic                  RP_i_fdi_lp_valid;
-  logic [DATA_PATH-1:0]  RP_i_fdi_lp_data;
-  logic [DLLP-1:0]       RP_i_fdi_lp_dllp;
-  logic                  RP_i_fdi_lp_dllp_valid;
-  logic                  RP_i_fdi_lp_dllp_ofc;
-  logic [7:0]            RP_i_fdi_lp_stream;
-  logic                  RP_o_fdi_pl_trdy;
-  logic [DATA_PATH-1:0]  RP_o_fdi_pl_data;
-  logic [7:0]            RP_o_fdi_pl_stream;
-  logic [DLLP-1:0]       RP_o_fdi_pl_dllp;
-  logic                  RP_o_fdi_pl_dllp_valid;
-  logic                  RP_o_fdi_pl_dllp_ofc;
-  logic                  RP_o_fdi_flit_cancel;
-  state_req              RP_i_fdi_lp_state_req;
-  logic                  RP_i_fdi_lp_linkerror;
-  logic                  RP_i_fdi_lp_rx_active_sts;
-  logic                  RP_i_fdi_lp_stall_ack;
-  logic                  RP_i_fdi_lp_clk_ack;
-  logic                  RP_i_fdi_lp_wake_req;
-  logic                  RP_o_fdi_pl_stallreq;
-  logic                  RP_o_fdi_pl_phyinrecenter;
-  logic                  RP_o_fdi_pl_phyinl1;
-  logic                  RP_o_fdi_pl_phyinl2;
-  logic [2:0]            RP_o_fdi_pl_speedmode;
-  logic                  RP_o_fdi_pl_max_speedmode;
-  logic [2:0]            RP_o_fdi_pl_lnk_cfg;
-  ll_state               RP_o_fdi_pl_state_sts;
-  logic                  RP_o_fdi_pl_inband_pres;
-  logic                  RP_o_fdi_pl_rx_active_req;
-  logic                  RP_o_fdi_pl_clk_req;
-  logic                  RP_o_fdi_pl_wake_ack;
-  logic                  RP_o_uncorrectable_error_IRQ;
-  logic                  RP_o_correctable_error_IRQ;
-  logic                  RP_o_fdi_pl_cerror;
-  logic                  RP_o_fdi_pl_nferror;
-  logic                  RP_o_fdi_pl_trainerror;
+  logic [`P_NC-1:0]           RP_i_rdi_pl_cfg;
+  logic                       RP_i_rdi_pl_cfg_vld;
+  logic                       RP_i_rdi_pl_cfg_crd;
+  logic [`P_NC-1:0]           RP_o_rdi_lp_cfg;
+  logic                       RP_o_rdi_lp_cfg_vld;
+  logic                       RP_o_rdi_lp_cfg_crd;
+  logic                       RP_i_rdi_pl_trdy;
+  logic [DATA_PATH-1:0]       RP_o_rdi_lp_data;
+  logic                       RP_o_rdi_lp_valid;
+  logic                       RP_o_rdi_lp_irdy;
+  logic [DATA_PATH-1:0]       RP_i_rdi_pl_data;
+  logic                       RP_i_rdi_pl_valid;
+  logic                       RP_i_rdi_pl_inband_pres;
+  logic                       RP_i_rdi_pl_phyinrecenter;
+  logic [2:0]                 RP_i_rdi_pl_speedmode;
+  logic [2:0]                 RP_i_rdi_pl_lnk_cfg;
+  logic                       RP_o_fdi_pl_protocol_valid;
+  ll_state                    RP_i_rdi_pl_state_sts;
+  logic                       RP_i_rdi_pl_clk_req;
+  logic                       RP_i_rdi_pl_wake_ack;
+  logic                       RP_i_rdi_pl_stall_req;
+  logic                       RP_i_rdi_pl_error;
+  logic                       RP_i_rdi_pl_trdy_alsm;
+  logic                       RP_o_rdi_lp_clk_ack;
+  logic                       RP_o_rdi_lp_wake_req;
+  logic                       RP_o_rdi_lp_linkerror;
+  state_req                   RP_o_rdi_lp_state_req;
+  logic                       RP_o_rdi_lp_stall_ack;
+  logic                       RP_i_rdi_pl_trainerror;
+  logic                       RP_i_rdi_pl_error_rf;
+  logic                       RP_i_rdi_pl_cerror;
+  logic                       RP_i_rdi_pl_nferror;
+  logic [`P_NC-1:0]           RP_i_fdi_lp_cfg;
+  logic                       RP_i_fdi_lp_cfg_vld;
+  logic                       RP_i_fdi_lp_cfg_crd;
+  logic [`P_NC-1:0]           RP_o_fdi_pl_cfg;
+  logic                       RP_o_fdi_pl_cfg_vld;
+  logic                       RP_o_fdi_pl_cfg_crd;
+  logic [3:0]                 RP_o_fdi_pl_protocol;
+  logic [3:0]                 RP_o_fdi_pl_flit_fmt;
+  logic                       RP_o_fdi_pl_valid;
+  logic                       RP_i_fdi_lp_irdy;
+  logic                       RP_i_fdi_lp_valid;
+  logic [DATA_PATH-1:0]       RP_i_fdi_lp_data;
+  logic [DLLP-1:0]            RP_i_fdi_lp_dllp;
+  logic                       RP_i_fdi_lp_dllp_valid;
+  logic                       RP_i_fdi_lp_dllp_ofc;
+  logic [7:0]                 RP_i_fdi_lp_stream;
+  logic                       RP_o_fdi_pl_trdy;
+  logic [DATA_PATH-1:0]       RP_o_fdi_pl_data;
+  logic [7:0]                 RP_o_fdi_pl_stream;
+  logic [DLLP-1:0]            RP_o_fdi_pl_dllp;
+  logic                       RP_o_fdi_pl_dllp_valid;
+  logic                       RP_o_fdi_pl_dllp_ofc;
+  logic                       RP_o_fdi_flit_cancel;
+  state_req                   RP_i_fdi_lp_state_req;
+  logic                       RP_i_fdi_lp_linkerror;
+  logic                       RP_i_fdi_lp_rx_active_sts;
+  logic                       RP_i_fdi_lp_stall_ack;
+  logic                       RP_i_fdi_lp_clk_ack;
+  logic                       RP_i_fdi_lp_wake_req;
+  logic                       RP_o_fdi_pl_stallreq;
+  logic                       RP_o_fdi_pl_phyinrecenter;
+  logic                       RP_o_fdi_pl_phyinl1;
+  logic                       RP_o_fdi_pl_phyinl2;
+  logic [2:0]                 RP_o_fdi_pl_speedmode;
+  logic                       RP_o_fdi_pl_max_speedmode;
+  logic [2:0]                 RP_o_fdi_pl_lnk_cfg;
+  ll_state                    RP_o_fdi_pl_state_sts;
+  logic                       RP_o_fdi_pl_inband_pres;
+  logic                       RP_o_fdi_pl_rx_active_req;
+  logic                       RP_o_fdi_pl_clk_req;
+  logic                       RP_o_fdi_pl_wake_ack;
+  logic                       RP_o_uncorrectable_error_IRQ;
+  logic                       RP_o_correctable_error_IRQ;
+  logic                       RP_o_fdi_pl_cerror;
+  logic                       RP_o_fdi_pl_nferror;
+  logic                       RP_o_fdi_pl_trainerror;
+  logic [DATA_WIDTH-1:0]      RP_ram_i_dout;
+  logic                       RP_ram_o_write_enable;
+  logic [ADDR_DATA_WIDTH-1:0] RP_ram_o_addr;
+  logic [DATA_WIDTH-1:0]      RP_ram_o_din;
 
   // ======================== EP Ports ========================
-  logic [`P_NC-1:0]      EP_i_rdi_pl_cfg;
-  logic                  EP_i_rdi_pl_cfg_vld;
-  logic                  EP_i_rdi_pl_cfg_crd;
-  logic [`P_NC-1:0]      EP_o_rdi_lp_cfg;
-  logic                  EP_o_rdi_lp_cfg_vld;
-  logic                  EP_o_rdi_lp_cfg_crd;
-  logic                  EP_i_rdi_pl_trdy;
-  logic [DATA_PATH-1:0]  EP_o_rdi_lp_data;
-  logic                  EP_o_rdi_lp_valid;
-  logic                  EP_o_rdi_lp_irdy;
-  logic [DATA_PATH-1:0]  EP_i_rdi_pl_data;
-  logic                  EP_i_rdi_pl_valid;
-  logic                  EP_i_rdi_pl_inband_pres;
-  logic                  EP_i_rdi_pl_phyinrecenter;
-  logic [2:0]            EP_i_rdi_pl_speedmode;
-  logic [2:0]            EP_i_rdi_pl_lnk_cfg;
-  logic                  EP_o_fdi_pl_protocol_valid;
-  ll_state               EP_i_rdi_pl_state_sts;
-  logic                  EP_i_rdi_pl_clk_req;
-  logic                  EP_i_rdi_pl_wake_ack;
-  logic                  EP_i_rdi_pl_stall_req;
-  logic                  EP_i_rdi_pl_error;
-  logic                  EP_i_rdi_pl_trdy_alsm;
-  logic                  EP_o_rdi_lp_clk_ack;
-  logic                  EP_o_rdi_lp_wake_req;
-  logic                  EP_o_rdi_lp_linkerror;
-  state_req              EP_o_rdi_lp_state_req;
-  logic                  EP_o_rdi_lp_stall_ack;
-  logic                  EP_i_rdi_pl_trainerror;
-  logic                  EP_i_rdi_pl_error_rf;
-  logic                  EP_i_rdi_pl_cerror;
-  logic                  EP_i_rdi_pl_nferror;
-  logic [`P_NC-1:0]      EP_i_fdi_lp_cfg;
-  logic                  EP_i_fdi_lp_cfg_vld;
-  logic                  EP_i_fdi_lp_cfg_crd;
-  logic [`P_NC-1:0]      EP_o_fdi_pl_cfg;
-  logic                  EP_o_fdi_pl_cfg_vld;
-  logic                  EP_o_fdi_pl_cfg_crd;
-  logic [3:0]            EP_o_fdi_pl_protocol;
-  logic [3:0]            EP_o_fdi_pl_flit_fmt;
-  logic                  EP_o_fdi_pl_valid;
-  logic                  EP_i_fdi_lp_irdy;
-  logic                  EP_i_fdi_lp_valid;
-  logic [DATA_PATH-1:0]  EP_i_fdi_lp_data;
-  logic [DLLP-1:0]       EP_i_fdi_lp_dllp;
-  logic                  EP_i_fdi_lp_dllp_valid;
-  logic                  EP_i_fdi_lp_dllp_ofc;
-  logic [7:0]            EP_i_fdi_lp_stream;
-  logic                  EP_o_fdi_pl_trdy;
-  logic [DATA_PATH-1:0]  EP_o_fdi_pl_data;
-  logic [7:0]            EP_o_fdi_pl_stream;
-  logic [DLLP-1:0]       EP_o_fdi_pl_dllp;
-  logic                  EP_o_fdi_pl_dllp_valid;
-  logic                  EP_o_fdi_pl_dllp_ofc;
-  logic                  EP_o_fdi_flit_cancel;
-  state_req              EP_i_fdi_lp_state_req;
-  logic                  EP_i_fdi_lp_linkerror;
-  logic                  EP_i_fdi_lp_rx_active_sts;
-  logic                  EP_i_fdi_lp_stall_ack;
-  logic                  EP_i_fdi_lp_clk_ack;
-  logic                  EP_i_fdi_lp_wake_req;
-  logic                  EP_o_fdi_pl_stallreq;
-  logic                  EP_o_fdi_pl_phyinrecenter;
-  logic                  EP_o_fdi_pl_phyinl1;
-  logic                  EP_o_fdi_pl_phyinl2;
-  logic [2:0]            EP_o_fdi_pl_speedmode;
-  logic                  EP_o_fdi_pl_max_speedmode;
-  logic [2:0]            EP_o_fdi_pl_lnk_cfg;
-  ll_state               EP_o_fdi_pl_state_sts;
-  logic                  EP_o_fdi_pl_inband_pres;
-  logic                  EP_o_fdi_pl_rx_active_req;
-  logic                  EP_o_fdi_pl_clk_req;
-  logic                  EP_o_fdi_pl_wake_ack;
-  logic                  EP_o_uncorrectable_error_IRQ;
-  logic                  EP_o_correctable_error_IRQ;
-  logic                  EP_o_fdi_pl_cerror;
-  logic                  EP_o_fdi_pl_nferror;
-  logic                  EP_o_fdi_pl_trainerror;
+  logic [`P_NC-1:0]           EP_i_rdi_pl_cfg;
+  logic                       EP_i_rdi_pl_cfg_vld;
+  logic                       EP_i_rdi_pl_cfg_crd;
+  logic [`P_NC-1:0]           EP_o_rdi_lp_cfg;
+  logic                       EP_o_rdi_lp_cfg_vld;
+  logic                       EP_o_rdi_lp_cfg_crd;
+  logic                       EP_i_rdi_pl_trdy;
+  logic [DATA_PATH-1:0]       EP_o_rdi_lp_data;
+  logic                       EP_o_rdi_lp_valid;
+  logic                       EP_o_rdi_lp_irdy;
+  logic [DATA_PATH-1:0]       EP_i_rdi_pl_data;
+  logic                       EP_i_rdi_pl_valid;
+  logic                       EP_i_rdi_pl_inband_pres;
+  logic                       EP_i_rdi_pl_phyinrecenter;
+  logic [2:0]                 EP_i_rdi_pl_speedmode;
+  logic [2:0]                 EP_i_rdi_pl_lnk_cfg;
+  logic                       EP_o_fdi_pl_protocol_valid;
+  ll_state                    EP_i_rdi_pl_state_sts;
+  logic                       EP_i_rdi_pl_clk_req;
+  logic                       EP_i_rdi_pl_wake_ack;
+  logic                       EP_i_rdi_pl_stall_req;
+  logic                       EP_i_rdi_pl_error;
+  logic                       EP_i_rdi_pl_trdy_alsm;
+  logic                       EP_o_rdi_lp_clk_ack;
+  logic                       EP_o_rdi_lp_wake_req;
+  logic                       EP_o_rdi_lp_linkerror;
+  state_req                   EP_o_rdi_lp_state_req;
+  logic                       EP_o_rdi_lp_stall_ack;
+  logic                       EP_i_rdi_pl_trainerror;
+  logic                       EP_i_rdi_pl_error_rf;
+  logic                       EP_i_rdi_pl_cerror;
+  logic                       EP_i_rdi_pl_nferror;
+  logic [`P_NC-1:0]           EP_i_fdi_lp_cfg;
+  logic                       EP_i_fdi_lp_cfg_vld;
+  logic                       EP_i_fdi_lp_cfg_crd;
+  logic [`P_NC-1:0]           EP_o_fdi_pl_cfg;
+  logic                       EP_o_fdi_pl_cfg_vld;
+  logic                       EP_o_fdi_pl_cfg_crd;
+  logic [3:0]                 EP_o_fdi_pl_protocol;
+  logic [3:0]                 EP_o_fdi_pl_flit_fmt;
+  logic                       EP_o_fdi_pl_valid;
+  logic                       EP_i_fdi_lp_irdy;
+  logic                       EP_i_fdi_lp_valid;
+  logic [DATA_PATH-1:0]       EP_i_fdi_lp_data;
+  logic [DLLP-1:0]            EP_i_fdi_lp_dllp;
+  logic                       EP_i_fdi_lp_dllp_valid;
+  logic                       EP_i_fdi_lp_dllp_ofc;
+  logic [7:0]                 EP_i_fdi_lp_stream;
+  logic                       EP_o_fdi_pl_trdy;
+  logic [DATA_PATH-1:0]       EP_o_fdi_pl_data;
+  logic [7:0]                 EP_o_fdi_pl_stream;
+  logic [DLLP-1:0]            EP_o_fdi_pl_dllp;
+  logic                       EP_o_fdi_pl_dllp_valid;
+  logic                       EP_o_fdi_pl_dllp_ofc;
+  logic                       EP_o_fdi_flit_cancel;
+  state_req                   EP_i_fdi_lp_state_req;
+  logic                       EP_i_fdi_lp_linkerror;
+  logic                       EP_i_fdi_lp_rx_active_sts;
+  logic                       EP_i_fdi_lp_stall_ack;
+  logic                       EP_i_fdi_lp_clk_ack;
+  logic                       EP_i_fdi_lp_wake_req;
+  logic                       EP_o_fdi_pl_stallreq;
+  logic                       EP_o_fdi_pl_phyinrecenter;
+  logic                       EP_o_fdi_pl_phyinl1;
+  logic                       EP_o_fdi_pl_phyinl2;
+  logic [2:0]                 EP_o_fdi_pl_speedmode;
+  logic                       EP_o_fdi_pl_max_speedmode;
+  logic [2:0]                 EP_o_fdi_pl_lnk_cfg;
+  ll_state                    EP_o_fdi_pl_state_sts;
+  logic                       EP_o_fdi_pl_inband_pres;
+  logic                       EP_o_fdi_pl_rx_active_req;
+  logic                       EP_o_fdi_pl_clk_req;
+  logic                       EP_o_fdi_pl_wake_ack;
+  logic                       EP_o_uncorrectable_error_IRQ;
+  logic                       EP_o_correctable_error_IRQ;
+  logic                       EP_o_fdi_pl_cerror;
+  logic                       EP_o_fdi_pl_nferror;
+  logic                       EP_o_fdi_pl_trainerror;
+  logic [DATA_WIDTH-1:0]      EP_ram_i_dout;
+  logic                       EP_ram_o_write_enable;
+  logic [ADDR_DATA_WIDTH-1:0] EP_ram_o_addr;
+  logic [DATA_WIDTH-1:0]      EP_ram_o_din;
 
   // ======================== internal signals ========================
   UC_TOP_RP  UC_TOP_RP_inst (
@@ -343,7 +352,11 @@ module UC_TOP_tb;
     .o_fdi_pl_nferror              (RP_o_fdi_pl_nferror           ),
     .o_fdi_pl_trainerror           (RP_o_fdi_pl_trainerror        ),
     .o_uncorrectable_error_IRQ     (RP_o_uncorrectable_error_IRQ  ),
-    .o_correctable_error_IRQ       (RP_o_correctable_error_IRQ    )
+    .o_correctable_error_IRQ       (RP_o_correctable_error_IRQ    ),
+    .ram_i_dout                    (RP_ram_i_dout                 ),
+    .ram_o_write_enable            (RP_ram_o_write_enable         ),
+    .ram_o_addr                    (RP_ram_o_addr                 ),
+    .ram_o_din                     (RP_ram_o_din                  )
   );
 
   UC_TOP_EP  UC_TOP_EP_inst (
@@ -426,7 +439,33 @@ module UC_TOP_tb;
     .o_fdi_pl_nferror              (EP_o_fdi_pl_nferror           ),
     .o_fdi_pl_trainerror           (EP_o_fdi_pl_trainerror        ),
     .o_uncorrectable_error_IRQ     (EP_o_uncorrectable_error_IRQ  ),
-    .o_correctable_error_IRQ       (EP_o_correctable_error_IRQ    )
+    .o_correctable_error_IRQ       (EP_o_correctable_error_IRQ    ),
+    .ram_i_dout                    (EP_ram_i_dout                 ),
+    .ram_o_write_enable            (EP_ram_o_write_enable         ),
+    .ram_o_addr                    (EP_ram_o_addr                 ),
+    .ram_o_din                     (EP_ram_o_din                  )
+  );
+
+  UC_single_port_ram # (.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_DATA_WIDTH)) 
+  UC_RAM_RP (
+    .i_clk  (i_clk                ),
+    .i_rst_n(i_rst_n              ),
+    .i_init (i_init               ),
+    .we     (RP_ram_o_write_enable),
+    .addr   (RP_ram_o_addr        ),
+    .din    (RP_ram_o_din         ),
+    .dout   (RP_ram_i_dout        )
+  );
+
+  UC_single_port_ram # (.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_DATA_WIDTH)) 
+  UC_RAM_EP (
+    .i_clk  (i_clk                ),
+    .i_rst_n(i_rst_n              ),
+    .i_init (i_init               ),
+    .we     (EP_ram_o_write_enable),
+    .addr   (EP_ram_o_addr        ),
+    .din    (EP_ram_o_din         ),
+    .dout   (EP_ram_i_dout        )
   );
 
 localparam CLK_PERIOD = 10;

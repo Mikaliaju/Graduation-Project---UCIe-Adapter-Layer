@@ -12,72 +12,6 @@
 import UC_ALSM_package::*;
 import UC_sb_rx_pkg::*;
 
-// typedef enum logic [2:0] {
-// 	Active_LSM_response_type    = 'b001,
-// 	L1_LSM_response_type        = 'b010,
-// 	L2_LSM_response_type        = 'b011,
-// 	LinkReset_LSM_response_type = 'b100,
-// 	Disable_LSM_response_type   = 'b101
-// } Adapter_Response;
-// typedef enum logic [3:0] { 
-// 	Req_NOP       = 'b0000,
-// 	Req_Active    = 'b0001,
-// 	Req_L1        = 'b0100,
-// 	Req_L2        = 'b1000,
-// 	Req_LinkReset = 'b1001,
-// 	Req_Retrain   = 'b1011,
-// 	Req_Disable   = 'b1100
-// } state_req;
-// typedef enum logic [3:0] { 
-// 	LL_Reset        = 'b0000,
-// 	LL_Active       = 'b0001,
-// 	LL_Active_PMNAK = 'b0011,
-// 	LL_L1           = 'b0100,
-// 	LL_L2           = 'b1000,
-// 	LL_LinkReset    = 'b1001,
-// 	LL_LinkError    = 'b1010,
-// 	LL_Retrain      = 'b1011,
-// 	LL_Disable      = 'b1100
-// } ll_state;
-// typedef enum logic [3:0] {
-// 		NONE           = 4'd0,
-// 		ACTIVE_REQ     = 4'd1,
-// 		L1_REQ         = 4'd2,
-// 		L2_REQ         = 4'd3,
-// 		LINKRESET_REQ  = 4'd4,
-// 		DISABLED_REQ   = 4'd5,
-// 		ACTIVE_RESP    = 4'd6,
-// 		PMNAK_RESP     = 4'd7,
-// 		L1_RESP        = 4'd8,
-// 		L2_RESP        = 4'd9,
-// 		LINKRESET_RESP = 4'd10,
-// 		DISABLED_RESP  = 4'd11
-// } sb_state_msg_encoding;
-// typedef enum {
-// 	ALSM_Reset,
-// 	ALSM_Param_exch,
-// 	ALSM_Active_Entry,
-// 	ALSM_SB_Active_Req,
-// 	ALSM_Active_Req_Await,
-// 	ALSM_rx_active_1,
-// 	ALSM_SB_rsp_received,
-// 	ALSM_rx_active_2,
-// 	ALSM_Await_FDI_Active,
-// 	ALSM_Active,
-// 	ALSM_Stall,
-// 	ALSM_Retrain,
-// 	ALSM_LinkReset_Entry,      // handles drain + SB req/await combined
-// 	ALSM_LinkReset_Transition,
-// 	ALSM_LinkReset,
-// 	ALSM_Disable_Entry,        // handles drain + SB req/await combined
-// 	ALSM_Disable_Transition,
-// 	ALSM_Disable,
-// 	ALSM_Error_Entry,
-// 	ALSM_LinkError,
-// 	ALSM_Protocol_Exit,
-// 	ALSM_Detected_Nop
-// } ALSM_State;
-
 module UC_ALSM (
 	input logic       i_clk,   								//! input clock
 	input logic       i_rst_n, 								//! system reset
@@ -143,6 +77,7 @@ module UC_ALSM (
 	output logic       o_mb_tx_enable, 					  //! ALSM enable signal for mb tx path
 	output logic       o_mb_rx_enable, 					  //! ALSM enable signal for mb tx path
   output logic       o_mb_drain,
+	output logic 		   o_mb_fdi_active,
 	// RegFile Inputs
 	input logic        i_regfile_linkerror, 		  //! Uncorrectable error signal from regfile
 	input logic 			 i_regfile_start_retrain,    //! SW retrain through Register File
@@ -209,7 +144,8 @@ module UC_ALSM (
 					s_link_error_state_condition,    //! Global condition signal at which must immediatly enter ALSM_LinkError
 					s_error_entry_state_condition,   //! Global condition signal at which must immediatly enter ALSM_Error_Entry
 					r_fdi_linkreset,
-					w_fdi_linkreset_comb;
+					w_fdi_linkreset_comb,
+					w_mb_fdi_active;
 
 	state_req w_rdi_lp_state_req_comb;
 	ll_state w_fdi_pl_state_sts_comb;
@@ -269,7 +205,7 @@ module UC_ALSM (
 																							((i_rdi_pl_state_sts == LL_Active) && (r_rdi_state_sts == LL_Reset))
 																						);       //clear when phyinrecenter AND (LinkError OR (Active transitioned from Reset))
 
-
+	assign w_mb_fdi_active									= (w_fdi_pl_state_sts_comb == LL_Active);
 	//! current state logic
 	always_ff @(negedge i_rst_n, posedge i_clk) begin : current_state_block
 		if (~i_rst_n) begin
@@ -314,6 +250,7 @@ module UC_ALSM (
 			o_uce_adapter_timeout_active     <= 'b0;
 			o_error_valid                    <= 'b0;
 			o_link_status                    <= 'b0;
+			o_mb_fdi_active                  <= 'b0;
 		end
 		else if (~i_init) begin
 			// RDI outputs
@@ -344,6 +281,7 @@ module UC_ALSM (
 			o_uce_adapter_timeout_active     <= 'b0;
 			o_error_valid                    <= 'b0;
 			o_link_status                    <= 'b0;
+			o_mb_fdi_active                  <= 'b0;
 		end
 		else begin
 			// RDI outputs
@@ -374,6 +312,7 @@ module UC_ALSM (
 			o_uce_adapter_timeout_active     <= w_uce_adapter_timeout_active_comb;
 			o_error_valid                    <= w_error_valid_comb;
 			o_link_status                    <= w_link_status_comb;
+			o_mb_fdi_active                  <= w_mb_fdi_active;
 		end
 	end
 

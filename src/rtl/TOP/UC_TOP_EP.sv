@@ -8,6 +8,7 @@ import UC_ALSM_package::*;
 import UC_sb_rx_pkg::*;
 import UC_MB_Mainband_pkg::*;
 import UC_regfile_package::*;
+import UC_MB_retry_pkg::*;
 
 `include "../common/UC_all_defs.svh"
 
@@ -140,8 +141,13 @@ module UC_TOP_EP #(
     // IRQ Outputs
     //==========================================================
     output logic                o_uncorrectable_error_IRQ,
-    output logic                o_correctable_error_IRQ
+    output logic                o_correctable_error_IRQ,
 
+    // Ram module interfaces 
+    input  logic [DATA_WIDTH-1:0]           ram_i_dout,
+    output logic                            ram_o_write_enable,
+    output logic [ADDR_DATA_WIDTH-1:0]      ram_o_addr,
+    output logic [DATA_WIDTH-1:0]           ram_o_din 
     //==========================================================
     // MB LSM Interface (from ALSM to MB)
     // Exposed at top for debug/visibility (optional)
@@ -154,7 +160,7 @@ module UC_TOP_EP #(
 // MB
 logic w_mb_drain, w_mb_drain_done, w_mb_flit_boundary, w_mb_flit_boundary_done,
       w_mb_flush, w_mb_flush_done, w_mb_tx_enable, w_mb_rx_enable, w_mb_receiver_overflow,
-      w_mb_correctable_internal_error, w_mb_crc_error_detected;
+      w_mb_correctable_internal_error, w_mb_crc_error_detected, mb_fdi_active, mb_retrain_trigger;
 // ALSM
 logic w_link_status, w_ce_adapter_transition_retrain, w_linkerror, w_start_retrain;
 Adapter_Response w_adpater_lsm_response_type;
@@ -239,7 +245,14 @@ UC_MB_Mainband  UC_MB_Mainband_inst (
     .o_flush_done         (w_mb_flush_done        ),
     .o_drain_done         (w_mb_drain_done        ),
     .i_unpacker_en        (w_mb_rx_enable         ),
-    .i_stop_stream        ('0                     )
+    .i_stop_stream        ('0                     ),
+    .i_fdi_active         (mb_fdi_active          ),
+    .o_rdi_retrain        (mb_retrain_trigger     ),
+    // RAM
+    .ram_i_dout           (ram_i_dout             ),
+    .ram_o_write_enable   (ram_o_write_enable     ),
+    .ram_o_addr           (ram_o_addr             ),
+    .ram_o_din            (ram_o_din              )
   );
 
 // RegFile
@@ -374,13 +387,14 @@ UC_ALSM  UC_ALSM_inst (
     // MB
     .i_mb_retry_clean_boundary_done   (w_mb_flit_boundary_done          ),
     .i_mb_flush_done                  (w_mb_flush_done                  ),
-    .i_mb_retrain_trigger             ('0                               ),
+    .i_mb_retrain_trigger             (mb_retrain_trigger               ),
     .i_mb_drain_done                  (w_mb_drain_done                  ),
     .o_mb_flush                       (w_mb_flush                       ),
     .o_mb_retry_clean_boundary        (w_mb_flit_boundary               ),
     .o_mb_tx_enable                   (w_mb_tx_enable                   ),
     .o_mb_rx_enable                   (w_mb_rx_enable                   ),
     .o_mb_drain                       (w_mb_drain                       ),
+    .o_mb_fdi_active                  (mb_fdi_active                    ),
     // RegFile
     .i_regfile_linkerror              (w_linkerror                      ),
     .i_regfile_start_retrain          (w_start_retrain                  ),

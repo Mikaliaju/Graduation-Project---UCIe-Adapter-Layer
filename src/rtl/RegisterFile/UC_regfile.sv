@@ -141,8 +141,8 @@ module UC_regfile
 logic w_mailbox_control_bit;
 logic [1:0] w_mailbox_status;
 
-logic [DATA_WIDTH - 1 : 0] mem_block [0 : MEM_BLOCK_DEPTH - 1] ;
-logic [DATA_WIDTH - 1 : 0] dvsec [0 : DVSEC_DEPTH - 1] ;
+logic [REGFILE_DATA_WIDTH - 1 : 0] mem_block [0 : MEM_BLOCK_DEPTH - 1] ;
+logic [REGFILE_DATA_WIDTH - 1 : 0] dvsec [0 : DVSEC_DEPTH - 1] ;
 
 logic [31:0] r_header_log2;
 logic [31:0] w_header_log2_comb;

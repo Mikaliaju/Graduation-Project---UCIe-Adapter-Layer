@@ -1,8 +1,8 @@
 
 package UC_regfile_package;
-localparam DVSEC_DEPTH       = 'h48;
-localparam DATA_WIDTH        = 'd32;
-localparam MEM_BLOCK_DEPTH   = 'd1024;
+localparam DVSEC_DEPTH               = 'h48;
+localparam REGFILE_DATA_WIDTH        = 'd32;
+localparam MEM_BLOCK_DEPTH           = 'd1024;
 
 localparam [$clog2(DVSEC_DEPTH) - 1 : 0] PCIE_EX_WORD_OFFSET               = 'h0  / 'd4;
 localparam [$clog2(DVSEC_DEPTH) - 1 : 0] LINK_CAPABILITY_WORD_OFFSET       = 'hC  / 'd4;
