@@ -267,8 +267,8 @@ UC_MB_retry_top U3_UC_MB_retry_top (
   .tx_en               (i_packer_en),
   .rx_en               (i_unpacker_en),
   .data_rate           (data_rate_t'(i_data_rate)), //needed from register file
-  .rx_flit_valid       (o_rx_flit_valid),           //needed from unpacker, when starting creating a flit waiting for seq number
-  .tx_flit_valid       (o_tx_flit_valid),           //needed from packer, when starting creating a flit waiting for seq number
+  .rx_flit_valid       (w_rx_flit_valid),           //needed from unpacker, when starting creating a flit waiting for seq number
+  .tx_flit_valid       (w_tx_flit_valid),           //needed from packer, when starting creating a flit waiting for seq number
   .flush               (i_flush),
   .drain               (i_drain),
 
