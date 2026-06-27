@@ -214,6 +214,7 @@ UC_MB_Mainband  UC_MB_Mainband_inst (
     .i_rst_n              (i_rst_n                ),
     .i_init               (i_init                 ),
     // FDI
+    .i_data_rate          (GTs_32                 ), //
     .i_lp_irdy_fdi        (i_fdi_lp_irdy          ),
     .i_lp_valid_fdi       (i_fdi_lp_valid         ),
     .i_lp_data_fdi        (i_fdi_lp_data          ),
