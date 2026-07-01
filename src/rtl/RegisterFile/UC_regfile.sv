@@ -422,7 +422,7 @@ always_comb begin : HEADER_LOG2_BLOCK
 end
 
 always_comb begin : READ_DATA_BLOCK
-  w_sb_read_data_comb = 'b0;
+  w_sb_read_data_comb = o_sb_read_data;
   if (i_sb_config_req) begin
     logic [11:0] wl;
     logic [4:0]  bl;

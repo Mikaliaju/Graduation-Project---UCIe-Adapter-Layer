@@ -47,4 +47,10 @@ sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_MB_Mainband_inst/U2_UC_MB_Unpacker/U1_UC_MB_crc
 sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_MB_Mainband_inst/U2_UC_MB_Unpacker/U1_UC_MB_crc_gen/r_crc_reg1 \
 sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_MB_Mainband_inst/U2_UC_MB_Unpacker/U1_UC_MB_crc_gen/r_crc_next
 
+add wave -position insertpoint  \
+sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_sb_top_EP_inst/U_TX_TOP_EP/U_ARBITER/i_Local_address \
+sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_sb_top_EP_inst/U_TX_TOP_EP/U_ARBITER/i_R_data \
+sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_sb_top_EP_inst/U_TX_TOP_EP/U_ARBITER/o_address \
+sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_sb_top_EP_inst/U_TX_TOP_EP/U_ARBITER/o_Local_done \
+sim:/UC_TOP_tb/UC_TOP_EP_inst/UC_sb_top_EP_inst/U_TX_TOP_EP/U_ARBITER/o_Local_R_data
 run -all
