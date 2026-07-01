@@ -187,7 +187,7 @@ logic                        s_remote_ctrl_packet_valid;
 logic                        s_remote_ctrl_packet_length;
 logic                        s_remote_ctrl_is_completion;
 logic                        s_remote_ctrl_sent_ack;
-
+logic                        s_rp_opcode_error_unused;
 logic [63:0]                 s_remote_ctrl_reg_write_data;
 logic                        s_remote_ctrl_reg_write_enable;
 logic [23:0]                 s_remote_ctrl_reg_address;
@@ -200,8 +200,8 @@ logic                        s_remote_ctrl_arbiter_valid;
 logic                        s_msg_fifo_empty_flag;
 logic                        s_msg_fifo_read_enable;
 logic [P_FIFO_WIDTH:0]       s_msg_fifo_read_data;
-
-
+logic  s_rp_decoder_write_unused;
+logic  s_rp_decoder_config_unused;
 // ===========================================================================
 //                    1. UC_sb_FDI_Packer
 //                    FDI chunk collector / FIFO controller
@@ -541,17 +541,14 @@ uc_mailbox_controller U_MAILBOX_CTRL (
     .i_e2e_crd_return     (i_e2e_crd_return),
     .o_remote_time_out    (o_tx_lsm_remote_time_out)
 );
-
-UC_remote_decoder U_MAILBOX_DECODER (
-    .i_decoder_addr     (24'd0),
-    .i_decoder_opcode   (s_mailbox_opcode),
-
-    .o_is_adapter       (s_mailbox_dec_is_adapter_unused),
-    .o_comp_opcode      (s_mailbox_dec_comp_opcode_unused),
-    .o_write_operation  (s_mailbox_dec_write_unused),
+UC_fdi_decoder U_MAILBOX_DECODER (
+    .i_opcode           (s_mailbox_opcode),
+    .o_write_operation  (s_rp_decoder_write_unused),
     .o_operation_32bit  (s_mailbox_32bit_access),
-    .o_confg_req        (s_mailbox_dec_config_unused),
-    .o_comp_type        (s_mailbox_request_length)
+    .o_request_type     (s_mailbox_request_length),
+    .o_confg_req        (s_rp_decoder_config_unused),
+   // .o_comp_opcode      (s_fdi_decoder_comp_unused),
+    .o_opcode_error     (s_rp_opcode_error_unused)
 );
 
 assign s_remote_ctrl_arbiter_valid    = 1'b0;

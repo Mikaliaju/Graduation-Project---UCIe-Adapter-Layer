@@ -41,12 +41,6 @@
 ../../src/rtl/Sideband_duplicated/UC_sb_top_RP.sv                                                                       
 
 
-../../src/rtl/sideband/common/UC_parameterexchange.sv
-../../src/rtl/sideband/common/UC_sb_credit_loop.sv
-../../src/rtl/sideband/common/UC_sb_tag_manager.sv
-../../src/rtl/sideband/common/uc_access_arbiter.sv
-
-
 ../../src/rtl/mainband/retry/*.sv
 
 ../../src/rtl/mainband/TX/UC_MB_Packer.sv

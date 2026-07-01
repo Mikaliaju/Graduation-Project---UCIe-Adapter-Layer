@@ -44,6 +44,7 @@ module uc_access_arbiter (
     output logic         o_32_B,
     output logic         o_register_valid  
 );
+    logic s_Local_done;
     always_ff @(posedge i_clk, negedge i_rstn) begin
         if (~i_rstn) begin
             o_Local_R_data   <= 0;
@@ -56,14 +57,24 @@ module uc_access_arbiter (
             o_remote_R_data  <= 0;
             o_remote_status  <= 0;
         end else begin
+             //$display(" here 1");
             if (o_remote_done) begin
+             //$display(" here 2");
                 o_remote_R_data <= i_R_data;
                 o_remote_status <= i_Status;
             end
             if (o_Local_done) begin
+               $display("s_Local_done = ob%0b", s_Local_done);
                 o_Local_R_data <= i_R_data;
                 o_Local_status <= i_Status;
             end
+        end
+    end
+    always_ff @(posedge i_clk or negedge i_rstn) begin : proc_s_Local_done
+        if(~i_rstn) begin
+            o_Local_done <= 0;
+        end else begin
+            o_Local_done <= s_Local_done;
         end
     end
     always_comb begin 
@@ -76,7 +87,7 @@ module uc_access_arbiter (
             o_32_B            = i_remote_32_B;
             o_register_valid  = 1'b1;
             o_remote_done     = 1'b1;
-            o_Local_done      = 1'b0;
+            s_Local_done      = 1'b0;
         end else if (i_Local_valid) begin
             o_wr_data         = i_Local_wr_data;
             o_wr_en           = i_Local_wr_en;
@@ -85,7 +96,7 @@ module uc_access_arbiter (
             o_cofig_req       = i_Local_cofig_req;
             o_32_B            = i_Local_32_B;
             o_register_valid  = 1'b1;
-            o_Local_done      = 1'b1;
+            s_Local_done      = 1'b1;
             o_remote_done     = 1'b0;
         end else begin
             o_wr_data         = 0;
@@ -95,7 +106,7 @@ module uc_access_arbiter (
             o_cofig_req       = 0;
             o_32_B            = 0;
             o_register_valid  = 0;
-            o_Local_done      = 0;
+            s_Local_done      = 0;
             o_remote_done     = 0;
         end
     end

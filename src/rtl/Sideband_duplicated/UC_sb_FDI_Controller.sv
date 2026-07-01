@@ -234,8 +234,8 @@ assign s_comp_header = {1'b0,
 
 assign s_completion_control_parity = ^s_comp_header;
 
-assign s_comp_data = (s_adapter_ur || s_reg_ur_ca) ? r_fdi_fifo_out[63:0]
-                                                    : i_Local_read_data;
+assign s_comp_data = /*(s_adapter_ur || s_reg_ur_ca) ? r_fdi_fifo_out[63:0]
+                                                    :*/ i_Local_read_data;
 
 assign s_completion_data_parity = ^s_comp_data;
 
