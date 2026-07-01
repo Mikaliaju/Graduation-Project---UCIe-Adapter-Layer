@@ -673,7 +673,7 @@ module UC_ALSM (
 						w_mb_tx_enable_comb = '1;
 					end
 					// ── After drain completes, or if TX was already disabled, start SB handshake ─────────────────────────
-					if (i_mb_drain_done && w_drain_timer_done || !o_mb_tx_enable) begin
+					if (i_mb_drain_done || w_drain_timer_done || !o_mb_tx_enable) begin
 						w_mb_drain_comb     = 'b1;              
 						// Remote partner already requested LinkReset -> respond immediately
 						if (w_sb_linkreset_req_received_comb) begin
@@ -855,7 +855,7 @@ module UC_ALSM (
 				end
 
 				ALSM_Error_Entry: begin
-					if (i_rdi_pl_stall_req && i_mb_flush_done) begin
+					if (i_rdi_pl_stall_req) begin
 						w_rdi_lp_stall_ack_comb     = 'b1;
 						w_mb_tx_enable_comb         = 'b0;
 						w_fdi_pl_state_sts_comb     =  LL_LinkError;

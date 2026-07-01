@@ -559,6 +559,23 @@ initial begin : main
   end
   req_pkt4 = new('0, 8'hFF, 3'b001, 'h33, 64'h0, 5'b01000);
   receive_fdi_half_packet_EP(req_pkt4.constructed_pkt);
+  EP_i_fdi_lp_state_req = Req_LinkReset;
+  repeat(15) begin
+    @(negedge i_clk);
+  end
+  EP_i_rdi_pl_state_sts = LL_LinkReset;
+  RP_i_rdi_pl_state_sts = LL_LinkReset;
+  repeat(10) begin
+    @(negedge i_clk);
+  end
+  RP_i_rdi_pl_state_sts = LL_Reset;
+  repeat(10) begin
+    @(negedge i_clk);
+  end
+  EP_i_fdi_lp_state_req = Req_Active;
+  repeat(3) begin
+    @(negedge i_clk);
+  end
   repeat(150) begin
     @(negedge i_clk);
   end
@@ -713,53 +730,4 @@ task receive_fdi_full_packet_RP(logic [127:0] full_packet);
     @(negedge i_clk);
     RP_i_fdi_lp_cfg_vld = 0;
 endtask
-/*task send_remote_request;
-    logic [23:0] address;
-
-    // ── Build request fields ──────────────────────────────────────
-    address = 24'h33;
-    RB_i_mailbox_index_low[4:0]   = 5'b01001;       // opcode  
-    RB_i_mailbox_index_low[12:5]  = 'hff;         // byte enable
-    RB_i_mailbox_index_low[31:13] = address[18:0];   // address lower
-    RB_i_mailbox_index_high       = address[23:19];  // address upper
-
-    RB_i_mailbox_data_low         = 32'hffff;
-    RB_i_mailbox_data_high        = 32'hffff;
-
-    // ── Pre-load EP register file response ───────────────────────
-    // EP will use these when UC_sb_remote_die_request_controller
-    // performs the register operation and builds the completion.
-    EB_i_reg_read_data            = 64'hffff;
-    EB_i_reg_status               = 3'b000;  
-
-    // ── Pulse mailbox trigger ─────────────────────────────────────
-    @(posedge RB_i_clk);
-    RB_i_mailbox_trigger = 1'b1;
-    @(posedge RB_i_clk);
-    RB_i_mailbox_trigger = 1'b0;
-
-    // ── Wait: RP finishes sending the request on RDI ──────────────
-    // negedge of RB_o_rdi_lp_cfg_vld means the last chunk was clocked out.
-    @(negedge RB_o_rdi_lp_cfg_vld);
-
-    // ── Wait: RP mailbox receives the completion from EP ─────────
-    @(posedge RB_o_mailbox_data_en);
-    @(posedge RB_i_clk);
-
-    // ── Check ─────────────────────────────────────────────────────
-    if (RB_o_mailbox_status != 2'b11)
-        $display("[TC_remote] FAILED — status=%0b (expected 2'b11)",
-                 RB_o_mailbox_status);
-    else
-        $display("[TC_remote] PASSED ^_^");
-
-    // ── Clean up ──────────────────────────────────────────────────
-    RB_i_mailbox_index_low       = '0;
-    RB_i_mailbox_index_high      = '0;
-    RB_i_mailbox_data_low        = '0;
-    RB_i_mailbox_data_high       = '0;
-    EB_i_reg_read_data           = '0;
-    EB_i_reg_status              = '0;
-  endtask*/
-
 endmodule                                
