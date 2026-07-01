@@ -578,14 +578,18 @@ task go_active();
   repeat(20) begin
     @(negedge i_clk);
   end
+  $display("Sent config Packet");
 
   RP_i_rdi_pl_inband_pres = 'b1;
   EP_i_rdi_pl_inband_pres = 'b1;
   RP_i_rdi_pl_state_sts = LL_Active;
   EP_i_rdi_pl_state_sts = LL_Active;
+  $display("Requesting Active from RDI");
   repeat(100) begin
     @(negedge i_clk);
   end
+  $display("parameter exchange successfull");
+  $display("Requesting Active from FDI");
   RP_i_fdi_lp_state_req = Req_Active;
   repeat(20) begin
     @(negedge i_clk);
@@ -594,6 +598,7 @@ task go_active();
   repeat(20) begin
     @(negedge i_clk);
   end
+  $display("Active Handshake Successfull");
 endtask
 
 task reset_values();
