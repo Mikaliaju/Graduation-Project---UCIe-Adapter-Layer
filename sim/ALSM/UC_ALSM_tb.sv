@@ -324,6 +324,8 @@ task Go_LinkReset();
   repeat(10) begin
     @(negedge i_clk);
   end
+  $display("UP in LinkReset");
+  $display("DP in LinkReset");
   i_rdi_pl_state_sts_DP = LL_Reset;
   repeat(10) begin
     @(negedge i_clk);
@@ -342,6 +344,7 @@ task link_error_entry_both();
     @(negedge i_clk);
   end
   assert(o_fdi_pl_state_sts_UP == LL_LinkError);
+  $display("UP Entered LinkError");
   i_rdi_pl_state_sts_DP = LL_LinkError;
   repeat(3) begin
     @(negedge i_clk);
@@ -349,6 +352,7 @@ task link_error_entry_both();
   i_fdi_lp_state_req_UP = Req_NOP;
   i_fdi_lp_state_req_DP = Req_NOP;
   assert(o_fdi_pl_state_sts_UP == LL_LinkError);
+  $display("DP Entered LinkError");
   repeat(10) begin
     @(negedge i_clk);
   end
@@ -363,6 +367,7 @@ task link_error_entry_both();
   repeat(2) begin
     @(negedge i_clk);
   end
+  $display("UP Entered Reset");
   assert(o_fdi_pl_state_sts_UP == LL_Reset);
   i_fdi_lp_state_req_UP = Req_NOP;
   @(negedge i_clk);
@@ -395,6 +400,8 @@ task retrain_entry_both();
   repeat(4) begin
     @(negedge i_clk);
   end
+  $display("UP Entered Retrain");
+  $display("DP Entered Retrain");
   assert(~o_mb_rx_enable_UP);
   assert(~o_mb_tx_enable_UP);
   assert(~o_mb_rx_enable_DP);
@@ -419,6 +426,8 @@ task bringup_both_at_same_time();
   repeat(5) begin
     @(negedge i_clk);
   end
+  $display("UP Entered Active");
+  $display("DP Entered Active");
   assert(o_fdi_pl_state_sts_UP == LL_Active);
   assert(o_fdi_pl_state_sts_DP == LL_Active);
 endtask
@@ -440,6 +449,8 @@ task bringup_UP_first();
   repeat(8) begin
     @(negedge i_clk);
   end
+  $display("UP Entered Active");
+  $display("DP Entered Active");
   assert(o_fdi_pl_state_sts_UP == LL_Active);
   assert(o_fdi_pl_state_sts_DP == LL_Active);
 endtask

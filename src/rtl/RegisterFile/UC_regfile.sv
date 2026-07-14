@@ -16,6 +16,9 @@ import UC_regfile_package::*;
 // 	Disable_LSM_response_type   = 'b101
 // } Adapter_Response;
 
+// regfile width = 32 bits
+// regfile depth = 1024 words
+
 module UC_regfile
 (
 
@@ -120,19 +123,6 @@ module UC_regfile
   output  logic       o_sb_format4_enabled,           // Enable format 4
   output  logic       o_sb_format6_enabled,           // Enable format 6
 
-  // Input to SW
-  // input  logic [31:0] i_sw_mailbox_data_low,          // Completion data low written back to mailbox
-  // input  logic [31:0] i_sw_mailbox_data_high,         // Completion data high written back to mailbox
-  // input  logic [1:0]  i_sw_mailbox_status,            // Mailbox status encoding (success/UR/CA)
-  // input  logic        i_sw_mailbox_trigger_en,        // Used to clear trigger after completion/timeout
-
-  // // Output to SW
-  // output logic        o_sw_mailbox_trigger,           // Mailbox trigger bit
-  // output logic [31:0] o_sw_mailbox_index_low,         // Contains opcode/BE/address lower bits
-  // output logic [4:0]  o_sw_mailbox_index_high,        // Upper bits of address
-  // output logic [31:0] o_sw_mailbox_data_low,          // Payload lower 32b
-  // output logic [31:0] o_sw_mailbox_data_high,         // Payload upper 32b
-
   output logic        o_uncorrectable_error_IRQ,
   output logic        o_correctable_error_IRQ
 
@@ -191,12 +181,6 @@ assign o_sb_format4_enabled = 'b0;
 assign o_sb_format6_enabled = 'b0;
 assign o_sb_status          = 'b0;
 
-// assign o_sw_mailbox_trigger    = w_mailbox_control_bit;
-// assign o_sw_mailbox_index_low  = dvsec[MAILBOX_INDEX_LOW_WORD_OFFSET];
-// assign o_sw_mailbox_index_high = dvsec[MAILBOX_INDEX_HIGH_WORD_OFFSET];
-// assign o_sw_mailbox_data_low   = dvsec[MAILBOX_DATA_LOW_WORD_OFFSET];
-// assign o_sw_mailbox_data_high  = dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET];
-
 always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
   if (~i_rst_n) begin
     foreach (dvsec[i]) begin
@@ -235,12 +219,6 @@ always_ff @(posedge i_clk , negedge i_rst_n) begin : DVSEC_BLOCK
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sb_mailbox_status;
       dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b0;
     end
-    // else if (~w_mailbox_control_bit && i_sw_mailbox_trigger_en) begin
-    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET]          <= i_sw_mailbox_data_high;
-    //   dvsec[MAILBOX_DATA_LOW_WORD_OFFSET]           <= i_sw_mailbox_data_low;
-    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][9:8] <= i_sw_mailbox_status;
-    //   dvsec[MAILBOX_DATA_HIGH_WORD_OFFSET + 1][0]   <= 'b1;
-    // end
     if (i_sb_flitfmt_valid) begin
       dvsec[LINK_STATUS_WORD_OFFSET][25:22] <= i_sb_flit_format_status;
     end
